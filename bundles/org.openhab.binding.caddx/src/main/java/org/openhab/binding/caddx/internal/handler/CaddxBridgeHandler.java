@@ -214,14 +214,14 @@ public class CaddxBridgeHandler extends BaseBridgeHandler implements SecurityPan
 
         switch (channelUID.getId()) {
             case BRIDGE_RESET:
-                if (command == OnOffType.OFF) {
+                if (command == OnOffType.ON) {
                     CaddxCommunicator n = communicator; 
                     if (n != null) {
                         n.stop();
                         n = null;
                         updateStatus(ThingStatus.OFFLINE);
                     }
-                } else if (command == OnOffType.ON) {
+                } else if (command == OnOffType.OFF) {
                     init();
                     updateStatus(ThingStatus.ONLINE);
                 }
@@ -341,19 +341,14 @@ public class CaddxBridgeHandler extends BaseBridgeHandler implements SecurityPan
             // Find the thing
             Thing thing = findThing(caddxThingType, partition, zone, keypad);
             if (thing != null) {
-                logger.debug("caddxMessage(): Thing found - '{}'", thing);
+                logger.trace("caddxMessage(): Thing found - '{}'", thing);
 
                 CaddxBaseThingHandler thingHandler = (CaddxBaseThingHandler) thing.getHandler();
-
                 if (thingHandler != null) {
-                    if (thingHandler.isThingHandlerInitialized()) {
-                        thingHandler.caddxEventReceived(event, thing);
-                    } else {
-                        logger.debug("caddxMessage(): Thing '{}' Not Refreshed!", thing.getUID());
-                    }
+                    thingHandler.caddxEventReceived(event, thing);
                 }
             } else {
-                logger.debug("caddxMessage(): Thing Not Found! Send to Discovery Service!");
+                logger.trace("caddxMessage(): Thing Not Found! Send to Discovery Service!");
 
                 CaddxDiscoveryService d = getDiscoveryService();
                 if (d != null) {

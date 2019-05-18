@@ -46,7 +46,7 @@ public class ThingHandlerZone extends CaddxBaseThingHandler {
 
     @Override
     public void updateChannel(ChannelUID channelUID, String data) {
-        logger.debug("updateChannel(): Zone Channel UID: {}", channelUID);
+        logger.trace("updateChannel(): Zone Channel UID: {}", channelUID);
 
         // All Zone channels are OnOffType
         OnOffType onOffType;

@@ -60,7 +60,6 @@ public class CaddxHandlerFactory extends BaseThingHandlerFactory {
     @Override
     public @Nullable Thing createThing(ThingTypeUID thingTypeUID, Configuration configuration,
             @Nullable ThingUID thingUID, @Nullable ThingUID bridgeUID) {
-        
         logger.trace("createThing(): thingTypeUID- {}, configuration - {}",
                 thingTypeUID, configuration);
         

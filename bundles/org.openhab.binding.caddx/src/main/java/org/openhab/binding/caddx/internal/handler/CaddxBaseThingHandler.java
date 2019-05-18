@@ -107,6 +107,8 @@ public abstract class CaddxBaseThingHandler extends BaseThingHandler {
         logger.debug("initializeThingHandler()");
 
         if (getCaddxBridgeHandler() != null) {
+            this.setThingHandlerInitialized(true);
+
             if (getThing().getStatus().equals(ThingStatus.ONLINE)) {
                 Thing thing = getThing();
                 List<Channel> channels = thing.getChannels();
@@ -132,7 +134,7 @@ public abstract class CaddxBaseThingHandler extends BaseThingHandler {
      * @return CaddxBridgeHandler 
      */
     public @Nullable synchronized CaddxBridgeHandler getCaddxBridgeHandler() {
-        logger.debug("getCaddxBridgeHandler(): Started!");
+        logger.trace("getCaddxBridgeHandler(): Started!");
         
         if (this.caddxBridgeHandler == null) {
             Bridge bridge = getBridge();
@@ -340,5 +342,10 @@ public abstract class CaddxBaseThingHandler extends BaseThingHandler {
      */
     public void setThingHandlerInitialized(boolean refreshed) {
         this.thingHandlerInitialized = refreshed;
+    }
+    
+    @Override
+    public void handleRemoval() {
+    	super.handleRemoval();
     }
 }
