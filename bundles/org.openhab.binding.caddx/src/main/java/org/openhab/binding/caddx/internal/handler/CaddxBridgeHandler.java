@@ -66,7 +66,7 @@ public class CaddxBridgeHandler extends BaseBridgeHandler implements SecurityPan
     static final byte[] DISCOVERY_PARTITIONS_SNAPSHOT_REQUEST = { 0x27 };
     static final byte[] DISCOVERY_SYSTEM_STATUS_REQUEST = { 0x28 };
 
-    private @Nullable CaddxDiscoveryService discoveryService;
+    private @Nullable CaddxDiscoveryService discoveryService = null;
 
     public @Nullable CaddxDiscoveryService getDiscoveryService() {
         return discoveryService;
@@ -141,6 +141,11 @@ public class CaddxBridgeHandler extends BaseBridgeHandler implements SecurityPan
             n.stop();
             n = null;
         }
+        
+        if (discoveryService != null) {
+            unregisterDiscoveryService();
+        }
+        
         super.dispose();
     }
 
@@ -356,7 +361,7 @@ public class CaddxBridgeHandler extends BaseBridgeHandler implements SecurityPan
                 }
             }
 
-            if (discoveryService != null) {
+            if (getDiscoveryService() != null) {
                 switch (caddxMessage.getCaddxMessageType()) {
                     case Partitions_Snapshot_Message:
                         for (int i = 1; i <= 8; i++) {
