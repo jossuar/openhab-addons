@@ -21,6 +21,7 @@ import org.eclipse.smarthome.core.thing.Channel;
 import org.eclipse.smarthome.core.thing.ChannelUID;
 import org.eclipse.smarthome.core.thing.Thing;
 import org.eclipse.smarthome.core.thing.ThingStatus;
+import org.eclipse.smarthome.core.thing.ThingStatusDetail;
 import org.eclipse.smarthome.core.thing.ThingStatusInfo;
 import org.eclipse.smarthome.core.thing.binding.BaseThingHandler;
 import org.eclipse.smarthome.core.thing.binding.ThingHandler;
@@ -183,12 +184,21 @@ public abstract class CaddxBaseThingHandler extends BaseThingHandler {
     public void bridgeStatusChanged(ThingStatusInfo bridgeStatusInfo) {
         logger.debug("bridgeStatusChanged(): Started!");
 
-        updateStatus(bridgeStatusInfo.getStatus());
-
-        if (bridgeStatusInfo.getStatus().equals(ThingStatus.ONLINE)) {
+        ThingStatus bridgeStatus = bridgeStatusInfo.getStatus();
+        
+        switch(bridgeStatus) {
+        case ONLINE:
+            updateStatus(bridgeStatus);
             this.initializeThingHandler();
-        } else {
+        	break;
+        case OFFLINE:
+            updateStatus(bridgeStatus, ThingStatusDetail.BRIDGE_OFFLINE);
             this.setThingHandlerInitialized(false);
+        	break;
+		default:
+            updateStatus(bridgeStatus);
+            this.setThingHandlerInitialized(false);
+			break;
         }
 
         logger.debug("bridgeStatusChanged(): Bridge Status: '{}' - Thing '{}' Status: '{}'!", bridgeStatusInfo,
