@@ -190,15 +190,15 @@ public abstract class CaddxBaseThingHandler extends BaseThingHandler {
         case ONLINE:
             updateStatus(bridgeStatus);
             this.initializeThingHandler();
-        	break;
+            break;
         case OFFLINE:
             updateStatus(bridgeStatus, ThingStatusDetail.BRIDGE_OFFLINE);
             this.setThingHandlerInitialized(false);
-        	break;
-		default:
+            break;
+        default:
             updateStatus(bridgeStatus);
             this.setThingHandlerInitialized(false);
-			break;
+            break;
         }
 
         logger.debug("bridgeStatusChanged(): Bridge Status: '{}' - Thing '{}' Status: '{}'!", bridgeStatusInfo,
@@ -356,6 +356,6 @@ public abstract class CaddxBaseThingHandler extends BaseThingHandler {
     
     @Override
     public void handleRemoval() {
-    	super.handleRemoval();
+        super.handleRemoval();
     }
 }
