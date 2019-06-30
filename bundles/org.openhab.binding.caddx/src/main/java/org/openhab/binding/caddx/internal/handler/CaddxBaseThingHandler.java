@@ -132,11 +132,11 @@ public abstract class CaddxBaseThingHandler extends BaseThingHandler {
     /**
      * Get the Bridge Handler for the Caddx system.
      *
-     * @return CaddxBridgeHandler 
+     * @return CaddxBridgeHandler
      */
     public @Nullable synchronized CaddxBridgeHandler getCaddxBridgeHandler() {
         logger.trace("getCaddxBridgeHandler(): Started!");
-        
+
         if (this.caddxBridgeHandler == null) {
             Bridge bridge = getBridge();
 
@@ -185,20 +185,20 @@ public abstract class CaddxBaseThingHandler extends BaseThingHandler {
         logger.debug("bridgeStatusChanged(): Started!");
 
         ThingStatus bridgeStatus = bridgeStatusInfo.getStatus();
-        
-        switch(bridgeStatus) {
-        case ONLINE:
-            updateStatus(bridgeStatus);
-            this.initializeThingHandler();
-            break;
-        case OFFLINE:
-            updateStatus(bridgeStatus, ThingStatusDetail.BRIDGE_OFFLINE);
-            this.setThingHandlerInitialized(false);
-            break;
-        default:
-            updateStatus(bridgeStatus);
-            this.setThingHandlerInitialized(false);
-            break;
+
+        switch (bridgeStatus) {
+            case ONLINE:
+                updateStatus(bridgeStatus);
+                this.initializeThingHandler();
+                break;
+            case OFFLINE:
+                updateStatus(bridgeStatus, ThingStatusDetail.BRIDGE_OFFLINE);
+                this.setThingHandlerInitialized(false);
+                break;
+            default:
+                updateStatus(bridgeStatus);
+                this.setThingHandlerInitialized(false);
+                break;
         }
 
         logger.debug("bridgeStatusChanged(): Bridge Status: '{}' - Thing '{}' Status: '{}'!", bridgeStatusInfo,
@@ -353,7 +353,7 @@ public abstract class CaddxBaseThingHandler extends BaseThingHandler {
     public void setThingHandlerInitialized(boolean refreshed) {
         this.thingHandlerInitialized = refreshed;
     }
-    
+
     @Override
     public void handleRemoval() {
         super.handleRemoval();

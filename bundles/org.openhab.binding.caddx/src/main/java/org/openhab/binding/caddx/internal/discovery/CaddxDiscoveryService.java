@@ -184,7 +184,7 @@ public class CaddxDiscoveryService extends AbstractDiscoveryService {
      * Activates the Discovery Service.
      */
     public void activate() {
-        CaddxBridgeHandler h = caddxBridgeHandler; 
+        CaddxBridgeHandler h = caddxBridgeHandler;
         if (h != null) {
             h.registerDiscoveryService(this);
         }
@@ -195,7 +195,7 @@ public class CaddxDiscoveryService extends AbstractDiscoveryService {
      */
     @Override
     public void deactivate() {
-        CaddxBridgeHandler h = caddxBridgeHandler; 
+        CaddxBridgeHandler h = caddxBridgeHandler;
         if (h != null) {
             h.unregisterDiscoveryService();
         }

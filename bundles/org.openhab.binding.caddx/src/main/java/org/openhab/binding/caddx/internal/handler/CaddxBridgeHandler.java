@@ -33,9 +33,9 @@ import org.eclipse.smarthome.core.thing.binding.BaseBridgeHandler;
 import org.eclipse.smarthome.core.types.Command;
 import org.openhab.binding.caddx.internal.CaddxBindingConstants;
 import org.openhab.binding.caddx.internal.CaddxCommunicator;
+import org.openhab.binding.caddx.internal.CaddxCommunicator.SecurityPanelListener;
 import org.openhab.binding.caddx.internal.CaddxEvent;
 import org.openhab.binding.caddx.internal.CaddxMessage;
-import org.openhab.binding.caddx.internal.CaddxCommunicator.SecurityPanelListener;
 import org.openhab.binding.caddx.internal.CaddxMessage.Source;
 import org.openhab.binding.caddx.internal.config.CaddxBridgeConfiguration;
 import org.openhab.binding.caddx.internal.config.CaddxKeypadConfiguration;
@@ -141,11 +141,11 @@ public class CaddxBridgeHandler extends BaseBridgeHandler implements SecurityPan
             n.stop();
             n = null;
         }
-        
+
         if (discoveryService != null) {
             unregisterDiscoveryService();
         }
-        
+
         super.dispose();
     }
 
@@ -220,7 +220,7 @@ public class CaddxBridgeHandler extends BaseBridgeHandler implements SecurityPan
         switch (channelUID.getId()) {
             case BRIDGE_RESET:
                 if (command == OnOffType.ON) {
-                    CaddxCommunicator n = communicator; 
+                    CaddxCommunicator n = communicator;
                     if (n != null) {
                         n.stop();
                         n = null;
@@ -278,7 +278,7 @@ public class CaddxBridgeHandler extends BaseBridgeHandler implements SecurityPan
             return false;
         }
 
-        CaddxCommunicator n = communicator; 
+        CaddxCommunicator n = communicator;
         if (n != null) {
             n.transmit(msg);
         }
@@ -370,7 +370,7 @@ public class CaddxBridgeHandler extends BaseBridgeHandler implements SecurityPan
                                 if (thing != null) {
                                     continue;
                                 }
-                                
+
                                 event = new CaddxEvent(caddxMessage, i, null, null);
                                 CaddxDiscoveryService d = getDiscoveryService();
                                 if (d != null) {
@@ -388,7 +388,7 @@ public class CaddxBridgeHandler extends BaseBridgeHandler implements SecurityPan
                                 if (thing != null) {
                                     continue;
                                 }
-                            
+
                                 event = new CaddxEvent(caddxMessage, null, zoneOffset + i, null);
                                 CaddxDiscoveryService d = getDiscoveryService();
                                 if (d != null) {

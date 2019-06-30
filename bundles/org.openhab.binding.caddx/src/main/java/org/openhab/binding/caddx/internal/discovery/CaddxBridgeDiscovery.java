@@ -19,8 +19,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.openhab.binding.caddx.internal.CaddxCommunicator;
-import org.openhab.binding.caddx.internal.CaddxMessage;
 import org.openhab.binding.caddx.internal.CaddxCommunicator.SecurityPanelListener;
+import org.openhab.binding.caddx.internal.CaddxMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,7 +62,7 @@ public class CaddxBridgeDiscovery implements SecurityPanelListener {
             if (portIdentifier == null) {
                 continue;
             }
-            
+
             if (portIdentifier.getPortType() == CommPortIdentifier.PORT_SERIAL) {
                 try {
                     for (int baudrate : BAUDRATES) {
@@ -71,7 +71,8 @@ public class CaddxBridgeDiscovery implements SecurityPanelListener {
                         }
                         caddxCommunicator = new CaddxCommunicator(portIdentifier.getName(), baudrate);
                         caddxCommunicator.addListener(this);
-                        caddxCommunicator.transmit(new CaddxMessage(CADDX_DISCOVERY_INTERFACE_CONFIGURATION_MESSAGE, false));
+                        caddxCommunicator
+                                .transmit(new CaddxMessage(CADDX_DISCOVERY_INTERFACE_CONFIGURATION_MESSAGE, false));
 
                         try {
                             TimeUnit.SECONDS.sleep(4); // Wait for 4 seconds and continue with next baudrate/port
