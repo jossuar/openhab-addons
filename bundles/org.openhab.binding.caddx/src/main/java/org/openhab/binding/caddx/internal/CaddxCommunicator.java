@@ -21,6 +21,7 @@ import java.util.concurrent.Exchanger;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.stream.IntStream;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -169,7 +170,7 @@ public class CaddxCommunicator implements Runnable, SerialPortEventListener {
     }
 
     // Transmitter state variables
-    int expectedMessageNumber = 0;
+    int @Nullable [] expectedMessageNumbers = null;
 
     @SuppressWarnings("null")
     @Override
@@ -187,7 +188,7 @@ public class CaddxCommunicator implements Runnable, SerialPortEventListener {
             while (!Thread.currentThread().isInterrupted()) {
                 // Initialize the state
                 outgoingMessage = null;
-                expectedMessageNumber = 0;
+                expectedMessageNumbers = null;
 
                 if (!skipTransmit) {
                     if (logger.isTraceEnabled()) {
@@ -213,7 +214,7 @@ public class CaddxCommunicator implements Runnable, SerialPortEventListener {
                                 outgoingMessage));
                     }
                     if (outgoingMessage != null) {
-                        expectedMessageNumber = outgoingMessage.getReplyMessageNumber();
+                        expectedMessageNumbers = outgoingMessage.getReplyMessageNumbers();
                     }
                 } else {
                     if (logger.isTraceEnabled()) {
@@ -231,7 +232,7 @@ public class CaddxCommunicator implements Runnable, SerialPortEventListener {
                     }
                     incomingMessage = exchanger.exchange(throwAway, 3, TimeUnit.SECONDS);
                 } catch (TimeoutException e) {
-                    if (expectedMessageNumber == 0) { // Nothing expected, Nothing received we continue
+                    if (expectedMessageNumbers == null) { // Nothing expected, Nothing received we continue
                         if (logger.isTraceEnabled()) {
                             logger.trace("CaddxCommunicator.run(): Nothing expected, Nothing received we continue");
                         }
@@ -251,7 +252,7 @@ public class CaddxCommunicator implements Runnable, SerialPortEventListener {
                 }
 
                 // Check if we wait for a reply
-                if (expectedMessageNumber == 0) {
+                if (expectedMessageNumbers == null) {
                     if (incomingMessage != null) { // Nothing expected. Message received.
                         if (logger.isTraceEnabled()) {
                             logger.trace("CaddxCommunicator.run() Nothing expected, Message received");
@@ -283,8 +284,10 @@ public class CaddxCommunicator implements Runnable, SerialPortEventListener {
                         }
 
                         // Message expected. Message received.
-                        if (incomingMessage.getMessageType() != expectedMessageNumber
-                                && incomingMessage.getMessageType() != 0x1f) {
+                        int receivedMessageType = incomingMessage.getMessageType();
+                        boolean isMessageExpected = IntStream.of(expectedMessageNumbers)
+                                .anyMatch(x -> x == receivedMessageType);
+                        if (!isMessageExpected) {
                             // Non expected reply received
                             if (outgoingMessage != null) {
                                 messages.putFirst(outgoingMessage); // put message in queue again
