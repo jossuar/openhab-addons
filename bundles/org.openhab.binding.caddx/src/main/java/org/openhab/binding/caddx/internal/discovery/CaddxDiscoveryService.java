@@ -72,6 +72,12 @@ public class CaddxDiscoveryService extends AbstractDiscoveryService {
         caddxBridgeDiscovery.discoverBridge3();
     }
 
+    @Override
+    protected synchronized void stopScan() {
+        super.stopScan();
+        removeOlderResults(getTimestampOfLastScan());
+    }
+
     /**
      * Method to add a Caddx Bridge to the Smarthome Inbox.
      *
