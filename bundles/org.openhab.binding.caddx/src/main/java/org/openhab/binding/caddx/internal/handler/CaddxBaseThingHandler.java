@@ -110,22 +110,26 @@ public abstract class CaddxBaseThingHandler extends BaseThingHandler {
         if (getCaddxBridgeHandler() != null) {
             this.setThingHandlerInitialized(true);
 
-            if (getThing().getStatus().equals(ThingStatus.ONLINE)) {
-                Thing thing = getThing();
-                List<Channel> channels = thing.getChannels();
-                logger.debug("initializeThingHandler(): Initialize Thing Handler - {}", thing.getUID());
-
-                for (Channel channel : channels) {
-                    updateChannel(channel.getUID(), "");
-                }
-
-                this.setThingHandlerInitialized(true);
-
-                logger.debug("initializeThingHandler(): Thing Handler Initialized - {}", thing.getUID());
-            } else {
-                logger.debug("initializeThingHandler(): Thing '{}' Unable To Initialize Thing Handler!: Status - {}",
-                        thing.getUID(), thing.getStatus());
-            }
+            /*
+             * if (getThing().getStatus().equals(ThingStatus.ONLINE)) {
+             * Thing thing = getThing();
+             * List<Channel> channels = thing.getChannels();
+             * logger.debug("initializeThingHandler(): Initialize Thing Handler - {}", thing.getUID());
+             *
+             *
+             * for (Channel channel : channels) {
+             * updateChannel(channel.getUID(), "");
+             * }
+             *
+             * this.setThingHandlerInitialized(true);
+             *
+             *
+             * logger.debug("initializeThingHandler(): Thing Handler Initialized - {}", thing.getUID());
+             * } else {
+             * logger.debug("initializeThingHandler(): Thing '{}' Unable To Initialize Thing Handler!: Status - {}",
+             * thing.getUID(), thing.getStatus());
+             * }
+             */
         }
     }
 
@@ -135,7 +139,7 @@ public abstract class CaddxBaseThingHandler extends BaseThingHandler {
      * @return CaddxBridgeHandler
      */
     public @Nullable synchronized CaddxBridgeHandler getCaddxBridgeHandler() {
-        logger.trace("getCaddxBridgeHandler(): Started!");
+        // logger.trace("getCaddxBridgeHandler(): Started!");
 
         if (this.caddxBridgeHandler == null) {
             Bridge bridge = getBridge();
@@ -346,16 +350,21 @@ public abstract class CaddxBaseThingHandler extends BaseThingHandler {
     }
 
     /**
-     * Set Thing Handler refresh status.
+     * Set Thing Handler status.
      *
      * @param deviceInitialized
      */
-    public void setThingHandlerInitialized(boolean refreshed) {
-        this.thingHandlerInitialized = refreshed;
+    public void setThingHandlerInitialized(boolean deviceInitialized) {
+        this.thingHandlerInitialized = deviceInitialized;
     }
 
-    @Override
-    public void handleRemoval() {
-        super.handleRemoval();
-    }
+    /*
+     * @Override
+     * public void handleRemoval() {
+     * logger.trace("handleRemoval(): Called");
+     *
+     * updateStatus(ThingStatus.REMOVED);
+     * super.handleRemoval();
+     * }
+     */
 }

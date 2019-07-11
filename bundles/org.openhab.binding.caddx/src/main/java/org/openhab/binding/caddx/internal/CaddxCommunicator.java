@@ -46,10 +46,10 @@ import gnu.io.UnsupportedCommOperationException;
 public class CaddxCommunicator implements Runnable, SerialPortEventListener {
     private final Logger logger = LoggerFactory.getLogger(CaddxCommunicator.class);
 
-    private final ArrayList<SecurityPanelListener> listenerQueue = new ArrayList<SecurityPanelListener>();
+    private final ArrayList<SecurityPanelListener> listenerQueue = new ArrayList<>();
 
     private Thread thread;
-    private final LinkedBlockingDeque<CaddxMessage> messages = new LinkedBlockingDeque<CaddxMessage>();
+    private final LinkedBlockingDeque<CaddxMessage> messages = new LinkedBlockingDeque<>();
 
     private String serialPortName;
     private int baudRate;
@@ -57,7 +57,7 @@ public class CaddxCommunicator implements Runnable, SerialPortEventListener {
     private InputStream in;
     private OutputStream out;
 
-    Exchanger<CaddxMessage> exchanger = new Exchanger<CaddxMessage>();
+    Exchanger<CaddxMessage> exchanger = new Exchanger<>();
 
     public interface SecurityPanelListener {
         public void caddxMessage(CaddxCommunicator communicator, CaddxMessage message);
@@ -120,7 +120,7 @@ public class CaddxCommunicator implements Runnable, SerialPortEventListener {
         } catch (IOException e) {
         }
 
-        // Communication thread should now exit. Wait for 5 secs??
+        // Communication thread should now exit. Wait for 5 sec or not wait at all??
         while (thread.isAlive()) {
             ;
         }
