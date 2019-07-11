@@ -16,6 +16,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.smarthome.core.library.types.OnOffType;
 import org.eclipse.smarthome.core.thing.ChannelUID;
 import org.eclipse.smarthome.core.thing.Thing;
+import org.eclipse.smarthome.core.thing.ThingStatus;
 import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.types.RefreshType;
 import org.openhab.binding.caddx.internal.CaddxBindingConstants;
@@ -100,7 +101,7 @@ public class ThingHandlerZone extends CaddxBaseThingHandler {
                 }
             }
 
-            // updateStatus(ThingStatus.ONLINE);
+            updateStatus(ThingStatus.ONLINE);
         }
     }
 }

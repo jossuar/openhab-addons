@@ -15,6 +15,7 @@ package org.openhab.binding.caddx.internal.handler;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.smarthome.core.thing.ChannelUID;
 import org.eclipse.smarthome.core.thing.Thing;
+import org.eclipse.smarthome.core.thing.ThingStatus;
 import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.types.RefreshType;
 import org.openhab.binding.caddx.internal.CaddxBindingConstants;
@@ -73,5 +74,6 @@ public class ThingHandlerKeypad extends CaddxBaseThingHandler {
 
     @Override
     public void caddxEventReceived(CaddxEvent event, Thing thing) {
+        updateStatus(ThingStatus.ONLINE);
     }
 }
