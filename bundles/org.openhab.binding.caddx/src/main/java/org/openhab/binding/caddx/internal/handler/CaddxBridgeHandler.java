@@ -255,7 +255,7 @@ public class CaddxBridgeHandler extends BaseBridgeHandler implements SecurityPan
      * Sends a command to the panel
      *
      * @param command The command to be send
-     * @param data    The associated command data
+     * @param data The associated command data
      */
     public boolean sendCommand(String command, String data) {
         logger.debug("sendCommand(): Attempting to send Command: command - {} - data: {}", command, data);
@@ -274,6 +274,8 @@ public class CaddxBridgeHandler extends BaseBridgeHandler implements SecurityPan
             msg = CaddxMessage.buildPartitionSecondaryCommand(data);
         } else if (CaddxBindingConstants.PANEL_INTERFACE_CONFIGURATION_REQUEST.equals(command)) {
             msg = CaddxMessage.buildInterfaceConfigurationRequest(data);
+        } else if (CaddxBindingConstants.PANEL_LOG_EVENT_REQUEST.equals(command)) {
+            msg = CaddxMessage.buildLogEventRequest(data);
         } else {
             return false;
         }

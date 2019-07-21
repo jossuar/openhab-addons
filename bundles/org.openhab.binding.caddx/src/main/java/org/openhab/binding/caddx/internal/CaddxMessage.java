@@ -690,27 +690,29 @@ public class CaddxMessage {
                 // Byte 1
                 new Property("", 1, 1, 0, 0, "Int", "Message number", false),
                 // Byte 2
-                new Property("", 2, 1, 0, 0, "Int", "Event number of this message", false),
+                new Property("panel_log_event_number", 2, 1, 0, 0, "Int", "Event number of this message", false),
                 // Byte 3
-                new Property("", 3, 1, 0, 0, "Int", "Total log size (number of log entries allowed)", false),
+                new Property("panel_log_event_size", 3, 1, 0, 0, "Int",
+                        "Total log size (number of log entries allowed)", false),
 
                 // Byte 4
-                new Property("", 4, 1, 0, 0, "Int", "Event type", false),
+                new Property("panel_log_event_type", 4, 1, 0, 0, "Int", "Event type", false),
                 // Bits 0-6 See type definitions in table that follows
                 // Bit 7 Non-reporting event if not set
 
                 // Byte 5
-                new Property("", 5, 1, 0, 0, "Int", "Zone / User / Device number", false),
+                new Property("panel_log_event_zud", 5, 1, 0, 0, "Int", "Zone / User / Device number", false),
                 // Byte 6
-                new Property("", 6, 1, 0, 0, "Int", "Partition number (0=partition 1, if relevant)", false),
+                new Property("panel_log_event_partition", 6, 1, 0, 0, "Int",
+                        "Partition number (0=partition 1, if relevant)", false),
                 // Byte 7
-                new Property("", 7, 1, 0, 0, "Int", "Month (1-12)", false),
+                new Property("panel_log_event_month", 7, 1, 0, 0, "Int", "Month (1-12)", false),
                 // Byte 8
-                new Property("", 8, 1, 0, 0, "Int", "Day (1-31)", false),
+                new Property("panel_log_event_day", 8, 1, 0, 0, "Int", "Day (1-31)", false),
                 // Byte 9
-                new Property("", 9, 1, 0, 0, "Int", "Hour (0-23)", false),
+                new Property("panel_log_event_hour", 9, 1, 0, 0, "Int", "Hour (0-23)", false),
                 // Byte 10
-                new Property("", 10, 1, 0, 0, "Int", "Minute (0-59)", false)),
+                new Property("panel_log_event_minute", 10, 1, 0, 0, "Int", "Minute (0-59)", false)),
 
         Keypad_Message_Received(0x0b, null, 3, "Keypad Message Received",
                 "This message contains a keystroke from a keypad that is in a Terminal Mode.", Direction.In,
@@ -1419,7 +1421,7 @@ public class CaddxMessage {
      * Constructor.
      *
      * @param message
-     *                    - the message received
+     *            - the message received
      */
     public CaddxMessage(byte[] message, boolean withChecksum) {
         if (withChecksum && message.length < 3) {
@@ -1547,6 +1549,20 @@ public class CaddxMessage {
     public static CaddxMessage buildInterfaceConfigurationRequest(String data) {
         byte[] arr = new byte[1];
         arr[0] = 0x21;
+
+        return new CaddxMessage(arr, false);
+    }
+
+    /**
+     * Builds a Caddx message for a log event request command
+     *
+     * @param data Should be the number of the event
+     * @return The Caddx message object
+     */
+    public static CaddxMessage buildLogEventRequest(String data) {
+        byte[] arr = new byte[2];
+        arr[0] = 0x2a;
+        arr[1] = (byte) Integer.parseInt(data);
 
         return new CaddxMessage(arr, false);
     }

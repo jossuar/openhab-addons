@@ -73,9 +73,21 @@ public class ThingHandlerPanel extends CaddxBaseThingHandler {
         }
 
         if (command instanceof RefreshType) {
-            if (channelUID.getId().equals(CaddxBindingConstants.PANEL_FIRMWARE_VERSION)) {
+            if (CaddxBindingConstants.PANEL_FIRMWARE_VERSION.equals(channelUID.getId())) {
                 cmd = CaddxBindingConstants.PANEL_INTERFACE_CONFIGURATION_REQUEST;
                 data = "";
+            } else if (CaddxBindingConstants.PANEL_LOG_MESSAGE_01.equals(channelUID.getId())) {
+                cmd = CaddxBindingConstants.PANEL_LOG_EVENT_REQUEST;
+                data = "1";
+            } else if (CaddxBindingConstants.PANEL_LOG_MESSAGE_02.equals(channelUID.getId())) {
+                cmd = CaddxBindingConstants.PANEL_LOG_EVENT_REQUEST;
+                data = "2";
+            } else if (CaddxBindingConstants.PANEL_LOG_MESSAGE_03.equals(channelUID.getId())) {
+                cmd = CaddxBindingConstants.PANEL_LOG_EVENT_REQUEST;
+                data = "3";
+            } else if (CaddxBindingConstants.PANEL_LOG_MESSAGE_04.equals(channelUID.getId())) {
+                cmd = CaddxBindingConstants.PANEL_LOG_EVENT_REQUEST;
+                data = "4";
             } else {
                 return;
             }
@@ -95,15 +107,31 @@ public class ThingHandlerPanel extends CaddxBaseThingHandler {
             CaddxMessageType mt = message.getCaddxMessageType();
             ChannelUID channelUID = null;
 
-            for (CaddxMessage.Property p : mt.properties) {
-                if (!("".equals(p.getId()))) {
-                    String value = message.getPropertyById(p.getId());
-                    channelUID = new ChannelUID(getThing().getUID(), p.getId());
-                    updateChannel(channelUID, value);
+            // Log event messages have special handling
+            if (CaddxMessageType.Log_Event_Message.equals(mt)) {
+                handleLogEventMessage(message);
+            } else {
+                for (CaddxMessage.Property p : mt.properties) {
+                    if (!("".equals(p.getId()))) {
+                        String value = message.getPropertyById(p.getId());
+                        channelUID = new ChannelUID(getThing().getUID(), p.getId());
+                        updateChannel(channelUID, value);
+                    }
                 }
             }
 
             updateStatus(ThingStatus.ONLINE);
         }
+    }
+
+    private void handleLogEventMessage(CaddxMessage message) {
+        logger.debug(message.toString());
+
+        // build the message
+        LogEventMessage logEventMessage = new LogEventMessage(message);
+
+        // fill the property
+        ChannelUID channelUID = new ChannelUID(getThing().getUID(), logEventMessage.getProperty());
+        updateChannel(channelUID, logEventMessage.toString());
     }
 }

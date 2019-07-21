@@ -16,6 +16,38 @@
                 <label>Firmware version</label>
                 <description>Firmware version</description>
             </channel>
+            
+            <channel id="panel_log_message_01" typeId="panel_text"><label>Log message 1</label><description>Log message 1</description></channel> 
+            <channel id="panel_log_message_02" typeId="panel_text"><label>Log message 2</label><description>Log message 2</description></channel> 
+            <channel id="panel_log_message_03" typeId="panel_text"><label>Log message 3</label><description>Log message 3</description></channel> 
+            <channel id="panel_log_message_04" typeId="panel_text"><label>Log message 4</label><description>Log message 4</description></channel> 
+            <channel id="panel_log_message_05" typeId="panel_text"><label>Log message 5</label><description>Log message 5</description></channel> 
+            <channel id="panel_log_message_06" typeId="panel_text"><label>Log message 6</label><description>Log message 6</description></channel> 
+            <channel id="panel_log_message_07" typeId="panel_text"><label>Log message 7</label><description>Log message 7</description></channel> 
+            <channel id="panel_log_message_08" typeId="panel_text"><label>Log message 8</label><description>Log message 8</description></channel> 
+            <channel id="panel_log_message_09" typeId="panel_text"><label>Log message 9</label><description>Log message 9</description></channel> 
+            <channel id="panel_log_message_10" typeId="panel_text"><label>Log message 10</label><description>Log message 10</description></channel> 
+            <channel id="panel_log_message_11" typeId="panel_text"><label>Log message 11</label><description>Log message 11</description></channel> 
+            <channel id="panel_log_message_12" typeId="panel_text"><label>Log message 12</label><description>Log message 12</description></channel> 
+            <channel id="panel_log_message_13" typeId="panel_text"><label>Log message 13</label><description>Log message 13</description></channel> 
+            <channel id="panel_log_message_14" typeId="panel_text"><label>Log message 14</label><description>Log message 14</description></channel> 
+            <channel id="panel_log_message_15" typeId="panel_text"><label>Log message 15</label><description>Log message 15</description></channel> 
+            <channel id="panel_log_message_16" typeId="panel_text"><label>Log message 16</label><description>Log message 16</description></channel> 
+            <channel id="panel_log_message_17" typeId="panel_text"><label>Log message 17</label><description>Log message 17</description></channel> 
+            <channel id="panel_log_message_18" typeId="panel_text"><label>Log message 18</label><description>Log message 18</description></channel> 
+            <channel id="panel_log_message_19" typeId="panel_text"><label>Log message 19</label><description>Log message 19</description></channel> 
+            <channel id="panel_log_message_20" typeId="panel_text"><label>Log message 20</label><description>Log message 20</description></channel> 
+            <channel id="panel_log_message_21" typeId="panel_text"><label>Log message 21</label><description>Log message 21</description></channel> 
+            <channel id="panel_log_message_22" typeId="panel_text"><label>Log message 22</label><description>Log message 22</description></channel> 
+            <channel id="panel_log_message_23" typeId="panel_text"><label>Log message 23</label><description>Log message 23</description></channel> 
+            <channel id="panel_log_message_24" typeId="panel_text"><label>Log message 24</label><description>Log message 24</description></channel> 
+            <channel id="panel_log_message_25" typeId="panel_text"><label>Log message 25</label><description>Log message 25</description></channel> 
+            <channel id="panel_log_message_26" typeId="panel_text"><label>Log message 26</label><description>Log message 26</description></channel> 
+            <channel id="panel_log_message_27" typeId="panel_text"><label>Log message 27</label><description>Log message 27</description></channel> 
+            <channel id="panel_log_message_28" typeId="panel_text"><label>Log message 28</label><description>Log message 28</description></channel> 
+            <channel id="panel_log_message_29" typeId="panel_text"><label>Log message 29</label><description>Log message 29</description></channel> 
+            <channel id="panel_log_message_30" typeId="panel_text"><label>Log message 30</label><description>Log message 30</description></channel> 
+            
             <channel id="panel_interface_configuration_message" typeId="panel_flag">
                 <label>Interface Configuration Message</label>
                 <description>Interface Configuration Message</description>
@@ -157,6 +189,8 @@
                 <label>Zone Bypass Toggle</label>
                 <description>Zone Bypass Toggle</description>
             </channel>
+            
+            
 		</channels>
 
 		<config-description>
