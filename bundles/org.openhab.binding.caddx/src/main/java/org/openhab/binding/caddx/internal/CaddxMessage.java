@@ -1608,8 +1608,16 @@ public class CaddxMessage {
         return hasAcknowledgementFlag;
     }
 
-    public byte[] getMessageFrameBytes() {
-        // Calculate additional bytes
+    public byte[] getMessageFrameBytes(CaddxProtocol protocol) {
+        if (protocol == CaddxProtocol.Binary) {
+            return getMessageFrameBytesInBinary();
+        } else {
+            return getMessageFrameBytesInAscii();
+        }
+    }
+
+    private byte[] getMessageFrameBytesInBinary() {
+        // Calculate bytes
         // 1 for the startbyte
         // 1 for the length
         // 2 for the checksum
@@ -1640,6 +1648,49 @@ public class CaddxMessage {
 
         frame[fi++] = checksum1Calc;
         frame[fi++] = checksum2Calc;
+
+        return frame;
+    }
+
+    private byte[] getMessageFrameBytesInAscii() {
+        // Calculate additional bytes
+        // 1 for the start byte
+        // 2 for the length
+        // 4 for the checksum
+        // 1 for the stop byte
+        int additional = 8;
+
+        int fi = 0;
+        byte[] frame = new byte[2 * message.length + additional];
+
+        // start character
+        frame[fi++] = 0x0a;
+
+        // message length
+        String tempString = Util.byteToHex((byte) message.length);
+        frame[fi++] = (byte) tempString.charAt(0);
+        frame[fi++] = (byte) tempString.charAt(1);
+
+        // message
+        for (int i = 0; i < message.length; i++) {
+            byte b = message[i];
+            tempString = Util.byteToHex(b);
+            frame[fi++] = (byte) tempString.charAt(0);
+            frame[fi++] = (byte) tempString.charAt(1);
+        }
+
+        // Checksum 1st byte
+        tempString = Util.byteToHex(checksum1Calc);
+        frame[fi++] = (byte) tempString.charAt(0);
+        frame[fi++] = (byte) tempString.charAt(1);
+
+        // Checksum 2nd byte
+        tempString = Util.byteToHex(checksum2Calc);
+        frame[fi++] = (byte) tempString.charAt(0);
+        frame[fi++] = (byte) tempString.charAt(1);
+
+        // Stop character
+        frame[fi++] = (byte) 0x0d;
 
         return frame;
     }

@@ -37,6 +37,7 @@ import org.openhab.binding.caddx.internal.CaddxCommunicator.SecurityPanelListene
 import org.openhab.binding.caddx.internal.CaddxEvent;
 import org.openhab.binding.caddx.internal.CaddxMessage;
 import org.openhab.binding.caddx.internal.CaddxMessage.Source;
+import org.openhab.binding.caddx.internal.CaddxProtocol;
 import org.openhab.binding.caddx.internal.config.CaddxBridgeConfiguration;
 import org.openhab.binding.caddx.internal.config.CaddxKeypadConfiguration;
 import org.openhab.binding.caddx.internal.config.CaddxPartitionConfiguration;
@@ -85,6 +86,7 @@ public class CaddxBridgeHandler extends BaseBridgeHandler implements SecurityPan
         super(bridge);
     }
 
+    private CaddxProtocol protocol = CaddxProtocol.Binary;
     private String serialPortName = "";
     private int baudRate;
     private @Nullable CaddxCommunicator communicator = null;
@@ -92,6 +94,7 @@ public class CaddxBridgeHandler extends BaseBridgeHandler implements SecurityPan
     private void init() {
         CaddxBridgeConfiguration configuration = getConfigAs(CaddxBridgeConfiguration.class);
 
+        protocol = configuration.getProtocol();
         serialPortName = configuration.getSerialPort();
         baudRate = configuration.getBaudrate().intValue();
         updateStatus(ThingStatus.OFFLINE);
@@ -99,7 +102,7 @@ public class CaddxBridgeHandler extends BaseBridgeHandler implements SecurityPan
         // create & start panel interface
         logger.info("starting interface at port {} with baudrate {}", serialPortName, baudRate);
         try {
-            communicator = new CaddxCommunicator(serialPortName, baudRate);
+            communicator = new CaddxCommunicator(protocol, serialPortName, baudRate);
         } catch (UnsupportedCommOperationException | NoSuchPortException | PortInUseException | IOException
                 | TooManyListenersException e) {
             logger.warn("Cannot initialize Communication.", e);

@@ -13,6 +13,7 @@
 package org.openhab.binding.caddx.internal.config;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.openhab.binding.caddx.internal.CaddxProtocol;
 
 /**
  * Configuration class for the Caddx RS232 Serial interface bridge.
@@ -24,11 +25,21 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 public class CaddxBridgeConfiguration {
 
     // Caddx Bridge Thing constants
+    public static final String PROTOCOL = "protocol";
     public static final String SERIAL_PORT = "serialPort";
     public static final String BAUD = "baud";
 
+    private CaddxProtocol protocol = CaddxProtocol.Binary;
     private @NonNullByDefault({}) String serialPort;
     private Integer baudrate = 9600;
+
+    public CaddxProtocol getProtocol() {
+        return protocol;
+    }
+
+    public void setProtocol(CaddxProtocol protocol) {
+        this.protocol = protocol;
+    }
 
     public String getSerialPort() {
         return serialPort;

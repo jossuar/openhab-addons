@@ -21,6 +21,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.openhab.binding.caddx.internal.CaddxCommunicator;
 import org.openhab.binding.caddx.internal.CaddxCommunicator.SecurityPanelListener;
 import org.openhab.binding.caddx.internal.CaddxMessage;
+import org.openhab.binding.caddx.internal.CaddxProtocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,7 +57,6 @@ public class CaddxBridgeDiscovery implements SecurityPanelListener {
         }
 
         Enumeration<?> ports = CommPortIdentifier.getPortIdentifiers();
-        CaddxCommunicator caddxCommunicator = null;
         while (ports.hasMoreElements()) {
             CommPortIdentifier portIdentifier = (CommPortIdentifier) ports.nextElement();
             if (portIdentifier == null) {
@@ -66,22 +66,8 @@ public class CaddxBridgeDiscovery implements SecurityPanelListener {
             if (portIdentifier.getPortType() == CommPortIdentifier.PORT_SERIAL) {
                 try {
                     for (int baudrate : BAUDRATES) {
-                        if (logger.isDebugEnabled()) {
-                            logger.debug("Checking port: {}, baud: {}", portIdentifier.getName(), baudrate);
-                        }
-                        caddxCommunicator = new CaddxCommunicator(portIdentifier.getName(), baudrate);
-                        caddxCommunicator.addListener(this);
-                        caddxCommunicator
-                                .transmit(new CaddxMessage(CADDX_DISCOVERY_INTERFACE_CONFIGURATION_MESSAGE, false));
-
-                        try {
-                            TimeUnit.SECONDS.sleep(4); // Wait for 4 seconds and continue with next baudrate/port
-                        } catch (InterruptedException e) {
-                            Thread.currentThread().interrupt();
-                            break;
-                        }
-
-                        caddxCommunicator.stop();
+                        checkforBridge(CaddxProtocol.Binary, portIdentifier.getName(), baudrate);
+                        checkforBridge(CaddxProtocol.Ascii, portIdentifier.getName(), baudrate);
                     }
                 } catch (UnsupportedCommOperationException | NoSuchPortException | PortInUseException | IOException
                         | TooManyListenersException e1) {
@@ -99,6 +85,29 @@ public class CaddxBridgeDiscovery implements SecurityPanelListener {
         }
     }
 
+    private void checkforBridge(CaddxProtocol protocol, String serialPort, int baudrate)
+            throws UnsupportedCommOperationException, NoSuchPortException, PortInUseException, IOException,
+            TooManyListenersException {
+        logger.error("Checking protocol: {}, port: {}, baud: {}", protocol, serialPort, baudrate);
+        if (logger.isDebugEnabled()) {
+            logger.debug("Checking protocol: {}, port: {}, baud: {}", protocol, serialPort, baudrate);
+        }
+
+        CaddxCommunicator caddxCommunicator = new CaddxCommunicator(protocol, serialPort, baudrate);
+        caddxCommunicator.addListener(this);
+        caddxCommunicator.transmit(new CaddxMessage(CADDX_DISCOVERY_INTERFACE_CONFIGURATION_MESSAGE, false));
+
+        // Wait for 4 seconds for a response
+        try {
+            TimeUnit.SECONDS.sleep(4);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+
+        caddxCommunicator.stop();
+        caddxCommunicator = null;
+    }
+
     @Override
     public void caddxMessage(CaddxCommunicator communicator, CaddxMessage caddxMessage) {
         if (logger.isTraceEnabled()) {
@@ -106,6 +115,7 @@ public class CaddxBridgeDiscovery implements SecurityPanelListener {
                     communicator.getSerialPortName(), communicator.getBaudRate());
         }
 
-        caddxDiscoveryService.addCaddxBridge(communicator.getSerialPortName(), communicator.getBaudRate());
+        caddxDiscoveryService.addCaddxBridge(communicator.getProtocol(), communicator.getSerialPortName(),
+                communicator.getBaudRate());
     }
 }

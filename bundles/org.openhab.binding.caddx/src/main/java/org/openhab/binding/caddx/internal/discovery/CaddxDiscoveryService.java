@@ -25,6 +25,7 @@ import org.eclipse.smarthome.core.thing.Bridge;
 import org.eclipse.smarthome.core.thing.ThingUID;
 import org.openhab.binding.caddx.internal.CaddxBindingConstants;
 import org.openhab.binding.caddx.internal.CaddxEvent;
+import org.openhab.binding.caddx.internal.CaddxProtocol;
 import org.openhab.binding.caddx.internal.config.CaddxBridgeConfiguration;
 import org.openhab.binding.caddx.internal.config.CaddxKeypadConfiguration;
 import org.openhab.binding.caddx.internal.config.CaddxPartitionConfiguration;
@@ -83,7 +84,7 @@ public class CaddxDiscoveryService extends AbstractDiscoveryService {
      *
      * @param port
      */
-    public void addCaddxBridge(String port, int baudrate) {
+    public void addCaddxBridge(CaddxProtocol protocol, String port, int baudrate) {
         logger.trace("addCaddxBridge(): Adding new Caddx Bridge on {} {} to Smarthome inbox", port, baudrate);
 
         String bridgeID = "";
@@ -99,6 +100,7 @@ public class CaddxDiscoveryService extends AbstractDiscoveryService {
         }
 
         Map<String, Object> properties = new HashMap<>(0);
+        properties.put(CaddxBridgeConfiguration.PROTOCOL, protocol);
         properties.put(CaddxBridgeConfiguration.SERIAL_PORT, port);
         properties.put(CaddxBridgeConfiguration.BAUD, baudrate);
 

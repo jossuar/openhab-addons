@@ -19,6 +19,13 @@
 		</channels>
 
 		<config-description>
+            <parameter name="protocol" type="text" required="true">
+                <context>protocol</context>
+                <label>Caddx Bridge Protocol</label>
+                <description>The configured panel protocol. Valid values
+                    are Binary and Ascii.</description>
+            </parameter>
+
 			<parameter name="serialPort" type="text" required="true">
 				<context>serial-port</context>
 				<label>Caddx Bridge Serial Port</label>
