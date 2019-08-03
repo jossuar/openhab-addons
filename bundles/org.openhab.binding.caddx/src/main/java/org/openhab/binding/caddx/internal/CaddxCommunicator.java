@@ -198,10 +198,6 @@ public class CaddxCommunicator implements Runnable, SerialPortEventListener {
                 expectedMessageNumbers = null;
 
                 if (!skipTransmit) {
-                    if (logger.isTraceEnabled()) {
-                        logger.trace("CaddxCommunicator.run() skipTransmit: false");
-                    }
-
                     // send next outgoing message if we have one
                     outgoingMessage = messages.poll();
                     if (logger.isTraceEnabled() && outgoingMessage != null) {
@@ -216,9 +212,12 @@ public class CaddxCommunicator implements Runnable, SerialPortEventListener {
                     }
 
                     // Log message
+                    if (logger.isInfoEnabled() && outgoingMessage != null) {
+                        logger.info("->: {}", outgoingMessage.getName());
+                    }
                     if (logger.isDebugEnabled() && outgoingMessage != null) {
-                        logger.debug(Util.buildCaddxMessageString("CaddxCommunicator.run() Message sending: ",
-                                outgoingMessage));
+                        logger.debug("{}", Util.buildCaddxMessageInBinaryString("->: ", outgoingMessage));
+                        logger.debug("{}", Util.buildCaddxMessageInAsciiString("->: ", outgoingMessage));
                     }
                     if (outgoingMessage != null) {
                         expectedMessageNumbers = outgoingMessage.getReplyMessageNumbers();
@@ -234,9 +233,6 @@ public class CaddxCommunicator implements Runnable, SerialPortEventListener {
                 CaddxMessage incomingMessage = null;
                 CaddxMessage throwAway = new CaddxMessage(new byte[] { 0x1d }, false);
                 try {
-                    if (logger.isTraceEnabled()) {
-                        logger.trace("CaddxCommunicator.run() Exchanging");
-                    }
                     incomingMessage = exchanger.exchange(throwAway, 3, TimeUnit.SECONDS);
                 } catch (TimeoutException e) {
                     if (expectedMessageNumbers == null) { // Nothing expected, Nothing received we continue
@@ -249,12 +245,15 @@ public class CaddxCommunicator implements Runnable, SerialPortEventListener {
                 }
 
                 // Log
+                if (logger.isInfoEnabled() && incomingMessage != null) {
+                    logger.info("<-: {}", incomingMessage.getName());
+                }
                 if (logger.isDebugEnabled()) {
                     if (incomingMessage == null) {
                         logger.debug("CaddxCommunicator.run() NoMessage received.");
                     } else {
-                        logger.debug(Util.buildCaddxMessageString("CaddxCommunicator.run() Message received: ",
-                                incomingMessage));
+                        logger.debug(Util.buildCaddxMessageInBinaryString("<-: ", incomingMessage));
+                        logger.debug(Util.buildCaddxMessageInAsciiString("<-: ", incomingMessage));
                     }
                 }
 
@@ -313,7 +312,13 @@ public class CaddxCommunicator implements Runnable, SerialPortEventListener {
                         listener.caddxMessage(this, incomingMessage);
                     }
                 } else {
-                    logger.error("CaddxCommunicator.run() Received packet checksum does not match");
+                    logger.error(
+                            "CaddxCommunicator.run() Received packet checksum does not match. in: {} {}, calc {} {}",
+                            incomingMessage.getChecksum1In(), incomingMessage.getChecksum2In(),
+                            incomingMessage.getChecksum1Calc(), incomingMessage.getChecksum2Calc());
+                    if (incomingMessage != null) {
+                        logger.error("{}", Util.buildCaddxMessageInBinaryString("<-: ", incomingMessage));
+                    }
                 }
             }
         } catch (IOException e) {
@@ -414,17 +419,14 @@ public class CaddxCommunicator implements Runnable, SerialPortEventListener {
             }
             message[messageBufferIndex] = (byte) b;
 
-            // the last two bytes are not stuffed
-            if (messageBufferIndex < messageBufferLength - 2) {
-                if (message[messageBufferIndex] == 0x7D) {
-                    unStuff = true;
-                    continue;
-                }
+            if (message[messageBufferIndex] == 0x7D) {
+                unStuff = true;
+                continue;
+            }
 
-                if (unStuff) {
-                    message[messageBufferIndex] |= 0x20;
-                    unStuff = false;
-                }
+            if (unStuff) {
+                message[messageBufferIndex] |= 0x20;
+                unStuff = false;
             }
 
             messageBufferIndex++;
@@ -578,6 +580,10 @@ public class CaddxCommunicator implements Runnable, SerialPortEventListener {
             if (logger.isTraceEnabled()) {
                 logger.trace("CaddxCommunicator.handleAsciiProtocol() TimeoutException caught.");
             }
+        }
+
+        if (logger.isDebugEnabled()) {
+            logger.debug("Message Received - {}.", caddxMessage.getCaddxMessageType());
         }
 
         // Initialize state for next reception

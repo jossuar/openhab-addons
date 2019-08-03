@@ -66,8 +66,12 @@ public class CaddxBridgeDiscovery implements SecurityPanelListener {
             if (portIdentifier.getPortType() == CommPortIdentifier.PORT_SERIAL) {
                 try {
                     for (int baudrate : BAUDRATES) {
-                        checkforBridge(CaddxProtocol.Binary, portIdentifier.getName(), baudrate);
-                        checkforBridge(CaddxProtocol.Ascii, portIdentifier.getName(), baudrate);
+                        if (checkforBridge(CaddxProtocol.Binary, portIdentifier.getName(), baudrate)) {
+                            break;
+                        }
+                        if (checkforBridge(CaddxProtocol.Ascii, portIdentifier.getName(), baudrate)) {
+                            break;
+                        }
                     }
                 } catch (UnsupportedCommOperationException | NoSuchPortException | PortInUseException | IOException
                         | TooManyListenersException e1) {
@@ -85,7 +89,9 @@ public class CaddxBridgeDiscovery implements SecurityPanelListener {
         }
     }
 
-    private void checkforBridge(CaddxProtocol protocol, String serialPort, int baudrate)
+    volatile boolean bridgeFound = false;
+
+    private boolean checkforBridge(CaddxProtocol protocol, String serialPort, int baudrate)
             throws UnsupportedCommOperationException, NoSuchPortException, PortInUseException, IOException,
             TooManyListenersException {
         logger.error("Checking protocol: {}, port: {}, baud: {}", protocol, serialPort, baudrate);
@@ -93,6 +99,7 @@ public class CaddxBridgeDiscovery implements SecurityPanelListener {
             logger.debug("Checking protocol: {}, port: {}, baud: {}", protocol, serialPort, baudrate);
         }
 
+        bridgeFound = false;
         CaddxCommunicator caddxCommunicator = new CaddxCommunicator(protocol, serialPort, baudrate);
         caddxCommunicator.addListener(this);
         caddxCommunicator.transmit(new CaddxMessage(CADDX_DISCOVERY_INTERFACE_CONFIGURATION_MESSAGE, false));
@@ -106,6 +113,7 @@ public class CaddxBridgeDiscovery implements SecurityPanelListener {
 
         caddxCommunicator.stop();
         caddxCommunicator = null;
+        return bridgeFound;
     }
 
     @Override
@@ -117,5 +125,6 @@ public class CaddxBridgeDiscovery implements SecurityPanelListener {
 
         caddxDiscoveryService.addCaddxBridge(communicator.getProtocol(), communicator.getSerialPortName(),
                 communicator.getBaudRate());
+        bridgeFound = true;
     }
 }

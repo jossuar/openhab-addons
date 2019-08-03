@@ -170,16 +170,13 @@ public class CaddxBridgeHandler extends BaseBridgeHandler implements SecurityPan
                         switch (handlerCaddxThingType) {
                             case PANEL:
                                 thing = t;
-                                logger.debug("findThing(): Thing Found - {}, {}, {}", t, handler,
-                                        handlerCaddxThingType);
                                 return thing;
                             case KEYPAD:
                                 BigDecimal keypadAddress = (BigDecimal) config
                                         .get(CaddxKeypadConfiguration.KEYPAD_ADDRESS);
                                 if (keypad == keypadAddress.intValue()) {
                                     thing = t;
-                                    logger.debug("findThing(): Thing Found - {}, {}, {}", t, handler,
-                                            handlerCaddxThingType);
+                                    logger.trace("findThing(): Thing Found - {}", handlerCaddxThingType);
                                     return thing;
                                 }
                                 break;
@@ -188,8 +185,6 @@ public class CaddxBridgeHandler extends BaseBridgeHandler implements SecurityPan
                                         .get(CaddxPartitionConfiguration.PARTITION_NUMBER);
                                 if (partition == partitionNumber.intValue()) {
                                     thing = t;
-                                    logger.debug("findThing(): Thing Found - {}, {}, {}", t, handler,
-                                            handlerCaddxThingType);
                                     return thing;
                                 }
                                 break;
@@ -197,8 +192,6 @@ public class CaddxBridgeHandler extends BaseBridgeHandler implements SecurityPan
                                 BigDecimal zoneNumber = (BigDecimal) config.get(CaddxZoneConfiguration.ZONE_NUMBER);
                                 if (zone == zoneNumber.intValue()) {
                                     thing = t;
-                                    logger.debug("findThing(): Thing Found - {}, {}, {}", t, handler,
-                                            handlerCaddxThingType);
                                     return thing;
                                 }
                                 break;
@@ -209,7 +202,7 @@ public class CaddxBridgeHandler extends BaseBridgeHandler implements SecurityPan
 
                 }
             } catch (Exception e) {
-                logger.debug("findThing(): Error Seaching Thing - {} ", e.getMessage(), e);
+                logger.error("findThing(): Error Searching Thing - {} ", e.getMessage(), e);
             }
         }
 
@@ -351,15 +344,11 @@ public class CaddxBridgeHandler extends BaseBridgeHandler implements SecurityPan
             // Find the thing
             Thing thing = findThing(caddxThingType, partition, zone, keypad);
             if (thing != null) {
-                logger.trace("caddxMessage(): Thing found - '{}'", thing);
-
                 CaddxBaseThingHandler thingHandler = (CaddxBaseThingHandler) thing.getHandler();
                 if (thingHandler != null) {
                     thingHandler.caddxEventReceived(event, thing);
                 }
             } else {
-                logger.trace("caddxMessage(): Thing Not Found! Send to Discovery Service!");
-
                 CaddxDiscoveryService d = getDiscoveryService();
                 if (d != null) {
                     d.addThing(getThing(), caddxThingType, event);

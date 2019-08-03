@@ -47,7 +47,7 @@ public class ThingHandlerZone extends CaddxBaseThingHandler {
 
     @Override
     public void updateChannel(ChannelUID channelUID, String data) {
-        logger.trace("updateChannel(): Zone Channel UID: {}", channelUID);
+        // logger.trace("updateChannel(): Zone Channel UID: {}", channelUID);
 
         // All Zone channels are OnOffType
         OnOffType onOffType;
@@ -86,7 +86,9 @@ public class ThingHandlerZone extends CaddxBaseThingHandler {
 
     @Override
     public void caddxEventReceived(CaddxEvent event, Thing thing) {
-        logger.debug("caddxEventReceived(): Event Received - {} {}.", event);
+        if (logger.isTraceEnabled()) {
+            logger.trace("caddxEventReceived(): Event Received - {} {}.", event);
+        }
 
         if (getThing().equals(thing)) {
             CaddxMessage message = event.getCaddxMessage();

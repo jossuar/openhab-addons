@@ -48,9 +48,10 @@ public class ThingHandlerPanel extends CaddxBaseThingHandler {
 
     @Override
     public void updateChannel(ChannelUID channelUID, String data) {
-        logger.debug("updateChannel(): Panel Channel UID: {}", channelUID);
+        // logger.trace("updateChannel(): Panel Channel UID: {}", channelUID);
 
-        if (channelUID.getId().equals(CaddxBindingConstants.PANEL_FIRMWARE_VERSION)) {
+        if (channelUID.getId().equals(CaddxBindingConstants.PANEL_FIRMWARE_VERSION)
+                || channelUID.getId().startsWith("panel_log_message_")) {
             updateState(channelUID, new StringType(data));
         } else {
             // All Panel channels are OnOffType
@@ -100,7 +101,9 @@ public class ThingHandlerPanel extends CaddxBaseThingHandler {
 
     @Override
     public void caddxEventReceived(CaddxEvent event, Thing thing) {
-        logger.debug("caddxEventReceived(): Event Received - {} {}.", event);
+        if (logger.isTraceEnabled()) {
+            logger.trace("caddxEventReceived(): Event Received - {} {}.", event);
+        }
 
         if (getThing().equals(thing)) {
             CaddxMessage message = event.getCaddxMessage();
@@ -125,10 +128,12 @@ public class ThingHandlerPanel extends CaddxBaseThingHandler {
     }
 
     private void handleLogEventMessage(CaddxMessage message) {
-        logger.debug(message.toString());
-
         // build the message
         LogEventMessage logEventMessage = new LogEventMessage(message);
+
+        if (logger.isTraceEnabled()) {
+            logger.trace("Log_event: {}", logEventMessage);
+        }
 
         // fill the property
         ChannelUID channelUID = new ChannelUID(getThing().getUID(), logEventMessage.getProperty());

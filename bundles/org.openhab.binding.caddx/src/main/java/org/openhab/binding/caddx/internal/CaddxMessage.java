@@ -35,6 +35,22 @@ public class CaddxMessage {
     private byte checksum2Calc;
     private CaddxMessageType caddxMessageType;
 
+    public byte getChecksum1In() {
+        return checksum1In;
+    }
+
+    public byte getChecksum2In() {
+        return checksum2In;
+    }
+
+    public byte getChecksum1Calc() {
+        return checksum1Calc;
+    }
+
+    public byte getChecksum2Calc() {
+        return checksum2Calc;
+    }
+
     public enum Direction {
         In,
         Out
@@ -93,9 +109,9 @@ public class CaddxMessage {
             if (type == "Int") {
                 if (bitFrom == 0 && bitLength == 0) {
                     mask = 255;
-                    val = message[byteFrom - 1];
+                    val = message[byteFrom - 1] & mask;
                 } else {
-                    mask = ((1 << ((bitLength - bitFrom) + 1)) - 1) << bitFrom;
+                    mask = ((1 << ((bitLength - bitFrom))) - 1) << bitFrom;
                     val = (message[byteFrom - 1] & mask) >> bitFrom;
                 }
 
@@ -696,7 +712,7 @@ public class CaddxMessage {
                         "Total log size (number of log entries allowed)", false),
 
                 // Byte 4
-                new Property("panel_log_event_type", 4, 1, 0, 0, "Int", "Event type", false),
+                new Property("panel_log_event_type", 4, 1, 0, 7, "Int", "Event type", false),
                 // Bits 0-6 See type definitions in table that follows
                 // Bit 7 Non-reporting event if not set
 
@@ -884,7 +900,7 @@ public class CaddxMessage {
                 new Property("", 1, 1, 0, 0, "Int", "Message number", false),
 
                 // Byte 2
-                new Property("", 2, 1, 0, 0, "Int", "Zone number (0= zone 1)", true)),
+                new Property("zone_number", 2, 1, 0, 0, "Int", "Zone number (0= zone 1)", true)),
 
         Zones_Snapshot_Request(0x25, new int[] { 0x05, 0x1c, 0x1f }, 2, "Zones Snapshot Request",
                 "This request will cause the return of the Zones Snapshot Message (05h) with the group of zones starting at the zone 1 plus the offset value.",
@@ -906,7 +922,7 @@ public class CaddxMessage {
                 new Property("", 1, 1, 0, 0, "Int", "Message number", false),
 
                 // Byte 2
-                new Property("", 2, 1, 0, 0, "Int", "Partition number (0= partition 1)", true)),
+                new Property("partition_number", 2, 1, 0, 0, "Int", "Partition number (0= partition 1)", true)),
 
         Partitions_Snapshot_Request(0x27, new int[] { 0x07, 0x1c, 0x1f }, 1, "Partitions Snapshot Request",
                 "This request will cause the return of the Partitions Snapshot Message (07h) containing all partitions.",
@@ -943,7 +959,7 @@ public class CaddxMessage {
         Log_Event_Request(0x2a, new int[] { 0x0a, 0x1c, 0x1f }, 2, "Log Event Request",
                 "This request will cause the return of the Log Event Message (0Ah).", Direction.Out, Source.None,
                 new Property("", 1, 1, 0, 0, "Int", "Message number", false),
-                new Property("", 2, 1, 0, 0, "Int", "Event number requested", true)),
+                new Property("panel_log_event_number", 2, 1, 0, 0, "Int", "Event number requested", true)),
 
         Send_Keypad_Text_Message(0x2b, new int[] { 0x1d, 0x1c, 0x1f }, 12, "Send Keypad Text Message",
                 "This message will contain ASCII text for a specific keypad on the bus that will be displayed during Terminal Mode.",
@@ -1501,6 +1517,19 @@ public class CaddxMessage {
     }
 
     /**
+     * Builds a Caddx message for a partition snapshot request command
+     *
+     * @param data The partition number
+     * @return The Caddx message object
+     */
+    public static CaddxMessage buildPartitionSnapshotRequest(String data) {
+        byte[] arr = new byte[1];
+        arr[0] = 0x27;
+
+        return new CaddxMessage(arr, false);
+    }
+
+    /**
      * Builds a Caddx message for a partition primary command
      *
      * @param data Two values comma separated. The command, The partition number. e.g. "1,0"
@@ -1580,6 +1609,34 @@ public class CaddxMessage {
         return message[0];
     }
 
+    public String getName() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(caddxMessageType.name);
+        switch (caddxMessageType) {
+            case Zone_Status_Request:
+            case Zone_Status_Message:
+                sb.append(" [Zone: ");
+                sb.append(getPropertyById("zone_number"));
+                sb.append("]");
+                break;
+            case Log_Event_Request:
+            case Log_Event_Message:
+                sb.append(" [Event: ");
+                sb.append(getPropertyById("panel_log_event_number"));
+                sb.append("]");
+                break;
+            case Partition_Status_Request:
+            case Partition_Status_Message:
+                sb.append(" [Partition: ");
+                sb.append(getPropertyById("partition_number"));
+                sb.append("]");
+                break;
+            default:
+                break;
+        }
+        return sb.toString();
+    }
+
     public String getPropertyValue(String property) {
         return propertyMap.get(property);
     }
@@ -1621,12 +1678,18 @@ public class CaddxMessage {
         // 1 for the startbyte
         // 1 for the length
         // 2 for the checksum
-        // n for the count of 0x7d and 0x7e occurrences in the message
+        // n for the count of 0x7d and 0x7e occurrences in the message and checksum
         int additional = 4;
         for (int i = 0; i < message.length; i++) {
             if (message[i] == 0x7d || message[i] == 0x7e) {
                 additional++;
             }
+        }
+        if (checksum1Calc == 0x7d || checksum1Calc == 0x7e) {
+            additional++;
+        }
+        if (checksum2Calc == 0x7d || checksum2Calc == 0x7e) {
+            additional++;
         }
 
         byte[] frame = new byte[message.length + additional];
@@ -1646,8 +1709,26 @@ public class CaddxMessage {
             frame[fi++] = b;
         }
 
-        frame[fi++] = checksum1Calc;
-        frame[fi++] = checksum2Calc;
+        // 1st checksum byte
+        if (checksum1Calc == 0x7e) {
+            frame[fi++] = 0x7d;
+            frame[fi++] = 0x5e;
+        } else if (checksum1Calc == 0x7d) {
+            frame[fi++] = 0x7d;
+            frame[fi++] = 0x5d;
+        } else {
+            frame[fi++] = checksum1Calc;
+        }
+        // 2nd checksum byte
+        if (checksum2Calc == 0x7e) {
+            frame[fi++] = 0x7d;
+            frame[fi++] = 0x5e;
+        } else if (checksum2Calc == 0x7d) {
+            frame[fi++] = 0x7d;
+            frame[fi++] = 0x5d;
+        } else {
+            frame[fi++] = checksum2Calc;
+        }
 
         return frame;
     }
@@ -1731,8 +1812,6 @@ public class CaddxMessage {
      * Processes the incoming Caddx message and extracts the information.
      */
     private void processCaddxMessage() {
-        // logger.debug("--> CaddxMessage.processCaddxMessage() Started.");
-
         if ((message[0] & 0x80) != 0) {
             hasAcknowledgementFlag = true;
             message[0] = (byte) (message[0] & 0x7f);

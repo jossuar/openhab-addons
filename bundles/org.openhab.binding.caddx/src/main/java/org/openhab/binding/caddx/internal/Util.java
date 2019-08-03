@@ -41,14 +41,35 @@ public class Util {
         return HEXVALUES[b & 0xFF];
     }
 
-    public static String buildCaddxMessageString(String prefix, CaddxMessage message) {
+    public static String buildCaddxMessageInBinaryString(String prefix, CaddxMessage message) {
         StringBuilder sb = new StringBuilder();
 
         sb.append(prefix);
-        byte msg[] = message.getMessageBytes();
+        byte msg[] = message.getMessageFrameBytes(CaddxProtocol.Binary);
         for (int i = 0; i < msg.length; i++) {
             sb.append(' ');
             sb.append(Util.byteToHex(msg[i]));
+        }
+
+        return sb.toString();
+    }
+
+    public static String buildCaddxMessageInAsciiString(String prefix, CaddxMessage message) {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(prefix);
+        byte msg[] = message.getMessageFrameBytes(CaddxProtocol.Ascii);
+        for (int i = 0; i < msg.length; i++) {
+            if (msg[i] > 0 && msg[i] < 32) {
+                sb.append(' ');
+                sb.append(Util.byteToHex(msg[i]));
+            } else {
+                sb.append(' ');
+                byte b1[] = { msg[i], msg[i + 1] };
+                String s1 = new String(b1);
+                sb.append(s1);
+                i++;
+            }
         }
 
         return sb.toString();

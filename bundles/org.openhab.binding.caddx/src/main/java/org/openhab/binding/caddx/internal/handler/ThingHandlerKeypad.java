@@ -44,7 +44,7 @@ public class ThingHandlerKeypad extends CaddxBaseThingHandler {
 
     @Override
     public void updateChannel(ChannelUID channelUID, String data) {
-        logger.debug("updateChannel(): Keypad Channel UID: {}", channelUID);
+        // logger.trace("updateChannel(): Keypad Channel UID: {}", channelUID);
     }
 
     @Override

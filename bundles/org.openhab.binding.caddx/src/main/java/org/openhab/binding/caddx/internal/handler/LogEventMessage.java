@@ -67,11 +67,15 @@ public class LogEventMessage {
         StringBuilder sb = new StringBuilder();
 
         // Date
-        sb.append(day).append('-').append(month).append(' ').append(hour).append(':').append(minute).append(' ');
+        sb.append(String.format("%02d", Integer.parseInt(day))).append('-')
+                .append(String.format("%02d", Integer.parseInt(month))).append(' ')
+                .append(String.format("%02d", Integer.parseInt(hour))).append(':')
+                .append(String.format("%02d", Integer.parseInt(minute))).append(' ');
 
         int eventType = Integer.parseInt(type);
         if (eventType >= 0 && eventType <= 12) { // Zone, Yes
-            sb.append(alarmList[eventType]).append(" Partition ").append(partition).append("Zone ").append(zud);
+            sb.append(alarmList[eventType]).append(" Partition ").append(Integer.parseInt(partition) + 1)
+                    .append(" Zone ").append(Integer.parseInt(zud) + 1);
         } else if ((eventType >= 17 && eventType <= 17) || (eventType >= 34 && eventType <= 35)
                 || (eventType >= 38 && eventType <= 39) || (eventType >= 44 && eventType <= 48)
                 || (eventType >= 50 && eventType <= 52) || (eventType >= 54 && eventType <= 57)
@@ -79,14 +83,15 @@ public class LogEventMessage {
             sb.append(alarmList[eventType]);
         } else if ((eventType >= 18 && eventType <= 20) || (eventType >= 22 && eventType <= 23)
                 || (eventType >= 125 && eventType <= 125)) { // None, Yes
-            sb.append(alarmList[eventType]).append(" Partition ").append(partition);
+            sb.append(alarmList[eventType]).append(" Partition ").append(Integer.parseInt(partition) + 1);
         } else if ((eventType >= 24 && eventType <= 33) || (eventType >= 36 && eventType <= 37)) { // Device, No
-            sb.append(alarmList[eventType]).append(" Device ").append(partition);
+            sb.append(alarmList[eventType]).append(" Device ").append(zud);
         } else if ((eventType >= 40 && eventType <= 43) || (eventType >= 49 && eventType <= 49)
                 || (eventType >= 53 && eventType <= 53) || (eventType >= 120 && eventType <= 122)) { // User, Yes
-            sb.append(alarmList[eventType]).append(" Partition ").append(partition).append(" User ").append(zud);
+            sb.append(alarmList[eventType]).append(" Partition ").append(Integer.parseInt(partition) + 1)
+                    .append(" User ").append(Integer.parseInt(zud) + 1);
         } else if ((eventType >= 126 && eventType <= 126)) { // User, No
-            sb.append(alarmList[eventType]).append(" User ").append(zud);
+            sb.append(alarmList[eventType]).append(" User ").append(Integer.parseInt(zud) + 1);
         }
 
         sb.append("");

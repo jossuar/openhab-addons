@@ -122,7 +122,7 @@ public class CaddxDiscoveryService extends AbstractDiscoveryService {
      * @param event
      */
     public void addThing(Bridge bridge, CaddxThingType caddxThingType, CaddxEvent event) {
-        logger.trace("addThing(): Adding new Thing {} to the smarthome inbox", caddxThingType.getLabel());
+        // logger.trace("addThing(): Adding new Thing {} to the smarthome inbox", caddxThingType.getLabel());
 
         ThingUID thingUID = null;
         String thingID = "";

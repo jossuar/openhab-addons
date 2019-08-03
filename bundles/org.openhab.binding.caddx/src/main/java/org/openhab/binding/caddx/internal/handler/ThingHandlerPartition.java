@@ -16,6 +16,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.smarthome.core.library.types.OnOffType;
 import org.eclipse.smarthome.core.thing.ChannelUID;
 import org.eclipse.smarthome.core.thing.Thing;
+import org.eclipse.smarthome.core.thing.ThingStatus;
 import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.types.RefreshType;
 import org.openhab.binding.caddx.internal.CaddxBindingConstants;
@@ -46,7 +47,7 @@ public class ThingHandlerPartition extends CaddxBaseThingHandler {
 
     @Override
     public void updateChannel(ChannelUID channelUID, String data) {
-        logger.trace("updateChannel(): Partition Channel UID: {}", channelUID);
+        // logger.trace("updateChannel(): Partition Channel UID: {}", channelUID);
 
         // All Zone channels are OnOffType
         OnOffType onOffType;
@@ -90,19 +91,19 @@ public class ThingHandlerPartition extends CaddxBaseThingHandler {
 
     @Override
     public void caddxEventReceived(CaddxEvent event, Thing thing) {
-        logger.debug("caddxEventReceived(): Event Received - {} {}.", event);
+        if (logger.isTraceEnabled()) {
+            logger.trace("caddxEventReceived(): Event Received - {} {}.", event);
+        }
 
         if (getThing().equals(thing)) {
             CaddxMessage message = event.getCaddxMessage();
             CaddxMessageType mt = message.getCaddxMessageType();
             ChannelUID channelUID = null;
 
-            String id = null;
             for (CaddxMessage.Property p : mt.properties) {
-                id = p.getId();
-                if (!("".equals(id))) {
-                    String value = message.getPropertyById(id);
-                    channelUID = new ChannelUID(getThing().getUID(), id);
+                if (!("".equals(p.getId()))) {
+                    String value = message.getPropertyById(p.getId());
+                    channelUID = new ChannelUID(getThing().getUID(), p.getId());
                     updateChannel(channelUID, value);
                 }
             }
@@ -113,6 +114,8 @@ public class ThingHandlerPartition extends CaddxBaseThingHandler {
             updateChannel(channelUID, value);
             channelUID = new ChannelUID(getThing().getUID(), CaddxBindingConstants.PARTITION_SECONDARY_COMMAND);
             updateChannel(channelUID, value);
+
+            updateStatus(ThingStatus.ONLINE);
         }
     }
 }
