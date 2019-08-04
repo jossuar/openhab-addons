@@ -262,6 +262,8 @@ public class CaddxBridgeHandler extends BaseBridgeHandler implements SecurityPan
             msg = CaddxMessage.buildZoneBypassToggle(data);
         } else if (CaddxBindingConstants.ZONE_STATUS_REQUEST.equals(command)) {
             msg = CaddxMessage.buildZoneStatusRequest(data);
+        } else if (CaddxBindingConstants.ZONE_NAME_REQUEST.equals(command)) {
+            msg = CaddxMessage.buildZoneNameRequest(data);
         } else if (CaddxBindingConstants.PARTITION_STATUS_REQUEST.equals(command)) {
             msg = CaddxMessage.buildPartitionStatusRequest(data);
         } else if (CaddxBindingConstants.PARTITION_PRIMARY_COMMAND.equals(command)) {

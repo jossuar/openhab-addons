@@ -46,6 +46,12 @@
 				<description>Partition 8</description>
 			</channel>
 
+            <!-- Name -->
+            <channel id="zone_name" typeId="zone_text">
+                <label>Name</label>
+                <description>Name</description>
+            </channel>
+
 			<!-- Zone types -->
 			<channel id="zone_fire" typeId="zone_type">
 				<label>Fire</label>

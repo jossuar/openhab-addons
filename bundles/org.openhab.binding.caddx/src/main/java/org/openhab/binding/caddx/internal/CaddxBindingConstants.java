@@ -83,7 +83,9 @@ public class CaddxBindingConstants {
     // Zone
     // Commands
     public static final String ZONE_STATUS_REQUEST = "zone_status_request";
+    public static final String ZONE_NAME_REQUEST = "zone_name_request";
     // Channels
+    public static final String ZONE_NAME = "zone_name";
     public static final String ZONE_FAULTED = "zone_faulted";
     public static final String ZONE_BYPASS_TOGGLE = "zone_bypass_toggle";
 

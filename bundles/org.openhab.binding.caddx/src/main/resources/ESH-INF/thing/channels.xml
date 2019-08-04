@@ -86,6 +86,13 @@
 	</channel-type>
 
 	<!-- zone -->
+    <channel-type id="zone_text">
+        <item-type>String</item-type>
+        <label>Zone text</label>
+        <description>Zone text</description>
+        <state pattern="%s" readOnly="true"></state>
+    </channel-type>
+
 	<channel-type id="zone_partition">
 		<item-type>Switch</item-type>
 		<label>Zone Partition</label>

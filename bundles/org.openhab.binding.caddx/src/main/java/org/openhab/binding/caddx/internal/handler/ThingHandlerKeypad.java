@@ -17,8 +17,6 @@ import org.eclipse.smarthome.core.thing.ChannelUID;
 import org.eclipse.smarthome.core.thing.Thing;
 import org.eclipse.smarthome.core.thing.ThingStatus;
 import org.eclipse.smarthome.core.types.Command;
-import org.eclipse.smarthome.core.types.RefreshType;
-import org.openhab.binding.caddx.internal.CaddxBindingConstants;
 import org.openhab.binding.caddx.internal.CaddxEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,27 +47,7 @@ public class ThingHandlerKeypad extends CaddxBaseThingHandler {
 
     @Override
     public void handleCommand(ChannelUID channelUID, Command command) {
-        logger.debug("handleCommand(): Command Received - {} {}.", channelUID, command);
-
-        String cmd = null;
-        String data = null;
-        CaddxBridgeHandler bridgeHandler = getCaddxBridgeHandler();
-        if (bridgeHandler == null) {
-            return;
-        }
-
-        if (command instanceof RefreshType) {
-            return;
-        } else if (channelUID.getId().equals(CaddxBindingConstants.PARTITION_PRIMARY_COMMAND)) {
-            cmd = channelUID.getId();
-            data = command.toString() + "," + String.format("%d", getPartitionNumber() - 1);
-        } else {
-            throw new IllegalArgumentException("Unknown command");
-        }
-
-        if (!data.startsWith("-")) {
-            bridgeHandler.sendCommand(cmd, data);
-        }
+        logger.trace("handleCommand(): Command Received - {} {}.", channelUID, command);
     }
 
     @Override

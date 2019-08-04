@@ -252,7 +252,7 @@ public class CaddxMessage {
                 // Properties
                 new Property("", 1, 1, 0, 0, "Int", "Message number", false),
                 new Property("zone_number", 2, 1, 0, 0, "Int", "Zone number", false),
-                new Property("", 3, 16, 0, 0, "String", "Zone name", false)),
+                new Property("zone_name", 3, 16, 0, 0, "String", "Zone name", false)),
 
         Zone_Status_Message(0x04, null, 8, "Zone Status Message",
                 "This message will contain all information relevant to a zone in the system.", Direction.In,
@@ -1497,6 +1497,20 @@ public class CaddxMessage {
     public static CaddxMessage buildZoneStatusRequest(String data) {
         byte[] arr = new byte[2];
         arr[0] = 0x24;
+        arr[1] = (byte) Integer.parseInt(data);
+
+        return new CaddxMessage(arr, false);
+    }
+
+    /**
+     * Builds a Caddx message for a zone name request command
+     *
+     * @param data The zone number
+     * @return The Caddx message object
+     */
+    public static CaddxMessage buildZoneNameRequest(String data) {
+        byte[] arr = new byte[2];
+        arr[0] = 0x23;
         arr[1] = (byte) Integer.parseInt(data);
 
         return new CaddxMessage(arr, false);
