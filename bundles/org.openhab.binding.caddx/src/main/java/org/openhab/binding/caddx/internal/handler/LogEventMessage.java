@@ -98,8 +98,4 @@ public class LogEventMessage {
 
         return sb.toString();
     }
-
-    public String getProperty() {
-        return "panel_log_message_" + String.format("%02d", Integer.parseInt(number));
-    }
 }

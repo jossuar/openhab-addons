@@ -12,7 +12,10 @@
  */
 package org.openhab.binding.caddx.internal.handler;
 
+import java.util.HashMap;
+
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.smarthome.core.library.types.OnOffType;
 import org.eclipse.smarthome.core.library.types.StringType;
 import org.eclipse.smarthome.core.thing.ChannelUID;
@@ -77,18 +80,9 @@ public class ThingHandlerPanel extends CaddxBaseThingHandler {
             if (CaddxBindingConstants.PANEL_FIRMWARE_VERSION.equals(channelUID.getId())) {
                 cmd = CaddxBindingConstants.PANEL_INTERFACE_CONFIGURATION_REQUEST;
                 data = "";
-            } else if (CaddxBindingConstants.PANEL_LOG_MESSAGE_01.equals(channelUID.getId())) {
-                cmd = CaddxBindingConstants.PANEL_LOG_EVENT_REQUEST;
-                data = "1";
-            } else if (CaddxBindingConstants.PANEL_LOG_MESSAGE_02.equals(channelUID.getId())) {
-                cmd = CaddxBindingConstants.PANEL_LOG_EVENT_REQUEST;
-                data = "2";
-            } else if (CaddxBindingConstants.PANEL_LOG_MESSAGE_03.equals(channelUID.getId())) {
-                cmd = CaddxBindingConstants.PANEL_LOG_EVENT_REQUEST;
-                data = "3";
-            } else if (CaddxBindingConstants.PANEL_LOG_MESSAGE_04.equals(channelUID.getId())) {
-                cmd = CaddxBindingConstants.PANEL_LOG_EVENT_REQUEST;
-                data = "4";
+            } else if (CaddxBindingConstants.PANEL_LOG_MESSAGE_N_0.equals(channelUID.getId())) {
+                cmd = CaddxBindingConstants.PANEL_SYSTEM_STATUS_REQUEST;
+                data = "";
             } else {
                 return;
             }
@@ -102,7 +96,7 @@ public class ThingHandlerPanel extends CaddxBaseThingHandler {
     @Override
     public void caddxEventReceived(CaddxEvent event, Thing thing) {
         if (logger.isTraceEnabled()) {
-            logger.trace("caddxEventReceived(): Event Received - {} {}.", event);
+            logger.trace("caddxEventReceived(): Event Received - {}.", event);
         }
 
         if (getThing().equals(thing)) {
@@ -111,7 +105,9 @@ public class ThingHandlerPanel extends CaddxBaseThingHandler {
             ChannelUID channelUID = null;
 
             // Log event messages have special handling
-            if (CaddxMessageType.Log_Event_Message.equals(mt)) {
+            if (CaddxMessageType.System_Status_Message.equals(mt)) {
+                handleSystemStatusMessage(message);
+            } else if (CaddxMessageType.Log_Event_Message.equals(mt)) {
                 handleLogEventMessage(message);
             } else {
                 for (CaddxMessage.Property p : mt.properties) {
@@ -127,7 +123,49 @@ public class ThingHandlerPanel extends CaddxBaseThingHandler {
         }
     }
 
+    @Nullable
+    HashMap<String, String> panelLogMessagesMap = null;
+
+    @Nullable
+    String communicatorStackPointer = null;
+
+    /*
+     * Gets the pointer into the panel's log messages ring buffer
+     * and sends the command for the retrieval of the last event_message
+     */
+    private void handleSystemStatusMessage(CaddxMessage message) {
+        // Get the bridge handler
+        CaddxBridgeHandler bridgeHandler = getCaddxBridgeHandler();
+        if (bridgeHandler == null) {
+            return;
+        }
+
+        String pointer = message.getPropertyById("panel_communicator_stack_pointer");
+        communicatorStackPointer = pointer;
+
+        // build map of log message channels to event numbers
+        HashMap<String, String> map = new HashMap<String, String>();
+        map.put(pointer, CaddxBindingConstants.PANEL_LOG_MESSAGE_N_0);
+        bridgeHandler.sendCommand(CaddxBindingConstants.PANEL_LOG_EVENT_REQUEST, pointer);
+        panelLogMessagesMap = map;
+    }
+
+    /*
+     * This function handles the panel log messages.
+     * If the received event_number matches our communication stack pointer then this is the last panel message. The
+     * channel gets updated and the required log message requests are generated for the update of the other log message
+     * channels
+     */
     private void handleLogEventMessage(CaddxMessage message) {
+        // Get the bridge handler
+        CaddxBridgeHandler bridgeHandler = getCaddxBridgeHandler();
+        if (bridgeHandler == null) {
+            return;
+        }
+
+        String eventNumberString = message.getPropertyById("panel_log_event_number");
+        String eventSizeString = message.getPropertyById("panel_log_event_size");
+
         // build the message
         LogEventMessage logEventMessage = new LogEventMessage(message);
 
@@ -135,8 +173,32 @@ public class ThingHandlerPanel extends CaddxBaseThingHandler {
             logger.trace("Log_event: {}", logEventMessage);
         }
 
-        // fill the property
-        ChannelUID channelUID = new ChannelUID(getThing().getUID(), logEventMessage.getProperty());
-        updateChannel(channelUID, logEventMessage.toString());
+        // get the channel id from the map
+        HashMap<String, String> logMap = panelLogMessagesMap;
+        if (logMap != null && logMap.containsKey(eventNumberString)) {
+            String id = logMap.get(eventNumberString);
+            ChannelUID channelUID = new ChannelUID(getThing().getUID(), id);
+            updateChannel(channelUID, logEventMessage.toString());
+        }
+
+        if (communicatorStackPointer != null && eventNumberString.equals(communicatorStackPointer)) {
+            HashMap<String, String> map = new HashMap<String, String>();
+
+            int eventNumber = Integer.parseInt(eventNumberString);
+            int eventSize = Integer.parseInt(eventSizeString);
+
+            for (int i = 1; i < 10; i++) {
+                eventNumber = eventNumber - 1;
+                if (eventNumber < 0) {
+                    eventNumber = eventSize;
+                }
+
+                map.put(Integer.toString(eventNumber), "panel_log_message_n_" + Integer.toString(i));
+                bridgeHandler.sendCommand(CaddxBindingConstants.PANEL_LOG_EVENT_REQUEST, Integer.toString(eventNumber));
+            }
+
+            communicatorStackPointer = null;
+            panelLogMessagesMap = map;
+        }
     }
 }

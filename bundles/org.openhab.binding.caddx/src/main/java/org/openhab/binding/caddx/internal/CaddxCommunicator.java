@@ -66,7 +66,7 @@ public class CaddxCommunicator implements Runnable, SerialPortEventListener {
 
     public void addListener(SecurityPanelListener listener) {
         if (logger.isTraceEnabled()) {
-            logger.trace("-> CaddxCommunicator.addListener() Started");
+            logger.trace("CaddxCommunicator.addListener() Started");
         }
 
         if (!listenerQueue.contains(listener)) {
@@ -78,7 +78,7 @@ public class CaddxCommunicator implements Runnable, SerialPortEventListener {
             throws UnsupportedCommOperationException, NoSuchPortException, PortInUseException, IOException,
             TooManyListenersException {
         if (logger.isTraceEnabled()) {
-            logger.trace("-> CaddxCommunicator() Started {}", serialPortName);
+            logger.trace("CaddxCommunicator() Started {}", serialPortName);
         }
 
         this.protocol = protocol;
@@ -104,13 +104,13 @@ public class CaddxCommunicator implements Runnable, SerialPortEventListener {
 
         message = new byte[0];
         if (logger.isTraceEnabled()) {
-            logger.trace("CaddxCommunicator communication thread started for {}", serialPortName);
+            logger.trace("CaddxCommunicator communication thread started successfully for {}", serialPortName);
         }
     }
 
     public void stop() {
         if (logger.isTraceEnabled()) {
-            logger.trace("-> CaddxCommunicator.stop() Started");
+            logger.trace("CaddxCommunicator.stop() Started");
         }
 
         // kick thread out of waiting for FIFO
@@ -156,7 +156,7 @@ public class CaddxCommunicator implements Runnable, SerialPortEventListener {
      */
     public void transmit(CaddxMessage msg) { // byte... msg) {
         if (logger.isTraceEnabled()) {
-            logger.trace("-> CaddxCommunicator.transmit() Started");
+            logger.trace("CaddxCommunicator.transmit() Started");
         }
 
         messages.add(msg);
@@ -170,14 +170,11 @@ public class CaddxCommunicator implements Runnable, SerialPortEventListener {
      */
     public void transmitFirst(CaddxMessage msg) {
         if (logger.isTraceEnabled()) {
-            logger.trace("-> CaddxCommunicator.transmitFirst() Started");
+            logger.trace("CaddxCommunicator.transmitFirst() Started");
         }
 
         messages.addFirst(msg);
     }
-
-    // Transmitter state variables
-    int @Nullable [] expectedMessageNumbers = null;
 
     @SuppressWarnings("null")
     @Override
@@ -185,6 +182,8 @@ public class CaddxCommunicator implements Runnable, SerialPortEventListener {
         if (logger.isTraceEnabled()) {
             logger.trace("CaddxCommunicator.run() Started");
         }
+
+        int @Nullable [] expectedMessageNumbers = null;
 
         @Nullable
         CaddxMessage outgoingMessage = null;
@@ -252,8 +251,8 @@ public class CaddxCommunicator implements Runnable, SerialPortEventListener {
                     if (incomingMessage == null) {
                         logger.debug("CaddxCommunicator.run() NoMessage received.");
                     } else {
-                        logger.debug(Util.buildCaddxMessageInBinaryString("<-: ", incomingMessage));
-                        // logger.debug(Util.buildCaddxMessageInAsciiString("<-: ", incomingMessage));
+                        logger.debug("{}", Util.buildCaddxMessageInBinaryString("<-: ", incomingMessage));
+                        // logger.debug("{}", Util.buildCaddxMessageInAsciiString("<-: ", incomingMessage));
                     }
                 }
 
@@ -293,15 +292,18 @@ public class CaddxCommunicator implements Runnable, SerialPortEventListener {
                         int receivedMessageType = incomingMessage.getMessageType();
                         boolean isMessageExpected = IntStream.of(expectedMessageNumbers)
                                 .anyMatch(x -> x == receivedMessageType);
+
                         if (!isMessageExpected) {
+                            if (logger.isTraceEnabled()) {
+                                logger.trace("Non expected message received exp:{}, recv: {}", expectedMessageNumbers,
+                                        receivedMessageType);
+                            }
+
                             // Non expected reply received
                             if (outgoingMessage != null) {
                                 messages.putFirst(outgoingMessage); // put message in queue again
                                 skipTransmit = true; // Skip the transmit on the next cycle to receive the panel message
                             }
-                            // } else {
-                            // Correct reply received
-                            // ;
                         }
                     }
                 }
@@ -316,18 +318,18 @@ public class CaddxCommunicator implements Runnable, SerialPortEventListener {
                             "CaddxCommunicator.run() Received packet checksum does not match. in: {} {}, calc {} {}",
                             incomingMessage.getChecksum1In(), incomingMessage.getChecksum2In(),
                             incomingMessage.getChecksum1Calc(), incomingMessage.getChecksum2Calc());
-                    if (incomingMessage != null) {
-                        logger.warn("{}", Util.buildCaddxMessageInBinaryString("<-: ", incomingMessage));
-                    }
                 }
             }
         } catch (IOException e) {
-            logger.warn("CaddxCommunicator.run() IOException caught. Stopping thread. {}", getSerialPortName());
+            logger.warn("CaddxCommunicator.run() IOException. Stopping sender thread. {}", getSerialPortName());
             Thread.currentThread().interrupt();
         } catch (InterruptedException e) {
-            logger.warn("CaddxCommunicator.run() InterruptedException {}", getSerialPortName());
+            logger.warn("CaddxCommunicator.run() InterruptedException. Stopping sender thread. {}",
+                    getSerialPortName());
             Thread.currentThread().interrupt();
         }
+
+        logger.warn("CaddxCommunicator.run() Sender thread stopped. {}", getSerialPortName());
     }
 
     // Receiver state variables

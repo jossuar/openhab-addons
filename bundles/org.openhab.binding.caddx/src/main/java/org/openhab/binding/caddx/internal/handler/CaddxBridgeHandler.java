@@ -65,7 +65,6 @@ public class CaddxBridgeHandler extends BaseBridgeHandler implements SecurityPan
     static final byte[] DISCOVERY_ZONES_SNAPSHOT_REQUEST_20 = { 0x25, 0x20 };
     static final byte[] DISCOVERY_ZONES_SNAPSHOT_REQUEST_30 = { 0x25, 0x30 };
     static final byte[] DISCOVERY_PARTITIONS_SNAPSHOT_REQUEST = { 0x27 };
-    static final byte[] DISCOVERY_SYSTEM_STATUS_REQUEST = { 0x28 };
 
     private @Nullable CaddxDiscoveryService discoveryService = null;
 
@@ -122,7 +121,6 @@ public class CaddxBridgeHandler extends BaseBridgeHandler implements SecurityPan
             myCommunicator.transmit(new CaddxMessage(DISCOVERY_ZONES_SNAPSHOT_REQUEST_20, false));
             myCommunicator.transmit(new CaddxMessage(DISCOVERY_PARTITION_STATUS_REQUEST_0, false));
             myCommunicator.transmit(new CaddxMessage(DISCOVERY_PARTITIONS_SNAPSHOT_REQUEST, false));
-            myCommunicator.transmit(new CaddxMessage(DISCOVERY_SYSTEM_STATUS_REQUEST, false));
         }
         // list all channels
         if (logger.isTraceEnabled()) {
@@ -278,6 +276,8 @@ public class CaddxBridgeHandler extends BaseBridgeHandler implements SecurityPan
             msg = CaddxMessage.buildPartitionPrimaryCommand(data);
         } else if (CaddxBindingConstants.PARTITION_SECONDARY_COMMAND.equals(command)) {
             msg = CaddxMessage.buildPartitionSecondaryCommand(data);
+        } else if (CaddxBindingConstants.PANEL_SYSTEM_STATUS_REQUEST.equals(command)) {
+            msg = CaddxMessage.buildSystemStatusRequest(data);
         } else if (CaddxBindingConstants.PANEL_INTERFACE_CONFIGURATION_REQUEST.equals(command)) {
             msg = CaddxMessage.buildInterfaceConfigurationRequest(data);
         } else if (CaddxBindingConstants.PANEL_LOG_EVENT_REQUEST.equals(command)) {

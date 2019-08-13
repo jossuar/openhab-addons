@@ -679,7 +679,8 @@ public class CaddxMessage {
                 new Property("", 11, 1, 7, 1, "Bit", "Valid partition 8", false),
 
                 // Byte 12 Communicator stack pointer
-                new Property("", 12, 1, 0, 0, "Int", "Communicator stack pointer", false)),
+                new Property("panel_communicator_stack_pointer", 12, 1, 0, 0, "Int", "Communicator stack pointer",
+                        false)),
 
         X10_Message_Received(0x09, null, 4, "X-10 Message Received",
                 "This message contains information about an X-10 command that was requested by any device on the system bus.",
@@ -1579,6 +1580,19 @@ public class CaddxMessage {
         arr[0] = 0x3e;
         arr[1] = (byte) Integer.parseInt(tokens[0]);
         arr[2] = (byte) (1 << Integer.parseInt(tokens[1]));
+
+        return new CaddxMessage(arr, false);
+    }
+
+    /**
+     * Builds a Caddx message for a system status request command
+     *
+     * @param data Should be passed empty
+     * @return The Caddx message object
+     */
+    public static CaddxMessage buildSystemStatusRequest(String data) {
+        byte[] arr = new byte[1];
+        arr[0] = 0x28;
 
         return new CaddxMessage(arr, false);
     }
