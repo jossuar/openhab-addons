@@ -94,7 +94,6 @@ public class CaddxBridgeDiscovery implements SecurityPanelListener {
     private boolean checkforBridge(CaddxProtocol protocol, String serialPort, int baudrate)
             throws UnsupportedCommOperationException, NoSuchPortException, PortInUseException, IOException,
             TooManyListenersException {
-        logger.error("Checking protocol: {}, port: {}, baud: {}", protocol, serialPort, baudrate);
         if (logger.isDebugEnabled()) {
             logger.debug("Checking protocol: {}, port: {}, baud: {}", protocol, serialPort, baudrate);
         }

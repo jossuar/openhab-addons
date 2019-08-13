@@ -217,7 +217,7 @@ public class CaddxCommunicator implements Runnable, SerialPortEventListener {
                     }
                     if (logger.isDebugEnabled() && outgoingMessage != null) {
                         logger.debug("{}", Util.buildCaddxMessageInBinaryString("->: ", outgoingMessage));
-                        logger.debug("{}", Util.buildCaddxMessageInAsciiString("->: ", outgoingMessage));
+                        // logger.debug("{}", Util.buildCaddxMessageInAsciiString("->: ", outgoingMessage));
                     }
                     if (outgoingMessage != null) {
                         expectedMessageNumbers = outgoingMessage.getReplyMessageNumbers();
@@ -241,7 +241,7 @@ public class CaddxCommunicator implements Runnable, SerialPortEventListener {
                         }
                         continue;
                     }
-                    logger.error("CaddxCommunicator.run() TimeoutException caught.");
+                    logger.warn("CaddxCommunicator.run() TimeoutException caught.");
                 }
 
                 // Log
@@ -253,7 +253,7 @@ public class CaddxCommunicator implements Runnable, SerialPortEventListener {
                         logger.debug("CaddxCommunicator.run() NoMessage received.");
                     } else {
                         logger.debug(Util.buildCaddxMessageInBinaryString("<-: ", incomingMessage));
-                        logger.debug(Util.buildCaddxMessageInAsciiString("<-: ", incomingMessage));
+                        // logger.debug(Util.buildCaddxMessageInAsciiString("<-: ", incomingMessage));
                     }
                 }
 
@@ -299,9 +299,9 @@ public class CaddxCommunicator implements Runnable, SerialPortEventListener {
                                 messages.putFirst(outgoingMessage); // put message in queue again
                                 skipTransmit = true; // Skip the transmit on the next cycle to receive the panel message
                             }
-                        } else {
+                            // } else {
                             // Correct reply received
-                            ;
+                            // ;
                         }
                     }
                 }
@@ -312,20 +312,20 @@ public class CaddxCommunicator implements Runnable, SerialPortEventListener {
                         listener.caddxMessage(this, incomingMessage);
                     }
                 } else {
-                    logger.error(
+                    logger.warn(
                             "CaddxCommunicator.run() Received packet checksum does not match. in: {} {}, calc {} {}",
                             incomingMessage.getChecksum1In(), incomingMessage.getChecksum2In(),
                             incomingMessage.getChecksum1Calc(), incomingMessage.getChecksum2Calc());
                     if (incomingMessage != null) {
-                        logger.error("{}", Util.buildCaddxMessageInBinaryString("<-: ", incomingMessage));
+                        logger.warn("{}", Util.buildCaddxMessageInBinaryString("<-: ", incomingMessage));
                     }
                 }
             }
         } catch (IOException e) {
-            logger.error("CaddxCommunicator.run() IOException caught. Stopping thread. {}", getSerialPortName());
+            logger.warn("CaddxCommunicator.run() IOException caught. Stopping thread. {}", getSerialPortName());
             Thread.currentThread().interrupt();
         } catch (InterruptedException e) {
-            logger.error("CaddxCommunicator.run() InterruptedException {}", getSerialPortName());
+            logger.warn("CaddxCommunicator.run() InterruptedException {}", getSerialPortName());
             Thread.currentThread().interrupt();
         }
     }
@@ -580,10 +580,6 @@ public class CaddxCommunicator implements Runnable, SerialPortEventListener {
             if (logger.isTraceEnabled()) {
                 logger.trace("CaddxCommunicator.handleAsciiProtocol() TimeoutException caught.");
             }
-        }
-
-        if (logger.isDebugEnabled()) {
-            logger.debug("Message Received - {}.", caddxMessage.getCaddxMessageType());
         }
 
         // Initialize state for next reception

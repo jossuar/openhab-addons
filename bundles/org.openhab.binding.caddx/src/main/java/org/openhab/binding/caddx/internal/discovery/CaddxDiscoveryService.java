@@ -110,7 +110,7 @@ public class CaddxDiscoveryService extends AbstractDiscoveryService {
             thingDiscovered(DiscoveryResultBuilder.create(thingUID).withProperties(properties)
                     .withLabel("Caddx Bridge - " + port).build());
         } catch (Exception e) {
-            logger.error("addBridge(): Error: {}", e);
+            logger.warn("addBridge(): Error: {}", e);
         }
     }
 

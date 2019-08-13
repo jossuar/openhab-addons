@@ -202,7 +202,7 @@ public class CaddxBridgeHandler extends BaseBridgeHandler implements SecurityPan
 
                 }
             } catch (Exception e) {
-                logger.error("findThing(): Error Searching Thing - {} ", e.getMessage(), e);
+                logger.warn("findThing(): Error Searching Thing - {} ", e.getMessage(), e);
             }
         }
 
