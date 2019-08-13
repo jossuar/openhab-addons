@@ -114,6 +114,7 @@ public class ThingHandlerZone extends CaddxBaseThingHandler {
              * }
              *
              */
+            getThing().setLabel(data);
             updateState(channelUID, new StringType(data));
         } else {
             // All Zone channels are OnOffType
