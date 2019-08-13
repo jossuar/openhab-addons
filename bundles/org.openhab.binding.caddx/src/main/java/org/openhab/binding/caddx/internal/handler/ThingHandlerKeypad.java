@@ -47,7 +47,9 @@ public class ThingHandlerKeypad extends CaddxBaseThingHandler {
 
     @Override
     public void handleCommand(ChannelUID channelUID, Command command) {
-        logger.trace("handleCommand(): Command Received - {} {}.", channelUID, command);
+        if (logger.isTraceEnabled()) {
+            logger.trace("handleCommand(): Command Received - {} {}.", channelUID, command);
+        }
     }
 
     @Override

@@ -184,7 +184,7 @@ public class CaddxDiscoveryService extends AbstractDiscoveryService {
 
             thingDiscovered(discoveryResult);
         } else {
-            logger.debug("addThing(): Unable to Add Caddx Alarm Thing to Inbox!");
+            logger.warn("addThing(): Unable to Add Caddx Alarm Thing to Inbox!");
         }
     }
 

@@ -100,7 +100,10 @@ public class CaddxBridgeHandler extends BaseBridgeHandler implements SecurityPan
         updateStatus(ThingStatus.OFFLINE);
 
         // create & start panel interface
-        logger.info("starting interface at port {} with baudrate {}", serialPortName, baudRate);
+        if (logger.isInfoEnabled()) {
+            logger.info("starting interface at port {} with baudrate {}", serialPortName, baudRate);
+        }
+
         try {
             communicator = new CaddxCommunicator(protocol, serialPortName, baudRate);
         } catch (UnsupportedCommOperationException | NoSuchPortException | PortInUseException | IOException
@@ -132,7 +135,9 @@ public class CaddxBridgeHandler extends BaseBridgeHandler implements SecurityPan
 
     @Override
     public void initialize() {
-        logger.debug("Initializing the Bridge handler.");
+        if (logger.isTraceEnabled()) {
+            logger.trace("Initializing the Bridge handler.");
+        }
 
         init();
     }
@@ -176,7 +181,6 @@ public class CaddxBridgeHandler extends BaseBridgeHandler implements SecurityPan
                                         .get(CaddxKeypadConfiguration.KEYPAD_ADDRESS);
                                 if (keypad == keypadAddress.intValue()) {
                                     thing = t;
-                                    logger.trace("findThing(): Thing Found - {}", handlerCaddxThingType);
                                     return thing;
                                 }
                                 break;
@@ -211,7 +215,9 @@ public class CaddxBridgeHandler extends BaseBridgeHandler implements SecurityPan
 
     @Override
     public void handleCommand(ChannelUID channelUID, Command command) {
-        logger.debug("handleCommand(), channelUID: {}, command: {}", channelUID, command);
+        if (logger.isTraceEnabled()) {
+            logger.trace("handleCommand(), channelUID: {}, command: {}", channelUID, command);
+        }
 
         switch (channelUID.getId()) {
             case BRIDGE_RESET:
@@ -254,7 +260,9 @@ public class CaddxBridgeHandler extends BaseBridgeHandler implements SecurityPan
      * @param data The associated command data
      */
     public boolean sendCommand(String command, String data) {
-        logger.debug("sendCommand(): Attempting to send Command: command - {} - data: {}", command, data);
+        if (logger.isTraceEnabled()) {
+            logger.trace("sendCommand(): Attempting to send Command: command - {} - data: {}", command, data);
+        }
 
         CaddxMessage msg = null;
 
@@ -297,14 +305,19 @@ public class CaddxBridgeHandler extends BaseBridgeHandler implements SecurityPan
         }
 
         this.discoveryService = discoveryService;
-        logger.trace("registerDiscoveryService(): Discovery Service Registered!");
+
+        if (logger.isTraceEnabled()) {
+            logger.trace("registerDiscoveryService(): Discovery Service Registered!");
+        }
     }
 
     /**
      * Unregister the Discovery Service.
      */
     public void unregisterDiscoveryService() {
-        logger.trace("unregisterDiscoveryService(): Discovery Service Unregistered!");
+        if (logger.isTraceEnabled()) {
+            logger.trace("unregisterDiscoveryService(): Discovery Service Unregistered!");
+        }
         discoveryService = null;
     }
 

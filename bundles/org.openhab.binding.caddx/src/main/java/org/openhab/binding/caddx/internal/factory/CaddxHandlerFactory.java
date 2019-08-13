@@ -60,8 +60,9 @@ public class CaddxHandlerFactory extends BaseThingHandlerFactory {
     @Override
     public @Nullable Thing createThing(ThingTypeUID thingTypeUID, Configuration configuration,
             @Nullable ThingUID thingUID, @Nullable ThingUID bridgeUID) {
-        logger.trace("createThing(): thingTypeUID- {}, configuration - {}", thingTypeUID, configuration);
-
+        if (logger.isTraceEnabled()) {
+            logger.trace("createThing(): thingTypeUID- {}, configuration - {}", thingTypeUID, configuration);
+        }
         if (CaddxBindingConstants.CADDXBRIDGE_THING_TYPE.equals(thingTypeUID)) {
             ThingUID caddxBridgeUID = getCaddxBridgeThingUID(thingTypeUID, thingUID, configuration);
             return super.createThing(thingTypeUID, configuration, caddxBridgeUID, null);
@@ -196,35 +197,55 @@ public class CaddxHandlerFactory extends BaseThingHandlerFactory {
                 .registerService(DiscoveryService.class.getName(), discoveryService, new Hashtable<>());
         discoveryServiceRegistrations.put(caddxBridgeHandler.getThing().getUID(), discoveryServiceRegistration);
 
-        logger.debug("registerCaddxDiscoveryService(): Bridge Handler - {}, Class Name - {}, Discovery Service - {}",
-                caddxBridgeHandler, DiscoveryService.class.getName(), discoveryService);
+        if (logger.isTraceEnabled()) {
+            logger.trace(
+                    "registerCaddxDiscoveryService(): Bridge Handler - {}, Class Name - {}, Discovery Service - {}",
+                    caddxBridgeHandler, DiscoveryService.class.getName(), discoveryService);
+        }
     }
 
     @Override
     protected @Nullable ThingHandler createHandler(Thing thing) {
-        logger.trace("createHandler(): thing - {}", thing);
-
         ThingTypeUID thingTypeUID = thing.getThingTypeUID();
 
         if (thingTypeUID.equals(CaddxBindingConstants.CADDXBRIDGE_THING_TYPE)) {
             CaddxBridgeHandler handler = new CaddxBridgeHandler((Bridge) thing);
             registerCaddxDiscoveryService(handler);
-            logger.debug("createHandler(): BRIDGE_THING: ThingHandler created for {}", thingTypeUID);
+
+            if (logger.isTraceEnabled()) {
+                logger.trace("createHandler(): BRIDGE_THING: ThingHandler created for {}", thingTypeUID);
+            }
+
             return handler;
         } else if (thingTypeUID.equals(CaddxBindingConstants.PANEL_THING_TYPE)) {
-            logger.debug("createHandler(): PANEL_THING: ThingHandler created for {}", thingTypeUID);
+            if (logger.isTraceEnabled()) {
+                logger.trace("createHandler(): PANEL_THING: ThingHandler created for {}", thingTypeUID);
+            }
+
             return new ThingHandlerPanel(thing);
         } else if (thingTypeUID.equals(CaddxBindingConstants.PARTITION_THING_TYPE)) {
-            logger.debug("createHandler(): PARTITION_THING: ThingHandler created for {}", thingTypeUID);
+            if (logger.isTraceEnabled()) {
+                logger.trace("createHandler(): PARTITION_THING: ThingHandler created for {}", thingTypeUID);
+            }
+
             return new ThingHandlerPartition(thing);
         } else if (thingTypeUID.equals(CaddxBindingConstants.ZONE_THING_TYPE)) {
-            logger.debug("createHandler(): ZONE_THING: ThingHandler created for {}", thingTypeUID);
+            if (logger.isTraceEnabled()) {
+                logger.trace("createHandler(): ZONE_THING: ThingHandler created for {}", thingTypeUID);
+            }
+
             return new ThingHandlerZone(thing);
         } else if (thingTypeUID.equals(CaddxBindingConstants.KEYPAD_THING_TYPE)) {
-            logger.debug("createHandler(): KEYPAD_THING: ThingHandler created for {}", thingTypeUID);
+            if (logger.isTraceEnabled()) {
+                logger.trace("createHandler(): KEYPAD_THING: ThingHandler created for {}", thingTypeUID);
+            }
+
             return new ThingHandlerKeypad(thing);
         } else {
-            logger.debug("createHandler(): ThingHandler not found for {}", thingTypeUID);
+            if (logger.isTraceEnabled()) {
+                logger.trace("createHandler(): ThingHandler not found for {}", thingTypeUID);
+            }
+
             return null;
         }
     }

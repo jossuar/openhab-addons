@@ -47,8 +47,6 @@ public class ThingHandlerPartition extends CaddxBaseThingHandler {
 
     @Override
     public void updateChannel(ChannelUID channelUID, String data) {
-        // logger.trace("updateChannel(): Partition Channel UID: {}", channelUID);
-
         // All Zone channels are OnOffType
         OnOffType onOffType;
 
@@ -58,7 +56,9 @@ public class ThingHandlerPartition extends CaddxBaseThingHandler {
 
     @Override
     public void handleCommand(ChannelUID channelUID, Command command) {
-        logger.trace("handleCommand(): Command Received - {} {}.", channelUID, command);
+        if (logger.isTraceEnabled()) {
+            logger.trace("handleCommand(): Command Received - {} {}.", channelUID, command);
+        }
 
         String cmd = null;
         String data = null;

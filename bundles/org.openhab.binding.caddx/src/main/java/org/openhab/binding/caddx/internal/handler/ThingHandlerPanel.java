@@ -48,8 +48,6 @@ public class ThingHandlerPanel extends CaddxBaseThingHandler {
 
     @Override
     public void updateChannel(ChannelUID channelUID, String data) {
-        // logger.trace("updateChannel(): Panel Channel UID: {}", channelUID);
-
         if (channelUID.getId().equals(CaddxBindingConstants.PANEL_FIRMWARE_VERSION)
                 || channelUID.getId().startsWith("panel_log_message_")) {
             updateState(channelUID, new StringType(data));
@@ -64,7 +62,9 @@ public class ThingHandlerPanel extends CaddxBaseThingHandler {
 
     @Override
     public void handleCommand(ChannelUID channelUID, Command command) {
-        logger.debug("handleCommand(): Command Received - {} {}.", channelUID, command);
+        if (logger.isTraceEnabled()) {
+            logger.trace("handleCommand(): Command Received - {} {}.", channelUID, command);
+        }
 
         String cmd = null;
         String data = null;

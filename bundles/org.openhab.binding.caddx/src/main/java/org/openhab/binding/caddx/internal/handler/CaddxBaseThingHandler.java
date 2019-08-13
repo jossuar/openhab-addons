@@ -83,8 +83,9 @@ public abstract class CaddxBaseThingHandler extends BaseThingHandler {
 
     @Override
     public void initialize() {
-        logger.debug("Initializing Caddx Thing handler - Thing Type: {}; Thing ID: {}.", caddxThingType,
-                this.getThing().getUID());
+        if (logger.isTraceEnabled()) {
+            logger.trace("initialize(): {}; Thing ID: {}.", caddxThingType, this.getThing().getUID());
+        }
 
         getConfiguration(caddxThingType);
 
@@ -94,7 +95,9 @@ public abstract class CaddxBaseThingHandler extends BaseThingHandler {
 
     @Override
     public void dispose() {
-        logger.debug("Thing {} disposed.", getThing().getUID());
+        if (logger.isTraceEnabled()) {
+            logger.trace("Thing {} disposed.", getThing().getUID());
+        }
 
         this.setThingHandlerInitialized(false);
 
@@ -105,31 +108,12 @@ public abstract class CaddxBaseThingHandler extends BaseThingHandler {
      * Method to Initialize Thing Handler.
      */
     public void initializeThingHandler() {
-        logger.debug("initializeThingHandler()");
+        if (logger.isTraceEnabled()) {
+            logger.trace("initializeThingHandler()");
+        }
 
         if (getCaddxBridgeHandler() != null) {
             this.setThingHandlerInitialized(true);
-
-            /*
-             * if (getThing().getStatus().equals(ThingStatus.ONLINE)) {
-             * Thing thing = getThing();
-             * List<Channel> channels = thing.getChannels();
-             * logger.debug("initializeThingHandler(): Initialize Thing Handler - {}", thing.getUID());
-             *
-             *
-             * for (Channel channel : channels) {
-             * updateChannel(channel.getUID(), "");
-             * }
-             *
-             * this.setThingHandlerInitialized(true);
-             *
-             *
-             * logger.debug("initializeThingHandler(): Thing Handler Initialized - {}", thing.getUID());
-             * } else {
-             * logger.debug("initializeThingHandler(): Thing '{}' Unable To Initialize Thing Handler!: Status - {}",
-             * thing.getUID(), thing.getStatus());
-             * }
-             */
         }
     }
 
@@ -139,24 +123,26 @@ public abstract class CaddxBaseThingHandler extends BaseThingHandler {
      * @return CaddxBridgeHandler
      */
     public @Nullable synchronized CaddxBridgeHandler getCaddxBridgeHandler() {
-        // logger.trace("getCaddxBridgeHandler(): Started!");
-
         if (this.caddxBridgeHandler == null) {
             Bridge bridge = getBridge();
 
             if (bridge == null) {
-                logger.debug("getCaddxBridgeHandler(): Unable to get bridge!");
+                logger.warn("getCaddxBridgeHandler(): Unable to get bridge!");
                 return null;
             }
 
-            logger.debug("getCaddxBridgeHandler(): Bridge for '{}' - '{}'", getThing().getUID(), bridge.getUID());
+            if (logger.isTraceEnabled()) {
+                logger.trace("getCaddxBridgeHandler(): Bridge for '{}' - '{}'", getThing().getUID(), bridge.getUID());
+            }
 
             ThingHandler handler = bridge.getHandler();
 
             if (handler instanceof CaddxBridgeHandler) {
                 this.caddxBridgeHandler = (CaddxBridgeHandler) handler;
             } else {
-                logger.debug("getCaddxBridgeHandler(): Unable to get bridge handler!");
+                if (logger.isTraceEnabled()) {
+                    logger.trace("getCaddxBridgeHandler(): Unable to get bridge handler!");
+                }
             }
         }
 
@@ -186,8 +172,6 @@ public abstract class CaddxBaseThingHandler extends BaseThingHandler {
 
     @Override
     public void bridgeStatusChanged(ThingStatusInfo bridgeStatusInfo) {
-        logger.debug("bridgeStatusChanged(): Started!");
-
         ThingStatus bridgeStatus = bridgeStatusInfo.getStatus();
 
         switch (bridgeStatus) {
@@ -205,8 +189,10 @@ public abstract class CaddxBaseThingHandler extends BaseThingHandler {
                 break;
         }
 
-        logger.debug("bridgeStatusChanged(): Bridge Status: '{}' - Thing '{}' Status: '{}'!", bridgeStatusInfo,
-                getThing().getUID(), getThing().getStatus());
+        if (logger.isTraceEnabled()) {
+            logger.trace("bridgeStatusChanged(): Bridge Status: '{}' - Thing '{}' Status: '{}'!", bridgeStatusInfo,
+                    getThing().getUID(), getThing().getStatus());
+        }
     }
 
     /**
@@ -215,7 +201,9 @@ public abstract class CaddxBaseThingHandler extends BaseThingHandler {
      * @param caddxThingType The Thing type
      */
     private void getConfiguration(CaddxThingType caddxThingType) {
-        logger.debug("getConfiguration(): caddxThingType - {}", caddxThingType);
+        if (logger.isTraceEnabled()) {
+            logger.trace("getConfiguration(): caddxThingType - {}", caddxThingType);
+        }
 
         switch (caddxThingType) {
             case PANEL:
@@ -345,7 +333,10 @@ public abstract class CaddxBaseThingHandler extends BaseThingHandler {
      * @return thingRefresh
      */
     public boolean isThingHandlerInitialized() {
-        logger.debug("isThingHandlerInitialized(): thingHandlerInitialized - {}", thingHandlerInitialized);
+        if (logger.isTraceEnabled()) {
+            logger.trace("isThingHandlerInitialized(): thingHandlerInitialized - {}", thingHandlerInitialized);
+        }
+
         return thingHandlerInitialized;
     }
 
@@ -357,14 +348,4 @@ public abstract class CaddxBaseThingHandler extends BaseThingHandler {
     public void setThingHandlerInitialized(boolean deviceInitialized) {
         this.thingHandlerInitialized = deviceInitialized;
     }
-
-    /*
-     * @Override
-     * public void handleRemoval() {
-     * logger.trace("handleRemoval(): Called");
-     *
-     * updateStatus(ThingStatus.REMOVED);
-     * super.handleRemoval();
-     * }
-     */
 }
