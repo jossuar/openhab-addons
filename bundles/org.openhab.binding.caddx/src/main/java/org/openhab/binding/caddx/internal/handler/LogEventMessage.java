@@ -43,24 +43,21 @@ public class LogEventMessage {
         this.minute = message.getPropertyById("panel_log_event_minute");
     }
 
-    private final String alarmList[] = { "Alarm Zone", "Alarm restore Zone", "Bypass Zone", "Bypass restore Zone",
-            "Tamper Zone", "Tamper restore Zone", "Trouble Zone", "Trouble restore Zone", "TX low battery Zone",
-            "TX low battery restore Zone", "Zone lost Zone", "Zone lost restore Zone", "Start of cross time Zone",
-            "Not used None", "Not used None", "Not used None", "Not used None", "Special expansion event None",
-            "Duress None", "Manual fire None", "Auxiliary 2 panic None", "Not used None", "Panic None",
-            "Keypad tamper None", "Control box tamper Device", "Control box tamper restore Device", "AC fail Device",
-            "AC fail restore Device", "Low battery Device", "Low battery restore Device", "Over-current Device",
-            "Over-current restore Device", "Siren tamper Device", "Siren tamper restore Device", "Telephone fault None",
-            "Telephone fault restore None", "Expander trouble Device", "Expander trouble restore Device",
-            "Fail to communicate None", "Log full None", "Opening User", "Closing User", "Exit error User",
-            "Recent closing User", "Auto-test None", "Start program None", "End program None", "Start download None",
-            "End download None", "Cancel User", "Ground fault None", "Ground fault restore None", "Manual test None",
-            "Closed with zones bypassed User", "Start of listen in None", "Technician on site None",
-            "Technician left None", "Control power up None", "58-", "", "", "", "", "", "", "", "", "", "", "", "", "",
+    private final String alarmList[] = { "Alarm", "Alarm restore", "Bypass", "Bypass restore", "Tamper",
+            "Tamper restore", "Trouble", "Trouble restore", "TX low battery", "TX low battery restore", "Zone lost",
+            "Zone lost restore", "Start of cross time", "Not used", "Not used", "Not used", "Not used",
+            "Special expansion event", "Duress", "Manual fire", "Auxiliary 2 panic", "Not used", "Panic",
+            "Keypad tamper", "Control box tamper", "Control box tamper restore", "AC fail", "AC fail restore",
+            "Low battery", "Low battery restore", "Over-current", "Over-current restore", "Siren tamper",
+            "Siren tamper restore", "Telephone fault", "Telephone fault restore", "Expander trouble",
+            "Expander trouble restore", "Fail to communicate", "Log full", "Opening", "Closing", "Exit error",
+            "Recent closing", "Auto-test None", "Start program", "End program", "Start download", "End download",
+            "Cancel", "Ground fault", "Ground fault restore", "Manual test", "Closed with zones bypassed",
+            "Start of listen in", "Technician on site", "Technician left", "Control power up", "58-", "", "", "", "",
             "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
-            "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "Not used None",
-            "First to open User", "Last to close User", "PIN entered with bit 7 set User", "Begin walk-test None",
-            "End walk-test None", "Re-exit None", "Output trip User", "Data lost None" };
+            "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
+            "", "", "Not used", "First to open", "Last to close", "PIN entered with bit 7 set", "Begin walk-test",
+            "End walk-test", "Re-exit", "Output trip", "Data lost" };
 
     @Override
     public String toString() {
