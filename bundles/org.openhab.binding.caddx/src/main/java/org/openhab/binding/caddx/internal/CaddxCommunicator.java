@@ -207,8 +207,10 @@ public class CaddxCommunicator implements Runnable, SerialPortEventListener {
                     }
 
                     // Log message
-                    if (outgoingMessage != null) {
+                    if (logger.isInfoEnabled() && outgoingMessage != null) {
                         logger.info("->: {}", outgoingMessage.getName());
+                    }
+                    if (logger.isDebugEnabled() && outgoingMessage != null) {
                         logger.debug("{}", Util.buildCaddxMessageInBinaryString("->: ", outgoingMessage));
                         // logger.debug("{}", Util.buildCaddxMessageInAsciiString("->: ", outgoingMessage));
                     }
@@ -234,12 +236,16 @@ public class CaddxCommunicator implements Runnable, SerialPortEventListener {
                 }
 
                 // Log
-                if (incomingMessage == null) {
-                    logger.debug("CaddxCommunicator.run() NoMessage received.");
-                } else {
+                if (logger.isInfoEnabled() && incomingMessage != null) {
                     logger.info("<-: {}", incomingMessage.getName());
-                    logger.debug("{}", Util.buildCaddxMessageInBinaryString("<-: ", incomingMessage));
-                    // logger.debug("{}", Util.buildCaddxMessageInAsciiString("<-: ", incomingMessage));
+                }
+                if (logger.isDebugEnabled()) {
+                    if (incomingMessage == null) {
+                        logger.debug("CaddxCommunicator.run() NoMessage received.");
+                    } else {
+                        logger.debug("{}", Util.buildCaddxMessageInBinaryString("<-: ", incomingMessage));
+                        // logger.debug("{}", Util.buildCaddxMessageInAsciiString("<-: ", incomingMessage));
+                    }
                 }
 
                 // Check if we wait for a reply

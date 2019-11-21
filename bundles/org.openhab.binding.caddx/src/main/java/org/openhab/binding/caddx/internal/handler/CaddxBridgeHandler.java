@@ -101,7 +101,9 @@ public class CaddxBridgeHandler extends BaseBridgeHandler implements SecurityPan
         updateStatus(ThingStatus.OFFLINE);
 
         // create & start panel interface
-        logger.info("starting interface at port {} with baudrate {}", serialPortName, baudRate);
+        if (logger.isInfoEnabled()) {
+            logger.info("starting interface at port {} with baudrate {}", serialPortName, baudRate);
+        }
 
         try {
             communicator = new CaddxCommunicator(portManager, protocol, serialPortName, baudRate);

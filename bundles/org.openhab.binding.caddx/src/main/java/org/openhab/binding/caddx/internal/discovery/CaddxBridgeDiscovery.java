@@ -72,7 +72,9 @@ public class CaddxBridgeDiscovery implements SecurityPanelListener {
                 }
             } catch (UnsupportedCommOperationException | PortInUseException | IOException
                     | TooManyListenersException e1) {
-                logger.debug("Port: {} is not applicable.", portIdentifier.getName());
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Port: {} is not applicable.", portIdentifier.getName());
+                }
                 continue;
             }
 
@@ -87,7 +89,9 @@ public class CaddxBridgeDiscovery implements SecurityPanelListener {
 
     private boolean checkforBridge(CaddxProtocol protocol, String serialPort, int baudrate)
             throws UnsupportedCommOperationException, PortInUseException, IOException, TooManyListenersException {
-        logger.debug("Checking protocol: {}, port: {}, baud: {}", protocol, serialPort, baudrate);
+        if (logger.isDebugEnabled()) {
+            logger.debug("Checking protocol: {}, port: {}, baud: {}", protocol, serialPort, baudrate);
+        }
 
         bridgeFound = false;
         CaddxCommunicator caddxCommunicator = new CaddxCommunicator(portManager, protocol, serialPort, baudrate);
