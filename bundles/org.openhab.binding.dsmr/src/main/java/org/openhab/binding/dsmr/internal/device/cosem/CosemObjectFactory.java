@@ -45,7 +45,7 @@ public class CosemObjectFactory {
     /**
      * Lookup cache for dynamic OBIS Identifiers
      */
-    private final HashMap<OBISIdentifier, CosemObjectType> obisLookupTableDynamic = new HashMap<>();
+    private final Map<OBISIdentifier, CosemObjectType> obisLookupTableDynamic = new HashMap<>();
 
     /**
      * Lookup cache for wild card Cosem Object types
@@ -75,8 +75,7 @@ public class CosemObjectFactory {
             if (msgType.obisId.reducedOBISIdentifierIsWildCard()) {
                 obisWildcardCosemTypeList.add(msgType);
             } else if (msgType.obisId.isConflict()) {
-                obisLookupTableMultipleFixed.computeIfAbsent(msgType.obisId, r -> new ArrayList<CosemObjectType>())
-                        .add(msgType);
+                obisLookupTableMultipleFixed.computeIfAbsent(msgType.obisId, r -> new ArrayList<>()).add(msgType);
             } else {
                 obisLookupTableFixed.put(msgType.obisId, msgType);
             }
@@ -94,11 +93,13 @@ public class CosemObjectFactory {
     public @Nullable CosemObject getCosemObject(String obisIdString, String cosemStringValues) {
         OBISIdentifier obisId;
         OBISIdentifier reducedObisId;
+        OBISIdentifier reducedObisIdGroupE;
 
         try {
             obisId = new OBISIdentifier(obisIdString);
             reducedObisId = obisId.getReducedOBISIdentifier();
-        } catch (ParseException pe) {
+            reducedObisIdGroupE = obisId.getReducedOBISIdentifierGroupE();
+        } catch (final ParseException pe) {
             logger.debug("Received invalid OBIS identifier: {}", obisIdString);
             return null;
         }
@@ -121,6 +122,9 @@ public class CosemObjectFactory {
         } else if (obisLookupTableDynamic.containsKey(reducedObisId)) {
             logger.trace("Found obisId {} in the dynamic lookup table", reducedObisId);
             cosemObject = getCosemObjectInternal(obisLookupTableDynamic.get(reducedObisId), obisId, cosemStringValues);
+        } else if (obisLookupTableFixed.containsKey(reducedObisIdGroupE)) {
+            cosemObject = getCosemObjectInternal(obisLookupTableFixed.get(reducedObisIdGroupE), obisId,
+                    cosemStringValues);
         } else {
             for (CosemObjectType obisMsgType : obisWildcardCosemTypeList) {
                 if (obisMsgType.obisId.equalsWildCard(reducedObisId)) {

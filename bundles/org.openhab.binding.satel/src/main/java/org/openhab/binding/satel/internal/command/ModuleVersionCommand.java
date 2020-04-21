@@ -12,6 +12,7 @@
  */
 package org.openhab.binding.satel.internal.command;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.openhab.binding.satel.internal.event.EventDispatcher;
 import org.openhab.binding.satel.internal.event.ModuleVersionEvent;
 import org.openhab.binding.satel.internal.protocol.SatelMessage;
@@ -23,6 +24,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Krzysztof Goworek - Initial contribution
  */
+@NonNullByDefault
 public class ModuleVersionCommand extends SatelCommandBase {
 
     private final Logger logger = LoggerFactory.getLogger(ModuleVersionCommand.class);
@@ -47,32 +49,23 @@ public class ModuleVersionCommand extends SatelCommandBase {
      * @return <code>true</code> if the module supports extended (32-bit) payload for zones/outputs
      */
     public boolean hasExtPayloadSupport() {
-        return (response.getPayload()[11] & 0x01) != 0;
-    }
-
-    @Override
-    public boolean handleResponse(EventDispatcher eventDispatcher, SatelMessage response) {
-        if (super.handleResponse(eventDispatcher, response)) {
-            // dispatch version event
-            eventDispatcher.dispatchEvent(new ModuleVersionEvent(getVersion(), hasExtPayloadSupport()));
-            return true;
-        } else {
-            return false;
-        }
+        return (getResponse().getPayload()[11] & 0x01) != 0;
     }
 
     @Override
     protected boolean isResponseValid(SatelMessage response) {
         // validate response
-        if (response.getCommand() != COMMAND_CODE) {
-            logger.debug("Invalid response code: {}", response.getCommand());
-            return false;
-        }
         if (response.getPayload().length != 12) {
             logger.debug("Invalid payload length: {}", response.getPayload().length);
             return false;
         }
         return true;
+    }
+
+    @Override
+    protected void handleResponseInternal(final EventDispatcher eventDispatcher) {
+        // dispatch version event
+        eventDispatcher.dispatchEvent(new ModuleVersionEvent(getVersion(), hasExtPayloadSupport()));
     }
 
 }

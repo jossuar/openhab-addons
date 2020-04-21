@@ -18,8 +18,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
 
-import javax.measure.quantity.Time;
-
 import org.eclipse.smarthome.core.library.unit.SmartHomeUnits;
 import org.openhab.binding.dsmr.internal.meter.DSMRMeterConstants;
 
@@ -47,6 +45,7 @@ public enum CosemObjectType {
     P1_TIMESTAMP(new OBISIdentifier(0, 0, 1, 0, 0, null), new CosemDate("")),
     P1_TEXT_CODE(new OBISIdentifier(0, 0, 96, 13, 1, null), CosemHexString.INSTANCE),
     P1_TEXT_STRING(new OBISIdentifier(0, 0, 96, 13, 0, null), CosemHexString.INSTANCE),
+    P1_TEXT_STRING_LONG(new OBISIdentifier(0, 0, 96, 13, null, null), CosemHexString.INSTANCE),
 
     /* Generic Meter Cosem Object types */
     METER_EQUIPMENT_IDENTIFIER(new OBISIdentifier(0, null, 96, 1, 0, null), CosemHexString.INSTANCE),
@@ -72,6 +71,7 @@ public enum CosemObjectType {
     EMETER_ACTUAL_PRODUCTION(new OBISIdentifier(1, 0, 2, 7, 0, null), CosemQuantity.KILO_WATT),
     EMETER_TRESHOLD_A_V2_1(new OBISIdentifier(1, 0, 17, 0, 0, null), CosemQuantity.AMPERE),
     EMETER_TRESHOLD_A(new OBISIdentifier(0, 0, 17, 0, 0, null, true), CosemQuantity.AMPERE),
+    EMETER_FUSE_THRESHOLD_A(new OBISIdentifier(1, 0, 31, 4, 0, null), CosemQuantity.AMPERE),
     EMETER_TRESHOLD_KWH(new OBISIdentifier(0, 0, 17, 0, 0, null, true), CosemQuantity.KILO_WATT),
     EMETER_SWITCH_POSITION_V2_1(new OBISIdentifier(1, 0, 96, 3, 10, null), CosemDecimal.INSTANCE),
     EMETER_SWITCH_POSITION(new OBISIdentifier(0, 0, 96, 3, 10, null), CosemDecimal.INSTANCE),
@@ -80,7 +80,7 @@ public enum CosemObjectType {
     EMETER_POWER_FAILURE_LOG(new OBISIdentifier(1, 0, 99, 97, 0, null), 2, new CosemDecimal("entries"),
             new CosemString("obisId"),
             /* Next 2 descriptors are repeating */
-            CosemDate.INSTANCE, new CosemQuantity<Time>(SmartHomeUnits.SECOND, "duration")),
+            CosemDate.INSTANCE, new CosemQuantity<>(SmartHomeUnits.SECOND, "duration")),
     EMETER_VOLTAGE_SAGS_L1(new OBISIdentifier(1, 0, 32, 32, 0, null), CosemDecimal.INSTANCE),
     EMETER_VOLTAGE_SAGS_L2(new OBISIdentifier(1, 0, 52, 32, 0, null), CosemDecimal.INSTANCE),
     EMETER_VOLTAGE_SAGS_L3(new OBISIdentifier(1, 0, 72, 32, 0, null), CosemDecimal.INSTANCE),

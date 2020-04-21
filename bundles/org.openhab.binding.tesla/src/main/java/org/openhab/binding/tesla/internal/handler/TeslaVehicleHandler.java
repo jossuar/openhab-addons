@@ -546,7 +546,6 @@ public class TeslaVehicleHandler extends BaseThingHandler {
     }
 
     protected boolean checkResponse(Response response, boolean immediatelyFail) {
-
         if (response != null && response.getStatus() == 200) {
             return true;
         } else {
@@ -628,14 +627,14 @@ public class TeslaVehicleHandler extends BaseThingHandler {
     public void openFrunk() {
         JsonObject payloadObject = new JsonObject();
         payloadObject.addProperty("which_trunk", "front");
-        sendCommand(COMMAND_TRUNK_OPEN, gson.toJson(payloadObject), account.commandTarget);
+        sendCommand(COMMAND_ACTUATE_TRUNK, gson.toJson(payloadObject), account.commandTarget);
         requestData(VEHICLE_STATE);
     }
 
     public void openTrunk() {
         JsonObject payloadObject = new JsonObject();
         payloadObject.addProperty("which_trunk", "rear");
-        sendCommand(COMMAND_TRUNK_OPEN, gson.toJson(payloadObject), account.commandTarget);
+        sendCommand(COMMAND_ACTUATE_TRUNK, gson.toJson(payloadObject), account.commandTarget);
         requestData(VEHICLE_STATE);
     }
 
@@ -926,7 +925,7 @@ public class TeslaVehicleHandler extends BaseThingHandler {
         if (command instanceof QuantityType) {
             return ((QuantityType<Temperature>) command).toUnit(SIUnits.CELSIUS);
         }
-        return new QuantityType<Temperature>(new BigDecimal(command.toString()), SIUnits.CELSIUS);
+        return new QuantityType<>(new BigDecimal(command.toString()), SIUnits.CELSIUS);
     }
 
     protected float quanityToRoundedFloat(QuantityType<Temperature> quantity) {
