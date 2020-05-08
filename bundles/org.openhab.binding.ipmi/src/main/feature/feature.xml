@@ -4,6 +4,10 @@
 
     <feature name="openhab-binding-ipmi" description="ipmi Binding" version="${project.version}">
         <feature>openhab-runtime-base</feature>
+        
+<!--         <feature prerequisite="true">wrap</feature>
+        <bundle dependency="true">wrap:mvn:fr.jrds/vxIPMI/2.0.0.1$Bundle-Name=frjrds%20VxIPMI%20Library&amp;Bundle-SymbolicName=fr.jrds/vxIPMI&amp;Bundle-Version=2.0.0.1</bundle>
+ -->        
         <bundle start-level="80">mvn:org.openhab.addons.bundles/org.openhab.binding.ipmi/${project.version}</bundle>
     </feature>
 </features>

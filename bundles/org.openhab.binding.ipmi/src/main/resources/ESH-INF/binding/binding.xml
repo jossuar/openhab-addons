@@ -3,8 +3,8 @@
 	xmlns:binding="https://openhab.org/schemas/binding/v1.0.0"
 	xsi:schemaLocation="https://openhab.org/schemas/binding/v1.0.0 https://openhab.org/schemas/binding-1.0.0.xsd">
 
-	<name>ipmi Binding</name>
-	<description>This is the binding for ipmi.</description>
+	<name>Ipmi Binding</name>
+	<description>This is the binding for the Intelligent Platform Management Interface</description>
 	<author>Georgios Moutsos</author>
 
 </binding:binding>

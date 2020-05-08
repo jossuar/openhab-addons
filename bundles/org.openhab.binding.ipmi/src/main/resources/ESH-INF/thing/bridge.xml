@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<thing:thing-descriptions bindingId="homematic"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
+	xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
+
+	<!-- Ipmi Bridge -->
+	<bridge-type id="bridge">
+		<label>Ipmi Bridge</label>
+		<description>The Ipmi bridge represents a Ipmi gateway</description>
+		<representation-property>serialNumber</representation-property>
+
+		<config-description>
+			<parameter name="gatewayAddress" type="text" required="true">
+				<label>Gateway Address</label>
+				<description>Network address of the Ipmi server</description>
+			</parameter>
+			<parameter name="user" type="text" required="true">
+				<label>Gateway Address</label>
+				<description>Network address of the Ipmi server</description>
+			</parameter>
+			<parameter name="password" type="text" required="true">
+				<label>Gateway Address</label>
+				<description>Network address of the Ipmi server</description>
+			</parameter>
+			<parameter name="timeout" type="integer">
+				<label>Timeout</label>
+				<description>The timeout in seconds for connections to a Homematic gateway</description>
+				<advanced>true</advanced>
+				<default>15</default>
+			</parameter>
+			<parameter name="port" type="integer">
+				<label>Port</label>
+				<description>The port number of the server</description>
+				<advanced>true</advanced>
+				<default>623</default>
+			</parameter>
+		</config-description>
+	</bridge-type>
+</thing:thing-descriptions>
