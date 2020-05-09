@@ -70,7 +70,7 @@ public class IpmiBridgeHandler extends BaseBridgeHandler {
                 IpmiConfig config = this.config;
                 if (config != null) {
                     connector = new IpmiConnector(config.port);
-                    connector.createConnection(InetAddress.getByName(config.gatewayAddress), config.port);
+                    connector.createConnection(InetAddress.getByName(config.host), config.port);
                 }
             } catch (IOException e) {
                 updateStatus(ThingStatus.OFFLINE);

@@ -21,18 +21,18 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
  */
 @NonNullByDefault
 public class IpmiConfig {
-    public @NonNullByDefault({}) String gatewayAddress;
+    public @NonNullByDefault({}) String host;
     public @NonNullByDefault({}) String user;
     public @NonNullByDefault({}) String password;
     public int timeout;
     public int port;
 
-    public String getGatewayAddress() {
-        return gatewayAddress;
+    public String getHost() {
+        return host;
     }
 
-    public void setGatewayAddress(String gatewayAddress) {
-        this.gatewayAddress = gatewayAddress;
+    public void setHost(String host) {
+        this.host = host;
     }
 
     public String getUser() {
