@@ -50,9 +50,9 @@ import com.nextian.ipmi.coding.protocol.AuthenticationType;
 import com.nextian.ipmi.coding.security.CipherSuite;
 
 /**
- * {@link IpmiBridgeHandler} is the handler for a Homematic gateway and connects it to the framework.
+ * {@link IpmiBridgeHandler} is the handler for an Ipmi gateway.
  *
- * @author Gerhard Riegler - Initial contribution
+ * @author Georgios Moutsos - Initial contribution
  */
 @NonNullByDefault
 public class IpmiBridgeHandler extends BaseBridgeHandler {
