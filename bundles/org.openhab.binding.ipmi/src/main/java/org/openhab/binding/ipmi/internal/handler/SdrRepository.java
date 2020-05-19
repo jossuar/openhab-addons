@@ -162,7 +162,6 @@ public class SdrRepository {
                     csr.getSensorBaseUnit().toString(), -1, -1, -1, -1, -1, -1, -1, -1, -1);
 
             repository.put((int) csr.getSensorNumber(), sdr);
-            logger.warn("CompactSensorRecord not supported");
         } else if (record instanceof DeviceRelativeEntityAssiciationRecord) {
             logger.warn("DeviceRelativeEntityAssiciationRecord not supported");
         } else if (record instanceof EntityAssociationRecord) {
