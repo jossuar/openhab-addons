@@ -26,8 +26,10 @@ import com.nextian.ipmi.coding.commands.sdr.record.SensorType;
  */
 @NonNullByDefault
 public class Sdr {
+    private final String type;
     private final int sensorNumber;
     private final SensorType sensorType;
+    private final String name;
     private final AddressType addressType;
     private final RateUnit rateUnit;
     private final SensorDirection sensorDirection;
@@ -44,12 +46,15 @@ public class Sdr {
     private final double normalMaximum;
     private final double nominalReading;
 
-    public Sdr(byte sensorNumber, SensorType sensorType, AddressType addressType, RateUnit rateUnit,
-            SensorDirection sensorDirection, String sensorBaseUnit, double upperNonCriticalThreshold,
+    public Sdr(String type, byte sensorNumber, SensorType sensorType, String name, AddressType addressType,
+            RateUnit rateUnit, SensorDirection sensorDirection, String sensorBaseUnit, double upperNonCriticalThreshold,
             double upperCriticalThreshold, double upperNonRecoverableThreshold, double lowerNonRecoverableThreshold,
             double lowerCriticalThreshold, double lowerNonCriticalThreshold, double normalMinimum, double normalMaximum,
             double nominalReading) {
+        this.type = type;
+        this.sensorNumber = sensorNumber;
         this.sensorType = sensorType;
+        this.name = name;
         this.addressType = addressType;
         this.rateUnit = rateUnit;
         this.sensorDirection = sensorDirection;
@@ -64,7 +69,10 @@ public class Sdr {
         this.normalMinimum = normalMinimum;
         this.normalMaximum = normalMaximum;
         this.nominalReading = nominalReading;
-        this.sensorNumber = sensorNumber;
+    }
+
+    public String getType() {
+        return type;
     }
 
     public int getSensorNumber() {
@@ -73,6 +81,10 @@ public class Sdr {
 
     public SensorType getSensorType() {
         return sensorType;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public AddressType getAddressType() {
@@ -125,5 +137,18 @@ public class Sdr {
 
     public double getNominalReading() {
         return nominalReading;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(this.type).append(", ");
+        sb.append(this.name).append(", ");
+        sb.append(this.sensorNumber).append(", ");
+        sb.append(this.sensorBaseUnit).append(", ");
+        sb.append(this.getSensorType()).append(", ");
+        sb.append(this.getSensorDirection());
+
+        return sb.toString();
     }
 }

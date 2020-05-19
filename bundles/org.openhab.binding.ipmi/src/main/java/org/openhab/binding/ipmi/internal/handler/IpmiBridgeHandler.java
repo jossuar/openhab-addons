@@ -13,8 +13,10 @@
 package org.openhab.binding.ipmi.internal.handler;
 
 import java.io.IOException;
-import java.net.InetAddress;
-import java.nio.ByteBuffer;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.Future;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -22,6 +24,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.smarthome.core.thing.Bridge;
 import org.eclipse.smarthome.core.thing.ChannelUID;
 import org.eclipse.smarthome.core.thing.ThingStatus;
+import org.eclipse.smarthome.core.thing.ThingStatusDetail;
 import org.eclipse.smarthome.core.thing.binding.BaseBridgeHandler;
 import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.types.RefreshType;
@@ -29,25 +32,8 @@ import org.openhab.binding.ipmi.internal.config.IpmiConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.nextian.ipmi.api.async.ConnectionHandle;
-import com.nextian.ipmi.api.sync.IpmiConnector;
-import com.nextian.ipmi.coding.commands.IpmiVersion;
-import com.nextian.ipmi.coding.commands.PrivilegeLevel;
-import com.nextian.ipmi.coding.commands.chassis.GetChassisStatus;
-import com.nextian.ipmi.coding.commands.chassis.GetChassisStatusResponseData;
-import com.nextian.ipmi.coding.commands.sdr.GetSdr;
-import com.nextian.ipmi.coding.commands.sdr.GetSdrRepositoryInfo;
-import com.nextian.ipmi.coding.commands.sdr.GetSdrRepositoryInfoResponseData;
-import com.nextian.ipmi.coding.commands.sdr.GetSdrResponseData;
-import com.nextian.ipmi.coding.commands.sdr.GetSensorReading;
-import com.nextian.ipmi.coding.commands.sdr.GetSensorReadingResponseData;
-import com.nextian.ipmi.coding.commands.sdr.ReserveSdrRepository;
-import com.nextian.ipmi.coding.commands.sdr.ReserveSdrRepositoryResponseData;
-import com.nextian.ipmi.coding.commands.sdr.record.FullSensorRecord;
-import com.nextian.ipmi.coding.commands.sdr.record.SensorRecord;
 import com.nextian.ipmi.coding.payload.lan.IPMIException;
-import com.nextian.ipmi.coding.protocol.AuthenticationType;
-import com.nextian.ipmi.coding.security.CipherSuite;
+import com.nextian.ipmi.connection.ConnectionException;
 
 /**
  * {@link IpmiBridgeHandler} is the handler for an Ipmi gateway.
@@ -93,112 +79,28 @@ public class IpmiBridgeHandler extends BaseBridgeHandler {
     }
 
     private void initializeInternal() {
-        boolean thingReachable = true;
-
         try {
             IpmiConfig config = this.config;
             if (config != null) {
-                IpmiConnector connector = new IpmiConnector(config.port);
-                ConnectionHandle handle = connector.createConnection(InetAddress.getByName(config.host));
+                SdrRepository repo = new SdrRepository(config.host, config.port, config.user, config.password);
 
-                // Get cipher suite and use it for the session.
-                CipherSuite cs = connector.getDefaultCipherSuite(handle);
-                System.out.println("Cipher suite selected");
+                HashMap<Integer, Sdr> map = repo.getRepository();
+                Set<Entry<Integer, Sdr>> entrySet = map.entrySet();
 
-                // Pass cipher suite and privilege level to the remote host.
-                // From now on, the connection handle will contain ths information.
-                connector.getChannelAuthenticationCapabilities(handle, cs, PrivilegeLevel.Administrator);
-                System.out.println("Channel authentication capabilities received");
+                // Obtaining an iterator for the entry set
+                Iterator<Entry<Integer, Sdr>> it = entrySet.iterator();
 
-                // Start the session, provide username and password, and optionally the
-                // BMC key (only if the remote host has two-key authentication enabled,
-                // otherwise this parameter should be null).
-                connector.openSession(handle, config.user, config.password, null);
-                System.out.println("Session open");
-
-                // Send a message and read the response
-                GetChassisStatusResponseData chassisData = (GetChassisStatusResponseData) connector.sendMessage(handle,
-                        new GetChassisStatus(IpmiVersion.V20, cs, AuthenticationType.RMCPPlus));
-
-                System.out.println("Received GetChassisStatus answer");
-                System.out.println("System power state is " + (chassisData.isPowerOn() ? "up" : "down"));
-
-                GetSdrRepositoryInfoResponseData sdrRepoData = (GetSdrRepositoryInfoResponseData) connector.sendMessage(
-                        handle, new GetSdrRepositoryInfo(IpmiVersion.V20, cs, AuthenticationType.RMCPPlus));
-
-                System.out.println("Received GetSdrRepositoryInfo answer");
-                System.out.println("Sdr Version is " + sdrRepoData.getSdrVersion());
-
-                ReserveSdrRepositoryResponseData reserveData = (ReserveSdrRepositoryResponseData) connector.sendMessage(
-                        handle, new ReserveSdrRepository(IpmiVersion.V20, cs, AuthenticationType.RMCPPlus));
-                int reservationId = reserveData.getReservationId();
-                System.out.println("Received ReserveSdrRepository answer");
-                System.out.println("Reservation Id is " + reservationId);
-
-                GetSdrResponseData data1 = null;
-                int offset = 0;
-                int bytesToRead = 0x10;
-                ByteBuffer bb = ByteBuffer.allocate(1000);
-                try {
-                    do {
-                        data1 = (GetSdrResponseData) connector.sendMessage(handle, new GetSdr(IpmiVersion.V20, cs,
-                                AuthenticationType.RMCPPlus, reservationId, 0, offset, bytesToRead));
-                        offset += bytesToRead;
-
-                        bb.put(data1.getSensorRecordData());
-                    } while (bytesToRead == data1.getSensorRecordData().length);
-                } catch (IPMIException e) {
-                    System.out.println(
-                            "code: " + e.getCompletionCode().getCode() + ", " + e.getCompletionCode().getMessage());
+                // Iterate through HashMap entries(Key-Value pairs)
+                while (it.hasNext()) {
+                    Entry<Integer, Sdr> me = it.next();
+                    logger.warn("Entry [{}]: {}", me.getKey(), me.getValue());
                 }
-
-                byte[] dst = new byte[bb.position()];
-                bb.flip();
-                bb.get(dst);
-
-                SensorRecord record = SensorRecord.populateSensorRecord(dst);
-
-                if (record instanceof FullSensorRecord) {
-                    FullSensorRecord fr = (FullSensorRecord) record;
-
-                    System.out.println("Sensor Type: " + fr.getSensorType().toString());
-                    System.out.println("Address Type: " + fr.getAddressType().toString());
-                    System.out.println("Rate Unit: " + fr.getRateUnit().toString());
-                    System.out.println("Sensor Direction: " + fr.getSensorDirection());
-                    System.out.println("Sensor Base Unit: " + fr.getSensorBaseUnit().toString());
-
-                    System.out.println("fr.getUpperNonCriticalThreshold(): " + fr.getUpperNonCriticalThreshold());
-                    System.out.println("fr.getUpperCriticalThreshold(): " + fr.getUpperCriticalThreshold());
-                    System.out.println("fr.getUpperNonRecoverableThreshold(): " + fr.getUpperNonRecoverableThreshold());
-                    System.out.println("fr.getLowerNonRecoverableThreshold(): " + fr.getLowerNonRecoverableThreshold());
-                    System.out.println("fr.getLowerCriticalThreshold(): " + fr.getLowerCriticalThreshold());
-                    System.out.println("fr.getLowerNonCriticalThreshold(): " + fr.getLowerNonCriticalThreshold());
-                    System.out.println("fr.getNormalMinimum(): " + fr.getNormalMinimum());
-                    System.out.println("fr.getNormalMaximum(): " + fr.getNormalMaximum());
-                    System.out.println("fr.getNominalReading(): " + fr.getNominalReading());
-                    byte sensor = fr.getSensorNumber();
-                    GetSensorReadingResponseData readingData = (GetSensorReadingResponseData) connector.sendMessage(
-                            handle, new GetSensorReading(IpmiVersion.V20, cs, AuthenticationType.RMCPPlus, sensor));
-
-                    System.out.println("Plain Sensor Reading: " + readingData.getPlainSensorReading());
-                    System.out.println("Sensor State is " + readingData.getSensorState());
-                }
-
-                // Close the session
-                connector.closeSession(handle);
-                logger.debug("End initializing!");
-
-                if (thingReachable) {
-                    updateStatus(ThingStatus.ONLINE);
-                } else {
-                    updateStatus(ThingStatus.OFFLINE);
-                }
+                updateStatus(ThingStatus.ONLINE);
             }
-        } catch (IOException e) {
-            updateStatus(ThingStatus.OFFLINE);
-            return;
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+        } catch (IllegalArgumentException | IOException | InterruptedException | IPMIException e) {
+            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.HANDLER_INITIALIZING_ERROR);
+        } catch (ConnectionException e) {
+            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR);
         }
     }
 }

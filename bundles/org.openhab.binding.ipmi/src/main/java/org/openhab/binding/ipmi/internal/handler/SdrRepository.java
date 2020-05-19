@@ -52,26 +52,35 @@ import com.nextian.ipmi.connection.ConnectionException;
 @NonNullByDefault
 public class SdrRepository {
     private final Logger logger = LoggerFactory.getLogger(SdrRepository.class);
-    private final String host;
-    private final int port;
-
     private final IpmiConnector connector;
     private final ConnectionHandle handle;
     private final CipherSuite cs;
-
     private final HashMap<Integer, Sdr> repository = new HashMap<Integer, Sdr>();
+    private int bytesToRead = 0xff;
 
-    public SdrRepository(String host, int port) throws IOException, ConnectionException, InterruptedException {
-        this.host = host;
-        this.port = port;
+    public SdrRepository(String host, int port, String user, String password)
+            throws IOException, ConnectionException, InterruptedException, IllegalArgumentException, IPMIException {
+        try {
+            connector = new IpmiConnector(port);
+            handle = connector.createConnection(InetAddress.getByName(host));
+            cs = connector.getDefaultCipherSuite(handle);
+            connector.getChannelAuthenticationCapabilities(handle, cs, PrivilegeLevel.Administrator);
+            connector.openSession(handle, user, password, null);
+            logger.warn("Session open");
 
-        connector = new IpmiConnector(port);
-        handle = connector.createConnection(InetAddress.getByName(host));
-        cs = connector.getDefaultCipherSuite(handle);
-        connector.getChannelAuthenticationCapabilities(handle, cs, PrivilegeLevel.Administrator);
+            fillSdrRepository();
+        } catch (IPMIException | IllegalArgumentException | InterruptedException | IOException
+                | ConnectionException e) {
+            logger.warn("Cannot read repository.", e);
+            throw e;
+        }
     }
 
-    public void fillSdrRepository() throws IllegalArgumentException, InterruptedException, IPMIException, IOException {
+    public HashMap<Integer, Sdr> getRepository() {
+        return repository;
+    }
+
+    private void fillSdrRepository() throws IllegalArgumentException, InterruptedException, IPMIException, IOException {
         int recordId = 0;
 
         ReserveSdrRepositoryResponseData reserveData = (ReserveSdrRepositoryResponseData) connector.sendMessage(handle,
@@ -85,21 +94,10 @@ public class SdrRepository {
         return;
     }
 
-    private class SdrRecord {
-        public final byte[] buffer;
-        public final int nextRecordId;
-
-        public SdrRecord(byte[] buffer, int nextRecordId) {
-            this.buffer = buffer;
-            this.nextRecordId = nextRecordId;
-        }
-    }
-
     private SdrRecord readSdrBuffer(int reservationId, int recordId)
             throws IllegalArgumentException, InterruptedException, IOException {
         GetSdrResponseData data = null;
         int offset = 0;
-        int bytesToRead = 0xff;
         int nextRecordId = 0xffff;
         boolean retry = true;
 
@@ -112,20 +110,25 @@ public class SdrRepository {
                             AuthenticationType.RMCPPlus, reservationId, recordId, offset, bytesToRead));
                     offset += bytesToRead;
 
+                    nextRecordId = data.getNextRecordId();
                     bb.put(data.getSensorRecordData());
-                } while (bytesToRead == 0xff || bytesToRead == data.getSensorRecordData().length);
+                } while ((bytesToRead == 0xff && data.getSensorRecordData().length > 0)
+                        || (bytesToRead != 0xff && data.getSensorRecordData().length == bytesToRead));
 
-                nextRecordId = data.getNextRecordId();
                 retry = false;
             } catch (IPMIException e) {
-                offset = 0;
-                bytesToRead = bytesToRead / 2;
-
-                if (bytesToRead == 0) {
+                if (e.getCompletionCode().getCode() == 204) {
                     retry = false;
+                } else {
+                    offset = 0;
+                    bytesToRead = bytesToRead / 2;
+
+                    if (bytesToRead == 0) {
+                        retry = false;
+                    }
+                    System.out.println(
+                            "code: " + e.getCompletionCode().getCode() + ", " + e.getCompletionCode().getMessage());
                 }
-                System.out.println(
-                        "code: " + e.getCompletionCode().getCode() + ", " + e.getCompletionCode().getMessage());
             }
         } while (retry);
 
@@ -141,52 +144,64 @@ public class SdrRepository {
             throws IllegalArgumentException, InterruptedException, IOException {
         SdrRecord rec = readSdrBuffer(reservationId, recordId);
 
-        // Build the sensor record
-        SensorRecord record = SensorRecord.populateSensorRecord(rec.buffer);
-
-        if (record instanceof CompactSensorRecord) {
-            logger.debug("CompactSensorRecord not supported");
-        } else if (record instanceof DeviceRelativeEntityAssiciationRecord) {
-            logger.debug("DeviceRelativeEntityAssiciationRecord not supported");
-        } else if (record instanceof EntityAssociationRecord) {
-            logger.debug("EntityAssociationRecord not supported");
-        } else if (record instanceof EventOnlyRecord) {
-            logger.debug("EventOnlyRecord not supported");
-        } else if (record instanceof FruDeviceLocatorRecord) {
-            logger.debug("FruDeviceLocatorRecord not supported");
-        } else if (record instanceof GenericDeviceLocatorRecord) {
-            logger.debug("GenericDeviceLocatorRecord not supported");
-        } else if (record instanceof ManagementControllerConfirmationRecord) {
-            logger.debug("ManagementControllerConfirmationRecord not supported");
-        } else if (record instanceof ManagementControllerDeviceLocatorRecord) {
-            logger.debug("ManagementControllerDeviceLocatorRecord not supported");
-        } else if (record instanceof OemRecord) {
-            logger.debug("OemRecord not supported");
-        } else if (record instanceof FullSensorRecord) {
-            FullSensorRecord fr = (FullSensorRecord) record;
-
-            Sdr sdr = new Sdr(fr.getSensorNumber(), fr.getSensorType(), fr.getAddressType(), fr.getRateUnit(),
-                    fr.getSensorDirection(), fr.getSensorBaseUnit().toString(), fr.getUpperNonCriticalThreshold(),
-                    fr.getUpperCriticalThreshold(), fr.getUpperNonRecoverableThreshold(),
-                    fr.getLowerNonRecoverableThreshold(), fr.getLowerCriticalThreshold(),
-                    fr.getLowerNonCriticalThreshold(), fr.getNormalMinimum(), fr.getNormalMaximum(),
-                    fr.getNominalReading());
-
-            repository.put((int) fr.getSensorNumber(), sdr);
-        }
+        addSensorRecord(rec.buffer);
 
         return rec.nextRecordId;
     }
 
-    public String getHost() {
-        return host;
+    private void addSensorRecord(byte[] buffer) {
+        // Build the sensor record
+        SensorRecord record = SensorRecord.populateSensorRecord(buffer);
+
+        if (record instanceof CompactSensorRecord) {
+            logger.warn("CompactSensorRecord found");
+            CompactSensorRecord csr = (CompactSensorRecord) record;
+
+            Sdr sdr = new Sdr("CompactSensorRecord", csr.getSensorNumber(), csr.getSensorType(), csr.getName(),
+                    csr.getAddressType(), csr.getRateUnit(), csr.getSensorDirection(),
+                    csr.getSensorBaseUnit().toString(), -1, -1, -1, -1, -1, -1, -1, -1, -1);
+
+            repository.put((int) csr.getSensorNumber(), sdr);
+            logger.warn("CompactSensorRecord not supported");
+        } else if (record instanceof DeviceRelativeEntityAssiciationRecord) {
+            logger.warn("DeviceRelativeEntityAssiciationRecord not supported");
+        } else if (record instanceof EntityAssociationRecord) {
+            logger.warn("EntityAssociationRecord not supported");
+        } else if (record instanceof EventOnlyRecord) {
+            logger.warn("EventOnlyRecord not supported");
+        } else if (record instanceof FruDeviceLocatorRecord) {
+            logger.warn("FruDeviceLocatorRecord not supported");
+        } else if (record instanceof GenericDeviceLocatorRecord) {
+            logger.warn("GenericDeviceLocatorRecord not supported");
+        } else if (record instanceof ManagementControllerConfirmationRecord) {
+            logger.warn("ManagementControllerConfirmationRecord not supported");
+        } else if (record instanceof ManagementControllerDeviceLocatorRecord) {
+            logger.warn("ManagementControllerDeviceLocatorRecord not supported");
+        } else if (record instanceof OemRecord) {
+            logger.warn("OemRecord not supported");
+        } else if (record instanceof FullSensorRecord) {
+            logger.warn("FullSensorRecord found");
+            FullSensorRecord fsr = (FullSensorRecord) record;
+
+            Sdr sdr = new Sdr("FullSensorRecord", fsr.getSensorNumber(), fsr.getSensorType(), fsr.getName(),
+                    fsr.getAddressType(), fsr.getRateUnit(), fsr.getSensorDirection(),
+                    fsr.getSensorBaseUnit().toString(), fsr.getUpperNonCriticalThreshold(),
+                    fsr.getUpperCriticalThreshold(), fsr.getUpperNonRecoverableThreshold(),
+                    fsr.getLowerNonRecoverableThreshold(), fsr.getLowerCriticalThreshold(),
+                    fsr.getLowerNonCriticalThreshold(), fsr.getNormalMinimum(), fsr.getNormalMaximum(),
+                    fsr.getNominalReading());
+
+            repository.put((int) fsr.getSensorNumber(), sdr);
+        }
     }
 
-    public int getPort() {
-        return port;
-    }
+    private class SdrRecord {
+        public final byte[] buffer;
+        public final int nextRecordId;
 
-    public HashMap<Integer, Sdr> getRepository() {
-        return repository;
+        public SdrRecord(byte[] buffer, int nextRecordId) {
+            this.buffer = buffer;
+            this.nextRecordId = nextRecordId;
+        }
     }
 }
