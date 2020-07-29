@@ -602,4 +602,28 @@ public class CaddxPanelActions implements ThingActions {
             throw new IllegalArgumentException(ACTION_CLASS_IS_WRONG);
         }
     }
+
+    @RuleAction(label = "requestProgramData", description = "Request program data")
+    public void requestProgramData(
+            @ActionInput(name = "deviceAddress", label = "deviceAddress", description = "The device address") int deviceAddress,
+            @ActionInput(name = "logicalLocation", label = "logicalLocation", description = "The logical location") int logicalLocation)
+            throws IOException {
+        ThingHandlerPanel handler = this.handler;
+        if (handler == null) {
+            logger.debug(HANDLER_IS_NULL);
+            return;
+        }
+
+        handler.requestProgramData(deviceAddress, logicalLocation);
+    }
+
+    @RuleAction(label = "requestProgramData", description = "Request program data")
+    public static void requestProgramData(@Nullable ThingActions actions, int deviceAddress, int logicalLocation)
+            throws IOException {
+        if (actions instanceof CaddxPanelActions) {
+            ((CaddxPanelActions) actions).requestProgramData(deviceAddress, logicalLocation);
+        } else {
+            throw new IllegalArgumentException(ACTION_CLASS_IS_WRONG);
+        }
+    }
 }

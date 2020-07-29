@@ -59,6 +59,7 @@ public class CaddxBindingConstants {
     public static final String PANEL_INTERFACE_CONFIGURATION_REQUEST = "panel_interface_configuration_request";
     public static final String PANEL_SYSTEM_STATUS_REQUEST = "panel_system_status_request";
     public static final String PANEL_LOG_EVENT_REQUEST = "panel_log_event_request";
+    public static final String PANEL_PROGRAM_DATA_REQUEST = "panel_program_data_request";
     // Channels
     public static final String PANEL_FIRMWARE_VERSION = "panel_firmware_version";
     public static final String PANEL_LOG_MESSAGE_N_0 = "panel_log_message_n_0";

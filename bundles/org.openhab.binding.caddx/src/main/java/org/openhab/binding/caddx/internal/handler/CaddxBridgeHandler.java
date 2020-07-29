@@ -247,6 +247,9 @@ public class CaddxBridgeHandler extends BaseBridgeHandler implements CaddxPanelL
             case CaddxBindingConstants.PANEL_LOG_EVENT_REQUEST:
                 msg = new CaddxMessage(CaddxMessageType.LOG_EVENT_REQUEST, data);
                 break;
+            case CaddxBindingConstants.PANEL_PROGRAM_DATA_REQUEST:
+                msg = new CaddxMessage(CaddxMessageType.PROGRAM_DATA_REQUEST, data);
+                break;
             case CaddxBindingConstants.KEYPAD_TERMINAL_MODE_REQUEST:
                 msg = new CaddxMessage(CaddxMessageType.KEYPAD_TERMINAL_MODE_REQUEST, data);
                 break;

@@ -76,13 +76,13 @@ public class CaddxProperty {
                     mask = 255;
                     val = message[byteFrom - 1] & mask;
                 } else {
-                    mask = ((1 << ((bitLength - bitFrom))) - 1) << bitFrom;
+                    mask = ((1 << ((bitLength - bitFrom) + 1)) - 1) << bitFrom;
                     val = (message[byteFrom - 1] & mask) >> bitFrom;
                 }
 
                 return Integer.toString(val);
             case STRING:
-                byte[] str = Arrays.copyOfRange(message, byteFrom - 1, byteFrom + byteLength);
+                byte[] str = Arrays.copyOfRange(message, byteFrom - 1, byteFrom + byteLength - 1);
                 return mapCaddxString(new String(str, StandardCharsets.US_ASCII));
             case BIT:
                 return (((message[byteFrom - 1] & (1 << bitFrom)) > 0) ? "true" : "false");

@@ -653,37 +653,39 @@ public enum CaddxMessageType {
             new CaddxProperty("", 2, 1, 0, 0, CaddxPropertyType.INT, "Device’s buss address", false),
 
             // Byte 3 Upper logical location / offset
-            new CaddxProperty("", 3, 1, 0, 3, CaddxPropertyType.INT, "Bits 8-11 of logical location", false),
-            new CaddxProperty("", 3, 1, 4, 4, CaddxPropertyType.INT, "Segment size (0=byte, 1=nibble)", false),
+            new CaddxProperty("", 3, 1, 0, 4, CaddxPropertyType.INT, "Bits 8-11 of logical location", false),
+            new CaddxProperty("panel_segment_size", 3, 1, 4, 4, CaddxPropertyType.INT,
+                    "Segment size (0=byte, 1=nibble)", false),
             new CaddxProperty("", 3, 1, 5, 1, CaddxPropertyType.BIT, "Must be 0", false),
-            new CaddxProperty("", 3, 1, 6, 6, CaddxPropertyType.INT, "Segment offset (0-none, 1=8 bytes)", false),
+            new CaddxProperty("panel_segment_offset", 3, 1, 6, 6, CaddxPropertyType.INT,
+                    "Segment offset (0-none, 1=8 bytes)", false),
             new CaddxProperty("", 3, 1, 7, 1, CaddxPropertyType.BIT, "Must be 0", false),
 
             // Byte 4 Bits 0-7 of logical location
             new CaddxProperty("", 4, 1, 0, 0, CaddxPropertyType.INT, "Bits 0-7 of logical location", false),
 
             // Byte 5 Location length / data type
-            new CaddxProperty("", 5, 1, 0, 4, CaddxPropertyType.INT, "Number of segments in location (0=1 segment)",
-                    false),
-            new CaddxProperty("", 5, 1, 5, 7, CaddxPropertyType.INT,
+            new CaddxProperty("panel_location_length", 5, 1, 0, 5, CaddxPropertyType.INT,
+                    "Number of segments in location (0=1 segment)", false),
+            new CaddxProperty("panel_data_type", 5, 1, 5, 3, CaddxPropertyType.INT,
                     "Data type : 0=Binary 1=Decimal 2=Hexadecimal 3=ASCII 4=unused 5=unused 6=unused 7=unused", false),
 
             // Byte 6 Data byte
-            new CaddxProperty("", 6, 1, 0, 0, CaddxPropertyType.INT, "Data byte 0", false),
+            new CaddxProperty("panel_data_byte_0", 6, 1, 0, 0, CaddxPropertyType.INT, "Data byte 0", false),
             // Byte 7 Data byte
-            new CaddxProperty("", 7, 1, 0, 0, CaddxPropertyType.INT, "Data byte 1", false),
+            new CaddxProperty("panel_data_byte_1", 7, 1, 0, 0, CaddxPropertyType.INT, "Data byte 1", false),
             // Byte 8 Data byte
-            new CaddxProperty("", 8, 1, 0, 0, CaddxPropertyType.INT, "Data byte 2", false),
+            new CaddxProperty("panel_data_byte_2", 8, 1, 0, 0, CaddxPropertyType.INT, "Data byte 2", false),
             // Byte 9 Data byte
-            new CaddxProperty("", 9, 1, 0, 0, CaddxPropertyType.INT, "Data byte 3", false),
+            new CaddxProperty("panel_data_byte_3", 9, 1, 0, 0, CaddxPropertyType.INT, "Data byte 3", false),
             // Byte 10 Data byte
-            new CaddxProperty("", 10, 1, 0, 0, CaddxPropertyType.INT, "Data byte 4", false),
+            new CaddxProperty("panel_data_byte_4", 10, 1, 0, 0, CaddxPropertyType.INT, "Data byte 4", false),
             // Byte 11 Data byte
-            new CaddxProperty("", 11, 1, 0, 0, CaddxPropertyType.INT, "Data byte 5", false),
+            new CaddxProperty("panel_data_byte_5", 11, 1, 0, 0, CaddxPropertyType.INT, "Data byte 5", false),
             // Byte 12 Data byte
-            new CaddxProperty("", 12, 1, 0, 0, CaddxPropertyType.INT, "Data byte 6", false),
+            new CaddxProperty("panel_data_byte_6", 12, 1, 0, 0, CaddxPropertyType.INT, "Data byte 6", false),
             // Byte 13 Data byte
-            new CaddxProperty("", 13, 1, 0, 0, CaddxPropertyType.INT, "Data byte 7", false)),
+            new CaddxProperty("panel_data_byte_7", 13, 1, 0, 0, CaddxPropertyType.INT, "Data byte 7", false)),
 
     USER_INFORMATION_REPLY(0x12, null, 7, "User Information Reply",
             "This message will contain all digits, attributes and partitions for the requested user PIN number that was previously requested (via User Information Request with(out) PIN (32h,33h)).",
