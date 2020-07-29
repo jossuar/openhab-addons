@@ -26,6 +26,7 @@ import org.eclipse.smarthome.core.thing.ThingStatus;
 import org.eclipse.smarthome.core.thing.binding.ThingHandlerService;
 import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.types.RefreshType;
+import org.eclipse.smarthome.core.util.HexUtils;
 import org.openhab.binding.caddx.internal.CaddxBindingConstants;
 import org.openhab.binding.caddx.internal.CaddxEvent;
 import org.openhab.binding.caddx.internal.CaddxMessage;
@@ -102,7 +103,9 @@ public class ThingHandlerPanel extends CaddxBaseThingHandler {
             ChannelUID channelUID = null;
 
             // Log event messages have special handling
-            if (CaddxMessageType.SYSTEM_STATUS_MESSAGE.equals(mt)) {
+            if (CaddxMessageType.PROGRAM_DATA_REPLY.equals(mt)) {
+                handleProgramDataReply(message);
+            } else if (CaddxMessageType.SYSTEM_STATUS_MESSAGE.equals(mt)) {
                 handleSystemStatusMessage(message);
             } else if (CaddxMessageType.LOG_EVENT_MESSAGE.equals(mt)) {
                 handleLogEventMessage(message);
@@ -118,6 +121,69 @@ public class ThingHandlerPanel extends CaddxBaseThingHandler {
 
             updateStatus(ThingStatus.ONLINE);
         }
+    }
+
+    /*
+     * Gets the data at a specific location of the panel
+     */
+    private void handleProgramDataReply(CaddxMessage message) {
+        logger.warn("handleProgramDataReply {}", message);
+
+        int segmentOffset = Integer.valueOf(message.getPropertyById("panel_segment_offset"));
+        int segmentSize = Integer.valueOf(message.getPropertyById("panel_segment_size"));
+        int locationLength = Integer.valueOf(message.getPropertyById("panel_location_length"));
+        int dataType = Integer.valueOf(message.getPropertyById("panel_data_type"));
+        byte[] dataBytes = { Integer.valueOf(message.getPropertyById("panel_data_byte_0")).byteValue(),
+                Integer.valueOf(message.getPropertyById("panel_data_byte_1")).byteValue(),
+                Integer.valueOf(message.getPropertyById("panel_data_byte_2")).byteValue(),
+                Integer.valueOf(message.getPropertyById("panel_data_byte_3")).byteValue(),
+                Integer.valueOf(message.getPropertyById("panel_data_byte_4")).byteValue(),
+                Integer.valueOf(message.getPropertyById("panel_data_byte_5")).byteValue(),
+                Integer.valueOf(message.getPropertyById("panel_data_byte_6")).byteValue(),
+                Integer.valueOf(message.getPropertyById("panel_data_byte_7")).byteValue() };
+        StringBuilder sb = new StringBuilder();
+
+        logger.warn("Reply {} {} {} {}", segmentSize, locationLength, dataType, dataBytes);
+
+        switch (dataType) {
+            case 0: // Binary
+                for (int i = segmentOffset * 8; i < Math.min(locationLength, 8); i++) {
+                    for (int j = 7; j >= 0; j--) {
+                        if ((dataBytes[i] & 1 << j) != 0) {
+                            sb.append("1-");
+                        } else {
+                            sb.append("0-");
+                        }
+                    }
+                    sb.append("--");
+                }
+                break;
+            case 1: // Decimal
+                break;
+            case 2: // Hexadecimal
+                if (segmentSize == 1) {
+                    for (int i = segmentOffset * 2 * 8; i < Math.min(locationLength, 16); i++) {
+                        if (i % 2 != 0) {
+                            logger.warn("{} {} {} {}", i, i / 2, i % 2, HexUtils.byteToHex(dataBytes[i / 2])[0]);
+                            sb.append(new String(new byte[] { HexUtils.byteToHex(dataBytes[i / 2])[0] }));
+                        } else {
+                            logger.warn("{} {} {} {}", i, i / 2, i % 2, HexUtils.byteToHex(dataBytes[i / 2])[1]);
+                            sb.append(new String(new byte[] { HexUtils.byteToHex(dataBytes[i / 2])[1] }));
+                        }
+                    }
+                }
+                break;
+            case 3: // Ascii
+                break;
+            default:
+                return;
+        }
+
+        logger.info("-Value {}", sb.toString());
+
+        ChannelUID channelUID = new ChannelUID(getThing().getUID(), "panel_firmware_version");
+        updateChannel(channelUID, sb.toString());
+        logger.info("=Value {}", sb.toString());
     }
 
     /*
@@ -322,5 +388,30 @@ public class ThingHandlerPanel extends CaddxBaseThingHandler {
 
     public void startKeypadSounder() {
         sendSecondaryCommand("15");
+    }
+
+    public void requestProgramData(int deviceAddress, int logicalLocation) {
+        String cmd = CaddxBindingConstants.PANEL_PROGRAM_DATA_REQUEST;
+
+        CaddxBridgeHandler bridgeHandler = getCaddxBridgeHandler();
+        if (bridgeHandler == null) {
+            return;
+        }
+
+        // Build the data for the 1st command
+        int lowerByte = logicalLocation & 0xff;
+        int upperByte = (logicalLocation & 0xf00) >> 8;
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(deviceAddress).append(",").append(upperByte).append(",").append(lowerByte);
+
+        bridgeHandler.sendCommand(cmd, sb.toString());
+
+        // Build the data for the 2nd command
+        upperByte = upperByte | 0x40; // Turn on Bit 6
+        sb.setLength(0);
+        sb.append(deviceAddress).append(",").append(upperByte).append(",").append(lowerByte);
+
+        bridgeHandler.sendCommand(cmd, sb.toString());
     }
 }
