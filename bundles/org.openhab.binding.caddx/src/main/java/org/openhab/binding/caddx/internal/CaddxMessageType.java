@@ -650,10 +650,11 @@ public enum CaddxMessageType {
             new CaddxProperty("", 1, 1, 0, 0, CaddxPropertyType.INT, "Message number", false),
 
             // Byte 2
-            new CaddxProperty("", 2, 1, 0, 0, CaddxPropertyType.INT, "Device’s buss address", false),
+            new CaddxProperty("bussAddress", 2, 1, 0, 0, CaddxPropertyType.INT, "Device’s buss address", false),
 
             // Byte 3 Upper logical location / offset
-            new CaddxProperty("", 3, 1, 0, 4, CaddxPropertyType.INT, "Bits 8-11 of logical location", false),
+            new CaddxProperty("logicalLocationUpper", 3, 1, 0, 4, CaddxPropertyType.INT,
+                    "Bits 8-11 of logical location", false),
             new CaddxProperty("panel_segment_size", 3, 1, 4, 4, CaddxPropertyType.INT,
                     "Segment size (0=byte, 1=nibble)", false),
             new CaddxProperty("", 3, 1, 5, 1, CaddxPropertyType.BIT, "Must be 0", false),
@@ -662,7 +663,8 @@ public enum CaddxMessageType {
             new CaddxProperty("", 3, 1, 7, 1, CaddxPropertyType.BIT, "Must be 0", false),
 
             // Byte 4 Bits 0-7 of logical location
-            new CaddxProperty("", 4, 1, 0, 0, CaddxPropertyType.INT, "Bits 0-7 of logical location", false),
+            new CaddxProperty("logicalLocationLower", 4, 1, 0, 0, CaddxPropertyType.INT, "Bits 0-7 of logical location",
+                    false),
 
             // Byte 5 Location length / data type
             new CaddxProperty("panel_location_length", 5, 1, 0, 5, CaddxPropertyType.INT,
