@@ -34,9 +34,10 @@ import org.slf4j.LoggerFactory;
 @ThingActionsScope(name = "caddx")
 @NonNullByDefault
 public class CaddxPartitionActions implements ThingActions {
-    private final static Logger logger = LoggerFactory.getLogger(CaddxPartitionActions.class);
-    private final static String HANDLER_IS_NULL = "ThingHandlerPartition is null!";
-    private final static String ACTION_CLASS_IS_WRONG = "Instance is not a CaddxPartitionActions class.";
+    private final Logger logger = LoggerFactory.getLogger(CaddxPartitionActions.class);
+
+    private static final String HANDLER_IS_NULL = "ThingHandlerPartition is null!";
+    private static final String ACTION_CLASS_IS_WRONG = "Instance is not a CaddxPartitionActions class.";
     private @Nullable ThingHandlerPartition handler;
 
     @Override

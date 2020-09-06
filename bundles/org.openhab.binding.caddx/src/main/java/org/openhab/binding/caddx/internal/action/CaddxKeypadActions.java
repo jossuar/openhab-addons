@@ -34,12 +34,13 @@ import org.slf4j.LoggerFactory;
 @ThingActionsScope(name = "caddx")
 @NonNullByDefault
 public class CaddxKeypadActions implements ThingActions {
-    private final static Logger logger = LoggerFactory.getLogger(CaddxKeypadActions.class);
-    private final static String HANDLER_IS_NULL = "ThingHandlerKeypad is null!";
-    private final static String ACTION_CLASS_IS_WRONG = "Instance is not a CaddxKeypadActions class.";
-    private final static String TEXT_IS_NULL = "The value for the text is null. Action not executed.";
-    private final static String DISPLAY_LOCATION_IS_NULL = "The value for the display location is null. Action not executed.";
-    private final static String DISPLAY_LOCATION_IS_INVALID = "The value for the display location [{}] is invalid. Action not executed.";
+    private final Logger logger = LoggerFactory.getLogger(CaddxKeypadActions.class);
+
+    private static final String HANDLER_IS_NULL = "ThingHandlerKeypad is null!";
+    private static final String ACTION_CLASS_IS_WRONG = "Instance is not a CaddxKeypadActions class.";
+    private static final String TEXT_IS_NULL = "The value for the text is null. Action not executed.";
+    private static final String DISPLAY_LOCATION_IS_NULL = "The value for the display location is null. Action not executed.";
+    private static final String DISPLAY_LOCATION_IS_INVALID = "The value for the display location [{}] is invalid. Action not executed.";
     private @Nullable ThingHandlerKeypad handler;
 
     @Override

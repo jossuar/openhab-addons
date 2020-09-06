@@ -34,11 +34,12 @@ import org.slf4j.LoggerFactory;
 @ThingActionsScope(name = "caddx")
 @NonNullByDefault
 public class CaddxPanelActions implements ThingActions {
-    private final static Logger logger = LoggerFactory.getLogger(CaddxPanelActions.class);
-    private final static String HANDLER_IS_NULL = "ThingHandlerPanel is null!";
-    private final static String PIN_IS_NULL = "The value for the pin is null. Action not executed.";
-    private final static String PIN_IS_INVALID = "The value for the pin [{}] is invalid. Action not executed.";
-    private final static String ACTION_CLASS_IS_WRONG = "Instance is not a CaddxPanelActions class.";
+    private final Logger logger = LoggerFactory.getLogger(CaddxPanelActions.class);
+
+    private static final String HANDLER_IS_NULL = "ThingHandlerPanel is null!";
+    private static final String PIN_IS_NULL = "The value for the pin is null. Action not executed.";
+    private static final String PIN_IS_INVALID = "The value for the pin [{}] is invalid. Action not executed.";
+    private static final String ACTION_CLASS_IS_WRONG = "Instance is not a CaddxPanelActions class.";
     private @Nullable ThingHandlerPanel handler;
 
     @Override
