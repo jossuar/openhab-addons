@@ -33,9 +33,10 @@ import org.slf4j.LoggerFactory;
 @ThingActionsScope(name = "caddx")
 @NonNullByDefault
 public class CaddxBridgeActions implements ThingActions {
-    private final static Logger logger = LoggerFactory.getLogger(CaddxBridgeActions.class);
-    private final static String HANDLER_IS_NULL = "CaddxBridgeHandler is null!";
-    private final static String ACTION_CLASS_IS_WRONG = "Instance is not a CaddxBridgeActions class.";
+    private final Logger logger = LoggerFactory.getLogger(CaddxBridgeActions.class);
+
+    private static final String HANDLER_IS_NULL = "CaddxBridgeHandler is null!";
+    private static final String ACTION_CLASS_IS_WRONG = "Instance is not a CaddxBridgeActions class.";
     private @Nullable CaddxBridgeHandler handler;
 
     @Override
