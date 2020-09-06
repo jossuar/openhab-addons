@@ -166,7 +166,7 @@ public class ThingHandlerPanel extends CaddxBaseThingHandler {
      * Gets the data at a specific location of the panel
      */
     private void handleProgramDataReply(CaddxMessage message) {
-        logger.warn("handleProgramDataReply {}", message);
+        logger.debug("handleProgramDataReply {}", message);
 
         int bussAddress = Integer.valueOf(message.getPropertyById("bussAddress"));
         int logicalLocationUpper = Integer.valueOf(message.getPropertyById("logicalLocationUpper"));
@@ -188,8 +188,9 @@ public class ThingHandlerPanel extends CaddxBaseThingHandler {
         StringBuilder sb = new StringBuilder();
         sb.append(programData);
 
-        logger.warn("ba: {}, lu: {}, ll: {}, so: {}, ss: {}, ln: {}, dt: {}, db: {}", bussAddress, logicalLocationUpper,
-                logicalLocationLower, segmentOffset, segmentSize, locationLength, dataType, dataBytes);
+        logger.debug("ba: {}, lu: {}, ll: {}, so: {}, ss: {}, ln: {}, dt: {}, db: {}", bussAddress,
+                logicalLocationUpper, logicalLocationLower, segmentOffset, segmentSize, locationLength, dataType,
+                dataBytes);
 
         boolean moreData = false;
         switch (dataType) {

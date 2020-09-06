@@ -67,6 +67,7 @@ The following table shows the available configuration parameters for each thing.
 | bridge    | `serialPort` - Serial port for the bridge - Required                                                |
 |           | `protocol` - Protocol used for the communication (Binary, Ascii) - Required - Default = Binary      |
 |           | `baud` - Baud rate of the bridge - Required - Default = 9600                                        |
+|           | `maxZoneNumber` - Maximum zone number to be added during discovery - Required - Default = 16        |
 | partition | `partitionNumber` - Partition number (1-8) - Required                                               |
 | zone      | `zoneNumber` - Zone number (1-192) - Required                                                       |
 | keypad    | `keypadAddress` - Keypad address (192-255) - Required                                               |
