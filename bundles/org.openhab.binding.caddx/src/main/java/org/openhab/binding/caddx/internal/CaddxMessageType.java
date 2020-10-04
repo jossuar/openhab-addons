@@ -658,7 +658,7 @@ public enum CaddxMessageType {
             new CaddxProperty("panel_segment_size", 3, 1, 4, 4, CaddxPropertyType.INT,
                     "Segment size (0=byte, 1=nibble)", false),
             new CaddxProperty("", 3, 1, 5, 1, CaddxPropertyType.BIT, "Must be 0", false),
-            new CaddxProperty("panel_segment_offset", 3, 1, 6, 6, CaddxPropertyType.INT,
+            new CaddxProperty("panel_segment_offset", 3, 1, 6, 1, CaddxPropertyType.INT,
                     "Segment offset (0-none, 1=8 bytes)", false),
             new CaddxProperty("", 3, 1, 7, 1, CaddxPropertyType.BIT, "Must be 0", false),
 

@@ -76,7 +76,7 @@ public class CaddxProperty {
                     mask = 255;
                     val = message[byteFrom - 1] & mask;
                 } else {
-                    mask = ((1 << ((bitLength - bitFrom) + 1)) - 1) << bitFrom;
+                    mask = ((1 << (bitLength - bitFrom)) - 1) << bitFrom;
                     val = (message[byteFrom - 1] & mask) >> bitFrom;
                 }
 
@@ -92,20 +92,13 @@ public class CaddxProperty {
     }
 
     public String toString(byte[] message) {
-        int mask;
         int val;
         StringWriter sWriter = new StringWriter();
         PrintWriter pWriter = new PrintWriter(sWriter);
 
         switch (type) {
             case INT:
-                if (bitFrom == 0 && bitLength == 0) {
-                    mask = 255;
-                    val = message[byteFrom - 1];
-                } else {
-                    mask = ((1 << ((bitLength - bitFrom) + 1)) - 1) << bitFrom;
-                    val = (message[byteFrom - 1] & mask) >> bitFrom;
-                }
+                val = Integer.parseInt(getValue(message));
 
                 pWriter.printf("%s: %02x - %d - %c", name, val, val, Character.isValidCodePoint(val) ? val : 32);
                 pWriter.flush();
@@ -129,7 +122,7 @@ public class CaddxProperty {
             case BIT:
                 pWriter.print(name);
                 pWriter.print(": ");
-                pWriter.print(((message[byteFrom - 1] & (1 << bitFrom)) > 0));
+                pWriter.print(getValue(message));
                 pWriter.flush();
 
                 return sWriter.toString();

@@ -153,8 +153,9 @@ public class ThingHandlerPanel extends CaddxBaseThingHandler {
             }
             moreData = (segmentOffset * 16) + 16 < locationLength;
         } else { // bytes
-            for (int i = segmentOffset * 8; i < Math.min(locationLength, 8); i++) {
+            for (int i = 0; i < Math.min(locationLength - segmentOffset * 8, 8); i++) {
                 sb.append(new String(new byte[] { HexUtils.byteToHex(dataBytes[i])[0] }));
+                sb.append(" ");
             }
             moreData = (segmentOffset * 8) + 8 < locationLength;
         }
@@ -186,6 +187,7 @@ public class ThingHandlerPanel extends CaddxBaseThingHandler {
                 Integer.valueOf(message.getPropertyById("panel_data_byte_7")).byteValue() };
 
         StringBuilder sb = new StringBuilder();
+        logger.debug("programData: {}", programData);
         sb.append(programData);
 
         logger.debug("ba: {}, lu: {}, ll: {}, so: {}, ss: {}, ln: {}, dt: {}, db: {}", bussAddress,
@@ -211,6 +213,7 @@ public class ThingHandlerPanel extends CaddxBaseThingHandler {
 
         if (moreData) {
             programData = sb.toString();
+            logger.debug("First part of reply: {}", programData);
 
             CaddxBridgeHandler bridgeHandler = getCaddxBridgeHandler();
             if (bridgeHandler != null) {
@@ -220,9 +223,13 @@ public class ThingHandlerPanel extends CaddxBaseThingHandler {
                         bussAddress + "," + logicalLocationUpper + "," + logicalLocationLower);
             }
         } else {
+            logger.debug("Full reply: {}", sb.toString());
+
             ChannelUID channelUID = new ChannelUID(getThing().getUID(), "panel_firmware_version");
             updateChannel(channelUID, sb.toString());
             logger.info("=Value {}", sb.toString());
+
+            programData = null;
         }
     }
 
