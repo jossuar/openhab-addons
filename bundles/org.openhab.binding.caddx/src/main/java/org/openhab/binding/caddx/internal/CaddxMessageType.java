@@ -608,7 +608,7 @@ public enum CaddxMessageType {
                     "Total log size (number of log entries allowed)", false),
 
             // Byte 4
-            new CaddxProperty("panel_log_event_type", 4, 1, 0, 7, CaddxPropertyType.INT, "Event type", false),
+            new CaddxProperty("panel_log_event_type", 4, 1, 0, 6, CaddxPropertyType.INT, "Event type", false),
             // Bits 0-6 See type definitions in table that follows
             // Bit 7 Non-reporting event if not set
 
