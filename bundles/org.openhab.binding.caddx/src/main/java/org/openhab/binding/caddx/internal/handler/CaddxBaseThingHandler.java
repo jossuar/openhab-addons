@@ -49,7 +49,6 @@ public abstract class CaddxBaseThingHandler extends BaseThingHandler {
 
     /** Partition */
     private int partitionNumber;
-    private int userNumber;
 
     /** Zone */
     private int zoneNumber;
@@ -130,7 +129,6 @@ public abstract class CaddxBaseThingHandler extends BaseThingHandler {
             case PARTITION:
                 CaddxPartitionConfiguration partitionConfiguration = getConfigAs(CaddxPartitionConfiguration.class);
                 setPartitionNumber(partitionConfiguration.getPartitionNumber());
-                setUserNumber(partitionConfiguration.getUserNumber());
                 break;
             case ZONE:
                 CaddxZoneConfiguration zoneConfiguration = getConfigAs(CaddxZoneConfiguration.class);
@@ -139,6 +137,7 @@ public abstract class CaddxBaseThingHandler extends BaseThingHandler {
             case KEYPAD:
                 CaddxKeypadConfiguration keypadConfiguration = getConfigAs(CaddxKeypadConfiguration.class);
                 setKeypadAddress(keypadConfiguration.getKeypadAddress());
+                setTerminalModeSeconds(keypadConfiguration.getTerminalModeSeconds());
             default:
                 break;
         }
@@ -167,26 +166,8 @@ public abstract class CaddxBaseThingHandler extends BaseThingHandler {
      *
      * @param partitionNumber
      */
-    public void setPartitionNumber(int partitionNumber) {
+    private void setPartitionNumber(int partitionNumber) {
         this.partitionNumber = partitionNumber;
-    }
-
-    /**
-     * Get User Number.
-     *
-     * @return userNumber
-     */
-    public int getUserNumber() {
-        return userNumber;
-    }
-
-    /**
-     * Set User Number.
-     *
-     * @param userNumber
-     */
-    public void setUserNumber(int userNumber) {
-        this.userNumber = userNumber;
     }
 
     /**
@@ -203,7 +184,7 @@ public abstract class CaddxBaseThingHandler extends BaseThingHandler {
      *
      * @param zoneNumber
      */
-    public void setZoneNumber(int zoneNumber) {
+    private void setZoneNumber(int zoneNumber) {
         this.zoneNumber = zoneNumber;
     }
 
@@ -221,25 +202,25 @@ public abstract class CaddxBaseThingHandler extends BaseThingHandler {
      *
      * @param keypadAddress
      */
-    public void setKeypadAddress(int keypadAddress) {
+    private void setKeypadAddress(int keypadAddress) {
         this.keypadAddress = keypadAddress;
     }
 
     /**
      * Get Keypad Terminal Mode Seconds.
      *
-     * @return keypadAddress
+     * @return terminalModeSeconds
      */
     public int getTerminalModeSeconds() {
         return terminalModeSeconds;
     }
 
     /**
-     * Set Keypad Address.
+     * Set Keypad Terminal Mode Seconds.
      *
-     * @param keypadAddress
+     * @param terminalModeSeconds
      */
-    public void setTerminalModeSeconds(int terminalModeSeconds) {
+    private void setTerminalModeSeconds(int terminalModeSeconds) {
         this.terminalModeSeconds = terminalModeSeconds;
     }
 
