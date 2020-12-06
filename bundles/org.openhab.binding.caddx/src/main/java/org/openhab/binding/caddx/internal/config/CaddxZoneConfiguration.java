@@ -24,14 +24,20 @@ public class CaddxZoneConfiguration {
 
     // Zone Thing constants
     public static final String ZONE_NUMBER = "zoneNumber";
+    public static final String IGNORE_ZONE_STATUS_TRANSITIONS = "ignoreZoneStatusTransitions";
 
     /**
      * The Zone Number. Can be in the range of 1-192. Depends on the Panel model. This is a required parameter for a
      * zone.
      */
     private int zoneNumber;
+    private boolean ignoreZoneStatusTransitions;
 
     public int getZoneNumber() {
         return zoneNumber;
+    }
+
+    public boolean getIgnoreZoneStatusTransitions() {
+        return ignoreZoneStatusTransitions;
     }
 }

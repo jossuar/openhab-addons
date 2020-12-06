@@ -52,6 +52,7 @@ public abstract class CaddxBaseThingHandler extends BaseThingHandler {
 
     /** Zone */
     private int zoneNumber;
+    private boolean ignoreZoneStatusTransitions;
 
     /** Keypad */
     private int keypadAddress;
@@ -133,6 +134,7 @@ public abstract class CaddxBaseThingHandler extends BaseThingHandler {
             case ZONE:
                 CaddxZoneConfiguration zoneConfiguration = getConfigAs(CaddxZoneConfiguration.class);
                 setZoneNumber(zoneConfiguration.getZoneNumber());
+                setIgnoreZoneStatusTransitions(zoneConfiguration.getIgnoreZoneStatusTransitions());
                 break;
             case KEYPAD:
                 CaddxKeypadConfiguration keypadConfiguration = getConfigAs(CaddxKeypadConfiguration.class);
@@ -186,6 +188,24 @@ public abstract class CaddxBaseThingHandler extends BaseThingHandler {
      */
     private void setZoneNumber(int zoneNumber) {
         this.zoneNumber = zoneNumber;
+    }
+
+    /**
+     * Get Ignore Zone Status Transitions flag.
+     *
+     * @return ignoreZoneStatusTransitions
+     */
+    public boolean getIgnoreZoneStatusTransitions() {
+        return ignoreZoneStatusTransitions;
+    }
+
+    /**
+     * Set Ignore Zone Status Transitions flag.
+     *
+     * @param ignoreZoneStatusTransitions
+     */
+    private void setIgnoreZoneStatusTransitions(boolean ignoreZoneStatusTransitions) {
+        this.ignoreZoneStatusTransitions = ignoreZoneStatusTransitions;
     }
 
     /**

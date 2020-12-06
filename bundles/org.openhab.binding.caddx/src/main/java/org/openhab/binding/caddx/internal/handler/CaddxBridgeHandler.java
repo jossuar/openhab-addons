@@ -314,11 +314,8 @@ public class CaddxBridgeHandler extends BaseBridgeHandler implements CaddxPanelL
 
         if (source != CaddxSource.NONE) {
             CaddxThingType caddxThingType = null;
-            @Nullable
             Integer partition = null;
-            @Nullable
             Integer zone = null;
-            @Nullable
             Integer keypad = null;
 
             switch (source) {

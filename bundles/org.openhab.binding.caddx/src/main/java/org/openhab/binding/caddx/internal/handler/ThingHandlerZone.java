@@ -107,11 +107,20 @@ public class ThingHandlerZone extends CaddxBaseThingHandler {
 
     @Override
     public void caddxEventReceived(CaddxEvent event, Thing thing) {
-        logger.trace("caddxEventReceived(): Event Received - {}", event);
+        logger.debug("Event Received - {}", event);
 
         if (getThing().equals(thing)) {
             CaddxMessage message = event.getCaddxMessage();
             CaddxMessageType mt = message.getCaddxMessageType();
+            CaddxMessageContext mc = message.getContext();
+
+            // Ignore Zone Status messages according to the configuration
+            if (getIgnoreZoneStatusTransitions() && mt == CaddxMessageType.ZONE_STATUS_MESSAGE
+                    && mc == CaddxMessageContext.NONE) {
+                logger.debug("Zone {} Transition ignored.", getZoneNumber());
+                return;
+            }
+
             ChannelUID channelUID = null;
 
             for (CaddxProperty p : mt.properties) {
