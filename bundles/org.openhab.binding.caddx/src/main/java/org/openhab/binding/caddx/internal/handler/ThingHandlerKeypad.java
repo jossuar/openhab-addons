@@ -25,6 +25,7 @@ import org.eclipse.smarthome.core.thing.binding.ThingHandlerService;
 import org.openhab.binding.caddx.internal.CaddxBindingConstants;
 import org.openhab.binding.caddx.internal.CaddxEvent;
 import org.openhab.binding.caddx.internal.CaddxMessage;
+import org.openhab.binding.caddx.internal.CaddxMessageContext;
 import org.openhab.binding.caddx.internal.CaddxMessageType;
 import org.openhab.binding.caddx.internal.CaddxProperty;
 import org.openhab.binding.caddx.internal.action.CaddxKeypadActions;
@@ -99,7 +100,7 @@ public class ThingHandlerKeypad extends CaddxBaseThingHandler {
         if (bridgeHandler == null) {
             return;
         }
-        bridgeHandler.sendCommand(cmd, data);
+        bridgeHandler.sendCommand(CaddxMessageContext.COMMAND, cmd, data);
     }
 
     public void sendKeypadTextMessage(String displayLocation, String text) {
@@ -116,6 +117,6 @@ public class ThingHandlerKeypad extends CaddxBaseThingHandler {
         if (bridgeHandler == null) {
             return;
         }
-        bridgeHandler.sendCommand(cmd, data);
+        bridgeHandler.sendCommand(CaddxMessageContext.COMMAND, cmd, data);
     }
 }

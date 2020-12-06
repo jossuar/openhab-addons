@@ -178,17 +178,17 @@ public class CaddxCommunicator implements SerialPortEventListener {
 
     @SuppressWarnings("null")
     private void messageDispatchLoop() {
-        int @Nullable [] expectedMessageNumbers = null;
-
-        @Nullable
+        int[] expectedMessageNumbers = null;
         CaddxMessage outgoingMessage = null;
         boolean skipTransmit = true;
+        CaddxMessageContext context = null;
 
         try {
             // loop until the thread is interrupted, sending out messages
             while (!Thread.currentThread().isInterrupted()) {
                 // Initialize the state
                 outgoingMessage = null;
+                context = null;
                 expectedMessageNumbers = null;
 
                 if (!skipTransmit) {
@@ -202,6 +202,7 @@ public class CaddxCommunicator implements SerialPortEventListener {
                         out.flush();
 
                         expectedMessageNumbers = outgoingMessage.getReplyMessageNumbers();
+                        context = outgoingMessage.getContext();
 
                         // Log message
                         if (logger.isDebugEnabled()) {
@@ -247,10 +248,12 @@ public class CaddxCommunicator implements SerialPortEventListener {
                         if (incomingMessage.hasAcknowledgementFlag()) {
                             if (incomingMessage.isChecksumCorrect()) {
                                 // send ACK
-                                transmitFirst(new CaddxMessage(CaddxMessageType.POSITIVE_ACKNOWLEDGE, ""));
+                                transmitFirst(new CaddxMessage(CaddxMessageContext.NONE,
+                                        CaddxMessageType.POSITIVE_ACKNOWLEDGE, ""));
                             } else {
                                 // Send NAK
-                                transmitFirst(new CaddxMessage(CaddxMessageType.NEGATIVE_ACKNOWLEDGE, ""));
+                                transmitFirst(new CaddxMessage(CaddxMessageContext.NONE,
+                                        CaddxMessageType.NEGATIVE_ACKNOWLEDGE, ""));
                             }
                         }
                     }
@@ -288,7 +291,10 @@ public class CaddxCommunicator implements SerialPortEventListener {
                 if (incomingMessage != null) {
                     if (incomingMessage.isChecksumCorrect()) {
                         for (CaddxPanelListener listener : listenerQueue) {
-                            listener.caddxMessage(this, incomingMessage);
+                            if (context != null) {
+                                incomingMessage.setContext(context);
+                            }
+                            listener.caddxMessage(incomingMessage);
                         }
                     } else {
                         logger.warn(
@@ -366,7 +372,7 @@ public class CaddxCommunicator implements SerialPortEventListener {
         logger.trace("Offering received message");
 
         // Full message received in data byte array
-        CaddxMessage caddxMessage = new CaddxMessage(message, true);
+        CaddxMessage caddxMessage = new CaddxMessage(CaddxMessageContext.NONE, message, true);
         if (!exchanger.offer(caddxMessage, 3, TimeUnit.SECONDS)) {
             logger.debug("Offered message was not received");
         }
