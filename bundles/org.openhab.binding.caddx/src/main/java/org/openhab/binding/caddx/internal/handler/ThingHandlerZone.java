@@ -107,7 +107,7 @@ public class ThingHandlerZone extends CaddxBaseThingHandler {
 
     @Override
     public void caddxEventReceived(CaddxEvent event, Thing thing) {
-        logger.trace("caddxEventReceived(): Event Received - {}", event);
+        logger.debug("Received: {}", event);
 
         if (getThing().equals(thing)) {
             CaddxMessage message = event.getCaddxMessage();
