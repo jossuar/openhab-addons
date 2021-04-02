@@ -106,9 +106,10 @@ public class ThingHandlerKeypad extends CaddxBaseThingHandler {
             return;
         }
         String cmd = CaddxBindingConstants.KEYPAD_SEND_KEYPAD_TEXT_MESSAGE;
-        String data = String.format("%d,0,%d,%d,%d,%d,%d,%d,%d,%d,%d", getKeypadAddress(), displayLocation,
-                text.charAt(0), text.charAt(1), text.charAt(2), text.charAt(3), text.charAt(4), text.charAt(5),
-                text.charAt(6), text.charAt(7));
+        String data = String.format("%d,0,%d,%d,%d,%d,%d,%d,%d,%d,%d", getKeypadAddress(),
+                Integer.parseInt(displayLocation), (int) text.charAt(0), (int) text.charAt(1), (int) text.charAt(2),
+                (int) text.charAt(3), (int) text.charAt(4), (int) text.charAt(5), (int) text.charAt(6),
+                (int) text.charAt(7));
 
         CaddxBridgeHandler bridgeHandler = getCaddxBridgeHandler();
         if (bridgeHandler == null) {
