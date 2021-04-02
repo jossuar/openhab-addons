@@ -105,6 +105,12 @@ public class ThingHandlerKeypad extends CaddxBaseThingHandler {
             logger.debug("Text to be displayed on the keypad has not the correct length");
             return;
         }
+
+        logger.debug("keypad Address: {}, display location:{}, 0:{}, 1:{}, 2:{}, 3:{}, 4:{}, 5:{}, 6:{}, 7:{}",
+                getKeypadAddress(), Integer.parseInt(displayLocation), (int) text.charAt(0), (int) text.charAt(1),
+                (int) text.charAt(2), (int) text.charAt(3), (int) text.charAt(4), (int) text.charAt(5),
+                (int) text.charAt(6), (int) text.charAt(7));
+
         String cmd = CaddxBindingConstants.KEYPAD_SEND_KEYPAD_TEXT_MESSAGE;
         String data = String.format("%d,0,%d,%d,%d,%d,%d,%d,%d,%d,%d", getKeypadAddress(),
                 Integer.parseInt(displayLocation), (int) text.charAt(0), (int) text.charAt(1), (int) text.charAt(2),
