@@ -139,6 +139,7 @@ public abstract class CaddxBaseThingHandler extends BaseThingHandler {
             case KEYPAD:
                 CaddxKeypadConfiguration keypadConfiguration = getConfigAs(CaddxKeypadConfiguration.class);
                 setKeypadAddress(keypadConfiguration.getKeypadAddress());
+                setTerminalModeSeconds(keypadConfiguration.getTerminalModeSeconds());
             default:
                 break;
         }
