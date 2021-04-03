@@ -88,7 +88,7 @@ public class CaddxKeypadActions implements ThingActions {
             return;
         }
 
-        if (!displayLocation.matches("^\\d$")) {
+        if (!displayLocation.matches("^\\d+$")) {
             logger.debug(DISPLAY_LOCATION_IS_INVALID, displayLocation);
             return;
         }

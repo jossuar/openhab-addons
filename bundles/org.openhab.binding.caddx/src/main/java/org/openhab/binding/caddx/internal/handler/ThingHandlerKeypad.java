@@ -91,7 +91,7 @@ public class ThingHandlerKeypad extends CaddxBaseThingHandler {
     public void enterTerminalMode() {
         String cmd = CaddxBindingConstants.KEYPAD_TERMINAL_MODE_REQUEST;
         logger.debug("Address: {}, Seconds: {}", getKeypadAddress(), getTerminalModeSeconds());
-        String data = String.format("%d,15", getKeypadAddress(), getTerminalModeSeconds());
+        String data = String.format("%d,%d", getKeypadAddress(), getTerminalModeSeconds());
 
         CaddxBridgeHandler bridgeHandler = getCaddxBridgeHandler();
         if (bridgeHandler == null) {
