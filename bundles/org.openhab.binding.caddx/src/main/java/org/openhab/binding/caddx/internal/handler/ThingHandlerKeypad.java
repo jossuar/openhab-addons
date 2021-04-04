@@ -88,10 +88,10 @@ public class ThingHandlerKeypad extends CaddxBaseThingHandler {
         return Collections.singleton(CaddxKeypadActions.class);
     }
 
-    public void enterTerminalMode() {
+    public void enterTerminalMode(String seconds) {
         String cmd = CaddxBindingConstants.KEYPAD_TERMINAL_MODE_REQUEST;
-        logger.debug("Address: {}, Seconds: {}", getKeypadAddress(), getTerminalModeSeconds());
-        String data = String.format("%d,%d", getKeypadAddress(), getTerminalModeSeconds());
+        logger.debug("Address: {}, Seconds: {}", getKeypadAddress(), Integer.parseInt(seconds));
+        String data = String.format("%d,%d", getKeypadAddress(), Integer.parseInt(seconds));
 
         CaddxBridgeHandler bridgeHandler = getCaddxBridgeHandler();
         if (bridgeHandler == null) {
@@ -100,27 +100,31 @@ public class ThingHandlerKeypad extends CaddxBaseThingHandler {
         bridgeHandler.sendCommand(cmd, data);
     }
 
-    public void sendKeypadTextMessage(String displayLocation, String text) {
-        if (text.length() != 8) {
-            logger.debug("Text to be displayed on the keypad has not the correct length");
-            return;
-        }
-
-        logger.debug("keypad Address: {}, display location:{}, 0:{}, 1:{}, 2:{}, 3:{}, 4:{}, 5:{}, 6:{}, 7:{}",
-                getKeypadAddress(), Integer.parseInt(displayLocation), (int) text.charAt(0), (int) text.charAt(1),
-                (int) text.charAt(2), (int) text.charAt(3), (int) text.charAt(4), (int) text.charAt(5),
-                (int) text.charAt(6), (int) text.charAt(7));
-
-        String cmd = CaddxBindingConstants.KEYPAD_SEND_KEYPAD_TEXT_MESSAGE;
-        String data = String.format("%d,0,%d,%d,%d,%d,%d,%d,%d,%d,%d", getKeypadAddress(),
-                Integer.parseInt(displayLocation), (int) text.charAt(0), (int) text.charAt(1), (int) text.charAt(2),
-                (int) text.charAt(3), (int) text.charAt(4), (int) text.charAt(5), (int) text.charAt(6),
-                (int) text.charAt(7));
+    public void sendKeypadTextMessage(String line1, String line2) {
+        logger.debug("keypad Address: {}, line1: [{}], line2: [{}]", getKeypadAddress(), line1, line2);
 
         CaddxBridgeHandler bridgeHandler = getCaddxBridgeHandler();
         if (bridgeHandler == null) {
             return;
         }
-        bridgeHandler.sendCommand(cmd, data);
+
+        String cmd = CaddxBindingConstants.KEYPAD_SEND_KEYPAD_TEXT_MESSAGE;
+        String data1 = String.format("%d,0,0,%d,%d,%d,%d,%d,%d,%d,%d", getKeypadAddress(), (int) line1.charAt(0),
+                (int) line1.charAt(1), (int) line1.charAt(2), (int) line1.charAt(3), (int) line1.charAt(4),
+                (int) line1.charAt(5), (int) line1.charAt(6), (int) line1.charAt(7));
+        String data2 = String.format("%d,0,8,%d,%d,%d,%d,%d,%d,%d,%d", getKeypadAddress(), (int) line1.charAt(8),
+                (int) line1.charAt(9), (int) line1.charAt(10), (int) line1.charAt(11), (int) line1.charAt(12),
+                (int) line1.charAt(13), (int) line1.charAt(14), (int) line1.charAt(15));
+        String data3 = String.format("%d,0,16,%d,%d,%d,%d,%d,%d,%d,%d", getKeypadAddress(), (int) line2.charAt(0),
+                (int) line2.charAt(1), (int) line2.charAt(2), (int) line2.charAt(3), (int) line2.charAt(4),
+                (int) line2.charAt(5), (int) line2.charAt(6), (int) line2.charAt(7));
+        String data4 = String.format("%d,0,24,%d,%d,%d,%d,%d,%d,%d,%d", getKeypadAddress(), (int) line2.charAt(8),
+                (int) line2.charAt(9), (int) line2.charAt(10), (int) line2.charAt(11), (int) line2.charAt(12),
+                (int) line2.charAt(13), (int) line2.charAt(14), (int) line2.charAt(15));
+
+        bridgeHandler.sendCommand(cmd, data1);
+        bridgeHandler.sendCommand(cmd, data2);
+        bridgeHandler.sendCommand(cmd, data3);
+        bridgeHandler.sendCommand(cmd, data4);
     }
 }

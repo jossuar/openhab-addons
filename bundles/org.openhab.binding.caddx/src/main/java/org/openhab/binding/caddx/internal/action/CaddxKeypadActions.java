@@ -35,10 +35,10 @@ public class CaddxKeypadActions implements ThingActions {
     private final Logger logger = LoggerFactory.getLogger(CaddxKeypadActions.class);
 
     private static final String HANDLER_IS_NULL = "ThingHandlerKeypad is null!";
-    private static final String TEXT_IS_NULL = "The value for the text is null. Action not executed.";
-    private static final String DISPLAY_LOCATION_IS_NULL = "The value for the display location is null. Action not executed.";
-    private static final String DISPLAY_LOCATION_IS_INVALID = "The value for the display location [{}] is invalid. Action not executed.";
-
+    private static final String LINE1_IS_NULL = "The value for the 1st line is null. Action not executed.";
+    private static final String LINE2_IS_NULL = "The value for the 2nd line is null. Action not executed.";
+    private static final String SECONDS_IS_NULL = "The value for the seconds is null. Action not executed.";
+    private static final String SECONDS_IS_INVALID = "The value for the seconds is invalid. Action not executed.";
     private @Nullable ThingHandlerKeypad handler;
 
     @Override
@@ -54,51 +54,63 @@ public class CaddxKeypadActions implements ThingActions {
     }
 
     @RuleAction(label = "enterTerminalMode", description = "Enter terminal mode on the selected keypad")
-    public void enterTerminalMode() {
+    public void enterTerminalMode(
+            @ActionInput(name = "seconds", label = "Number of seconds to stay in terminal mode", description = "Number of seconds to stay in terminal mode") @Nullable String seconds) {
         ThingHandlerKeypad thingHandler = this.handler;
         if (thingHandler == null) {
             logger.debug(HANDLER_IS_NULL);
             return;
         }
+        if (seconds == null) {
+            logger.debug(SECONDS_IS_NULL);
+            return;
+        }
+        try {
+            int secs = Integer.parseInt(seconds);
+            if (secs < 0 || secs > 200) {
+                logger.debug(SECONDS_IS_INVALID);
+                return;
+            }
+        } catch (NumberFormatException ex) {
+            logger.debug(SECONDS_IS_INVALID);
+            return;
+        }
 
-        thingHandler.enterTerminalMode();
+        thingHandler.enterTerminalMode(seconds);
     }
 
-    public static void enterTerminalMode(ThingActions actions) {
-        ((CaddxKeypadActions) actions).enterTerminalMode();
+    public static void enterTerminalMode(ThingActions actions, @Nullable String seconds) {
+        ((CaddxKeypadActions) actions).enterTerminalMode(seconds);
     }
 
     @RuleAction(label = "sendKeypadTextMessage", description = "Display a message on the Keypad")
     public void sendKeypadTextMessage(
-            @ActionInput(name = "displayLocation", label = "Display Location", description = "Display storage location (0=top left corner)") @Nullable String displayLocation,
-            @ActionInput(name = "text", label = "Text", description = "The text to be displayed") @Nullable String text) {
+            @ActionInput(name = "line1", label = "Line 1 text", description = "The text to be displayed on the 1st line") @Nullable String line1,
+            @ActionInput(name = "line2", label = "Line 2 text", description = "The text to be displayed on the 2nd line") @Nullable String line2) {
         ThingHandlerKeypad thingHandler = handler;
         if (thingHandler == null) {
             logger.debug(HANDLER_IS_NULL);
             return;
         }
 
-        if (text == null) {
-            logger.debug(TEXT_IS_NULL);
+        if (line1 == null) {
+            logger.debug(LINE1_IS_NULL);
             return;
         }
 
-        if (displayLocation == null) {
-            logger.debug(DISPLAY_LOCATION_IS_NULL);
-            return;
-        }
-
-        if (!displayLocation.matches("^(1?[0-9]{1,2}|2[0-4][0-9]|25[0-5])$")) {
-            logger.debug(DISPLAY_LOCATION_IS_INVALID, displayLocation);
+        if (line2 == null) {
+            logger.debug(LINE2_IS_NULL);
             return;
         }
 
         // Adjust parameters
-        String paddedText = text + "        ";
-        paddedText = paddedText.substring(0, 8);
+        String paddedLine1 = line1 + "                ";
+        paddedLine1 = paddedLine1.substring(0, 16);
+        String paddedLine2 = line2 + "                ";
+        paddedLine2 = paddedLine2.substring(0, 16);
 
         // Build the command
-        thingHandler.sendKeypadTextMessage(displayLocation, text);
+        thingHandler.sendKeypadTextMessage(paddedLine1, paddedLine2);
     }
 
     public static void sendKeypadTextMessage(ThingActions actions, @Nullable String displayLocation,
