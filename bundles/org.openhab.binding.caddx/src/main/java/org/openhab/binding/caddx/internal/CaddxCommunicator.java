@@ -337,6 +337,7 @@ public class CaddxCommunicator implements SerialPortEventListener {
         if (b == -1) {
             throw new EOFException();
         }
+
         return b;
     }
 
@@ -353,6 +354,9 @@ public class CaddxCommunicator implements SerialPortEventListener {
             haveFirstByte = false;
         }
 
+        if (logger.isTraceEnabled()) {
+            logger.trace("Read: {}", HexUtils.bytesToHex(HexUtils.byteToHex((byte) tempAsciiByte)));
+        }
         return tempAsciiByte;
     }
 
@@ -360,6 +364,9 @@ public class CaddxCommunicator implements SerialPortEventListener {
         int b = 0;
         do {
             b = readByte(in);
+            if (logger.isTraceEnabled()) {
+                logger.trace("Skipped: {}", HexUtils.bytesToHex(HexUtils.byteToHex((byte) b)));
+            }
         } while (b != byteToRead);
     }
 

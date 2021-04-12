@@ -103,18 +103,15 @@ public class CaddxKeypadActions implements ThingActions {
             return;
         }
 
-        // Adjust parameters
-        String paddedLine1 = line1 + "                ";
-        paddedLine1 = paddedLine1.substring(0, 16);
-        String paddedLine2 = line2 + "                ";
-        paddedLine2 = paddedLine2.substring(0, 16);
+        // Adjust parameters. Keep only 16 characters of each line
+        String paddedLine1 = (line1 + "                ").substring(0, 16);
+        String paddedLine2 = (line2 + "                ").substring(0, 16);
 
         // Build the command
         thingHandler.sendKeypadTextMessage(paddedLine1, paddedLine2);
     }
 
-    public static void sendKeypadTextMessage(ThingActions actions, @Nullable String displayLocation,
-            @Nullable String text) {
-        ((CaddxKeypadActions) actions).sendKeypadTextMessage(displayLocation, text);
+    public static void sendKeypadTextMessage(ThingActions actions, @Nullable String line1, @Nullable String line2) {
+        ((CaddxKeypadActions) actions).sendKeypadTextMessage(line1, line2);
     }
 }
