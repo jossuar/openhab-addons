@@ -20,11 +20,20 @@ import java.text.ParseException;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.openhab.binding.mqtt.handler.AbstractBrokerHandler;
 import org.openhab.binding.mysensors.internal.event.MySensorsEventRegister;
 import org.openhab.binding.mysensors.internal.gateway.MySensorsGatewayConfig;
 import org.openhab.binding.mysensors.internal.protocol.MySensorsAbstractConnection;
 import org.openhab.binding.mysensors.internal.protocol.message.MySensorsMessage;
-import org.openhab.core.io.transport.mqtt.*;
+import org.openhab.core.io.transport.mqtt.MqttActionCallback;
+import org.openhab.core.io.transport.mqtt.MqttBrokerConnection;
+import org.openhab.core.io.transport.mqtt.MqttConnectionObserver;
+import org.openhab.core.io.transport.mqtt.MqttConnectionState;
+import org.openhab.core.io.transport.mqtt.MqttMessageSubscriber;
+import org.openhab.core.thing.Thing;
+import org.openhab.core.thing.ThingRegistry;
+import org.openhab.core.thing.ThingUID;
+import org.openhab.core.thing.binding.ThingHandler;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
@@ -65,33 +74,43 @@ public class MySensorsMqttConnection extends MySensorsAbstractConnection impleme
         }
     }
 
+    @Nullable
+    private MqttBrokerConnection getMqttConnection(String brokerName) {
+        @Nullable
+        MqttBrokerConnection localConnection = null;
+        final BundleContext bundleContext = FrameworkUtil.getBundle(getClass()).getBundleContext();
+        if (bundleContext != null) {
+            final ServiceReference serviceReference = bundleContext.getServiceReference(ThingRegistry.class.getName());
+            if (serviceReference != null) {
+                ThingRegistry thingRegistry = (ThingRegistry) bundleContext.getService(serviceReference);
+                if (thingRegistry != null) {
+                    ThingUID thingUID = new ThingUID(String.format("mqtt:broker:%s", brokerName));
+                    Thing thing = thingRegistry.get(thingUID);
+                    if (thing != null) {
+                        ThingHandler handler = thing.getHandler();
+                        if (handler instanceof AbstractBrokerHandler) {
+                            AbstractBrokerHandler abh = (AbstractBrokerHandler) handler;
+                            localConnection = abh.getConnection();
+                        }
+                    } else {
+                        logger.error("Mqtt Broker with name '{}' not found!", brokerName);
+                    }
+                }
+            }
+        } else {
+            logger.error("No valid BundleContext!");
+        }
+        return localConnection;
+    }
+
     /**
      * Establishes a link to the broker connection
      */
     @Override
     protected boolean establishConnection() {
-        if (MySensorsMqttService.getMqttService() == null) {
-            BundleContext bc = FrameworkUtil.getBundle(getClass()).getBundleContext();
-            final ServiceReference sr = bc.getServiceReference(MqttService.class.getName());
-            if (sr != null) {
-                final MqttService mqtt = (MqttService) bc.getService(sr);
-                if (mqtt != null) {
-                    new MySensorsMqttService().setMqttService(mqtt);
-                }
-            }
-        }
-        // ## End workaround
-
-        if (MySensorsMqttService.getMqttService() == null) {
-            logger.error("MqttService is null!");
-            return false;
-        }
-
         @Nullable
         String brokerName = myGatewayConfig.getBrokerName();
-
-        if (brokerName != null)
-            connection = MySensorsMqttService.getMqttService().getBrokerConnection(brokerName);
+        connection = getMqttConnection(brokerName);
 
         if (connection == null) {
             logger.error("No connection to broker: {}", brokerName);
@@ -99,7 +118,7 @@ public class MySensorsMqttConnection extends MySensorsAbstractConnection impleme
         }
 
         mysConReader = new MySensorsReader(in);
-        mysConWriter = new MySensorsMqttWriter(new OutputStream() {
+        mysConWriter = new MySensorsMqttWriter(connection, new OutputStream() {
 
             @Override
             public void write(int b) {
@@ -214,13 +233,11 @@ public class MySensorsMqttConnection extends MySensorsAbstractConnection impleme
         @Nullable
         private MqttBrokerConnection conn;
 
-        public MySensorsMqttWriter(OutputStream outStream) {
+        public MySensorsMqttWriter(@Nullable MqttBrokerConnection mqttConnection, OutputStream outStream) {
             super(outStream);
-            @Nullable
-            String brokerName = myGatewayConfig.getBrokerName();
-            assert MySensorsMqttService.getMqttService() != null;
-            if (brokerName != null)
-                conn = MySensorsMqttService.getMqttService().getBrokerConnection(brokerName);
+            // @Nullable
+            // String brokerName = myGatewayConfig.getBrokerName();
+            conn = mqttConnection;
         }
 
         @Override
