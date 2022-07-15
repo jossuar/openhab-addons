@@ -16,11 +16,14 @@ import static org.openhab.binding.mysensors.MySensorsBindingConstants.*;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.binding.mysensors.MySensorsBindingConstants;
+import org.openhab.binding.mysensors.action.MySensorsActions;
 import org.openhab.binding.mysensors.config.MySensorsSensorConfiguration;
 import org.openhab.binding.mysensors.converter.MySensorsRGBWPureTypeConverter;
 import org.openhab.binding.mysensors.converter.MySensorsTypeConverter;
@@ -32,10 +35,24 @@ import org.openhab.binding.mysensors.internal.protocol.message.MySensorsMessage;
 import org.openhab.binding.mysensors.internal.protocol.message.MySensorsMessageAck;
 import org.openhab.binding.mysensors.internal.protocol.message.MySensorsMessageSubType;
 import org.openhab.binding.mysensors.internal.protocol.message.MySensorsMessageType;
-import org.openhab.binding.mysensors.internal.sensors.*;
-import org.openhab.core.library.types.*;
-import org.openhab.core.thing.*;
+import org.openhab.binding.mysensors.internal.sensors.MySensorsChild;
+import org.openhab.binding.mysensors.internal.sensors.MySensorsChildConfig;
+import org.openhab.binding.mysensors.internal.sensors.MySensorsNode;
+import org.openhab.binding.mysensors.internal.sensors.MySensorsNodeConfig;
+import org.openhab.binding.mysensors.internal.sensors.MySensorsVariable;
+import org.openhab.core.library.types.DateTimeType;
+import org.openhab.core.library.types.DecimalType;
+import org.openhab.core.library.types.HSBType;
+import org.openhab.core.library.types.OnOffType;
+import org.openhab.core.library.types.StringType;
+import org.openhab.core.thing.Bridge;
+import org.openhab.core.thing.ChannelUID;
+import org.openhab.core.thing.Thing;
+import org.openhab.core.thing.ThingStatus;
+import org.openhab.core.thing.ThingStatusDetail;
+import org.openhab.core.thing.ThingStatusInfo;
 import org.openhab.core.thing.binding.BaseThingHandler;
+import org.openhab.core.thing.binding.ThingHandlerService;
 import org.openhab.core.types.Command;
 import org.openhab.core.types.RefreshType;
 import org.openhab.core.types.State;
@@ -61,6 +78,11 @@ public class MySensorsThingHandler extends BaseThingHandler implements MySensors
 
     public MySensorsThingHandler(Thing thing) {
         super(thing);
+    }
+
+    @Override
+    public Collection<Class<? extends ThingHandlerService>> getServices() {
+        return Collections.singletonList(MySensorsActions.class);
     }
 
     @Override
@@ -299,6 +321,15 @@ public class MySensorsThingHandler extends BaseThingHandler implements MySensors
                 updateStatus(ThingStatus.ONLINE);
             }
         }
+    }
+
+    public void handleNodeReboot() {
+        logger.debug("Send message for reboot Node: {}", configuration.nodeId);
+        // Create the real message to send
+        MySensorsMessage newMsg = new MySensorsMessage(configuration.nodeId,
+                MySensorsChild.MYSENSORS_CHILD_ID_RESERVED_255, MySensorsMessageType.INTERNAL,
+                MySensorsMessageAck.FALSE, false, MySensorsMessageSubType.I_REBOOT, "", configuration.smartSleep);
+        myGateway.sendMessage(newMsg);
     }
 
     /**
