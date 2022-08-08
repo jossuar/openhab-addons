@@ -12,6 +12,24 @@
  */
 package org.openhab.binding.mysensors.internal.protocol;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.binding.mysensors.internal.event.MySensorsEventRegister;
@@ -20,13 +38,6 @@ import org.openhab.binding.mysensors.internal.protocol.message.MySensorsMessage;
 import org.openhab.binding.mysensors.internal.protocol.message.MySensorsMessageDirection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.*;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
-import java.util.concurrent.*;
 
 /**
  * Connection of the bridge (via TCP/IP or serial) to the MySensors network.
@@ -114,25 +125,29 @@ public abstract class MySensorsAbstractConnection implements Runnable {
     public void run() {
         Thread.currentThread().setName(MySensorsAbstractConnection.class.getName());
 
-        if (requestingDisconnection()) {
-            logger.info("Connection request disconnection...");
-            requestDisconnection(false);
-            disconnect();
-        }
-
-        if (!connected) {
-            if (connect()) {
-                logger.info("Successfully connected to MySensors Bridge.");
-
-                numOfRetry = 0;
-            } else {
-                logger.error("Failed connecting to bridge...next retry in {} seconds (Retry No.:{})",
-                        CONNECTOR_INTERVAL_CHECK, numOfRetry);
-                numOfRetry++;
+        try {
+            if (requestingDisconnection()) {
+                logger.info("Connection request disconnection...");
+                requestDisconnection(false);
                 disconnect();
             }
-        } else {
-            logger.trace("Bridge is connected, connection skipped");
+
+            if (!connected) {
+                if (connect()) {
+                    logger.info("Successfully connected to MySensors Bridge.");
+
+                    numOfRetry = 0;
+                } else {
+                    logger.error("Failed connecting to bridge...next retry in {} seconds (Retry No.:{})",
+                            CONNECTOR_INTERVAL_CHECK, numOfRetry);
+                    numOfRetry++;
+                    disconnect();
+                }
+            } else {
+                logger.trace("Bridge is connected, connection skipped");
+            }
+        } catch (Exception e) {
+            logger.error("Exception on checking bridge connection", e);
         }
     }
 
@@ -315,8 +330,9 @@ public abstract class MySensorsAbstractConnection implements Runnable {
          * Starts the reader process that will receive the messages from the MySensors network.
          */
         public void startReader() {
-            if (executor != null)
+            if (executor != null) {
                 future = executor.submit(this);
+            }
         }
 
         @Override
@@ -414,8 +430,9 @@ public abstract class MySensorsAbstractConnection implements Runnable {
         }
 
         private void handleAckReceived(MySensorsMessage msg) {
-            if (mysConWriter == null)
+            if (mysConWriter == null) {
                 return;
+            }
             try {
                 mysConWriter.confirmAcknowledgeMessage(msg);
             } catch (Exception e) {
@@ -430,8 +447,9 @@ public abstract class MySensorsAbstractConnection implements Runnable {
          * @param msg The heartbeat message received from a node.
          */
         private void handleSmartSleepMessage(MySensorsMessage msg) {
-            if (mysConWriter == null)
+            if (mysConWriter == null) {
                 return;
+            }
             mysConWriter.checkPendingSmartSleepMessage(msg.getNodeId());
         }
     }
@@ -483,8 +501,9 @@ public abstract class MySensorsAbstractConnection implements Runnable {
          * and send them to the MySensors network.
          */
         public void startWriter() {
-            if (executor != null)
+            if (executor != null) {
                 future = executor.submit(this);
+            }
         }
 
         @Override
