@@ -13,9 +13,8 @@
 package org.openhab.binding.mysensors.internal.event;
 
 import java.util.EventListener;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.slf4j.Logger;
@@ -36,59 +35,38 @@ public class EventRegister<T extends EventListener> implements Register<T> {
     private final List<T> registeredEventListener;
 
     public EventRegister() {
-        registeredEventListener = new LinkedList<>();
+        registeredEventListener = new CopyOnWriteArrayList<>();
     }
 
     @Override
     public boolean isEventListenerRegisterd(T listener) {
-        boolean ret;
-
-        synchronized (registeredEventListener) {
-            ret = registeredEventListener.contains(listener);
-        }
-        return ret;
+        return registeredEventListener.contains(listener);
     }
 
     @Override
     public void addEventListener(T listener) {
-
-        synchronized (registeredEventListener) {
-            if (!isEventListenerRegisterd(listener)) {
-                logger.trace("Adding listener {} to {}", listener, this);
-                registeredEventListener.add(listener);
-            } else {
-                logger.debug("Event listener {} already registered", listener);
-            }
+        if (!isEventListenerRegisterd(listener)) {
+            logger.trace("Adding listener {} to {}", listener, this);
+            registeredEventListener.add(listener);
+        } else {
+            logger.debug("Event listener {} already registered", listener);
         }
     }
 
     @Override
     public void removeEventListener(T listener) {
-
-        // Thread-safe remove
-        synchronized (registeredEventListener) {
-            if (isEventListenerRegisterd(listener)) {
-                logger.trace("Removing listener {} from {}", listener, this);
-                Iterator<T> iter = registeredEventListener.iterator();
-                while (iter.hasNext()) {
-                    T elem = iter.next();
-                    if (elem.equals(listener)) {
-                        iter.remove();
-                        return;
-                    }
-                }
-            } else {
-                logger.debug("Listener {} not present, cannot remove it", listener);
-            }
+        if (isEventListenerRegisterd(listener)) {
+            logger.trace("Removing listener {} from {}", listener, this);
+            registeredEventListener.remove(listener);
+        } else {
+            logger.debug("Listener {} not present, cannot remove it", listener);
         }
     }
 
     @Override
     public void clearAllListeners() {
         logger.trace("Clearing all listeners from {}", this);
-        synchronized (registeredEventListener) {
-            registeredEventListener.clear();
-        }
+        registeredEventListener.clear();
     }
 
     @Override
