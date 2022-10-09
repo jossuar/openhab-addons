@@ -53,7 +53,7 @@ public class RiscoBridgeHandler extends BaseBridgeHandler {
 
         RiscoBridgeConfiguration configuration = getConfigAs(RiscoBridgeConfiguration.class);
 
-        String panelIp = configuration.getPanelIp();
+        String panelIp = configuration.getHostname();
         if (panelIp == null || panelIp.trim().isEmpty()) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR,
                     "Set an IP address in the thing configuration.");
@@ -62,7 +62,7 @@ public class RiscoBridgeHandler extends BaseBridgeHandler {
         }
 
         hostName = panelIp;
-        port = configuration.getPanelPort();
+        port = configuration.getPort();
         updateStatus(ThingStatus.OFFLINE);
 
         // create & start panel interface
@@ -70,7 +70,7 @@ public class RiscoBridgeHandler extends BaseBridgeHandler {
 
         try {
             communicator = new RiscoCommunicator(getThing().getUID().getAsString(), hostName, port,
-                    configuration.getPanelId(), configuration.getEncoding());
+                    configuration.getId(), configuration.getEncoding());
         } catch (IOException e) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR,
                     "Communication cannot be initialized. " + e.toString());

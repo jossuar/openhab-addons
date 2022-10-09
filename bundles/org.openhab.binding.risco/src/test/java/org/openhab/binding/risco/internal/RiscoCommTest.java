@@ -16,7 +16,6 @@ import java.io.IOException;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.junit.jupiter.api.Test;
-import org.openhab.binding.risco.internal.RiscoCommunicator;
 
 /**
  * Test class for Risco communication.
