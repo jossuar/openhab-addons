@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  */
-package org.openhab.binding.risco.internal.message;
+package org.openhab.binding.risco.internal;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
@@ -20,16 +20,15 @@ import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.openhab.binding.risco.internal.MessageReaderUtil;
-import org.openhab.binding.risco.internal.RiscoMessage;
+import org.openhab.binding.risco.internal.RiscoCrypt;
 
 /**
- * Test class for Risco Message.
+ * Test class for Risco encryption
  *
  * @author Georgios Moutsos - Initial contribution
  */
 @NonNullByDefault
-public class RiscoMessageTest {
+public class RiscoCryptTest {
 
     // @formatter:off
     public static final List<Object[]> data() {
@@ -45,20 +44,19 @@ public class RiscoMessageTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testDecryptEncrypt(String messageName) {
+        RiscoCrypt rc = new RiscoCrypt(1, "UTF-8");
         byte[] bytes = MessageReaderUtil.readRiscoMessage(messageName);
 
-        // Decrypt
-        RiscoMessage msg = new RiscoMessage(1, "UTF-8", bytes);
+        Object[] obj = rc.decodeMessage(bytes);
+        if (obj.length == 4) {
+            Integer cmdId = (Integer) obj[0];
+            String commandStr = (String) obj[1];
+            Boolean encrypted = (Boolean) obj[2];
+            // Boolean crcOk = (Boolean) obj[3];
 
-        // Get parts
-        Integer cmdId = msg.getCommandId();
-        String commandStr = msg.getCommand();
-        Boolean encrypted = msg.isEncrypted();
+            byte[] encodedBuffer = rc.getCommandBuffer(commandStr, cmdId, encrypted);
 
-        if (cmdId != null) {
-            RiscoMessage msg2 = new RiscoMessage(1, "UTF-8", cmdId, commandStr, encrypted);
-            assertArrayEquals(msg.getEncryptedMessage(), msg2.getEncryptedMessage());
-            assertArrayEquals(msg.getDecryptedMessage(), msg2.getDecryptedMessage());
+            assertArrayEquals(bytes, encodedBuffer);
         }
     }
 }
