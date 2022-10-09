@@ -43,7 +43,7 @@ public class RiscoCommunicator {
     private final Thread riscoReceiver;
     private final BlockingDeque<RiscoMessage> receiveQueue = new LinkedBlockingDeque<>();
 
-    public RiscoCommunicator(String uid, String hostName, int port, int panelId, String encoding) throws IOException {
+    public RiscoCommunicator(String uid, String hostname, int port, int panelId, String encoding) throws IOException {
         logger.warn("openConnection(): Connecting to Risco panel");
 
         this.panelId = panelId;
@@ -51,8 +51,8 @@ public class RiscoCommunicator {
 
         // Open the socket and get the streams
         tcpSocket = new Socket();
-        SocketAddress tpiSocketAddress = new InetSocketAddress(hostName, port);
-        tcpSocket.connect(tpiSocketAddress, 5000);
+        SocketAddress socketAddress = new InetSocketAddress(hostname, port);
+        tcpSocket.connect(socketAddress, 5000);
         tcpOutput = new BufferedOutputStream(tcpSocket.getOutputStream());
         tcpInput = new BufferedInputStream(tcpSocket.getInputStream());
 
@@ -67,7 +67,7 @@ public class RiscoCommunicator {
 
         connected = true;
 
-        logger.trace("RiscoCommunicator communication thread started successfully");
+        logger.trace("RiscoCommunicator communication threads started successfully");
     }
 
     public void stop() {
@@ -99,11 +99,11 @@ public class RiscoCommunicator {
 
         // Wait until communication threads exit
         try {
-            riscoReceiver.join(30000);
+            riscoReceiver.join(3000);
         } catch (InterruptedException e) {
         }
         try {
-            riscoSender.join(30000);
+            riscoSender.join(3000);
         } catch (InterruptedException e) {
         }
 

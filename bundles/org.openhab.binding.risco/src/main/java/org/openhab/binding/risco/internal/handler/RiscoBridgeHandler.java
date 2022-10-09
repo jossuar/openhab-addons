@@ -43,8 +43,6 @@ public class RiscoBridgeHandler extends BaseBridgeHandler {
         super(bridge);
     }
 
-    private String hostName = "";
-    private int port;
     private @Nullable RiscoCommunicator communicator = null;
 
     @Override
@@ -53,23 +51,22 @@ public class RiscoBridgeHandler extends BaseBridgeHandler {
 
         RiscoBridgeConfiguration configuration = getConfigAs(RiscoBridgeConfiguration.class);
 
-        String panelIp = configuration.getHostname();
-        if (panelIp == null || panelIp.trim().isEmpty()) {
+        String hostname = configuration.getHostname();
+        if (hostname == null || hostname.trim().isEmpty()) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR,
                     "Set an IP address in the thing configuration.");
 
             return;
         }
 
-        hostName = panelIp;
-        port = configuration.getPort();
+        int port = configuration.getPort();
         updateStatus(ThingStatus.OFFLINE);
 
         // create & start panel interface
-        logger.debug("Starting interface with host {} at port {}", hostName, port);
+        logger.debug("Starting interface with host {} at port {}", hostname, port);
 
         try {
-            communicator = new RiscoCommunicator(getThing().getUID().getAsString(), hostName, port,
+            communicator = new RiscoCommunicator(getThing().getUID().getAsString(), hostname, port,
                     configuration.getId(), configuration.getEncoding());
         } catch (IOException e) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR,
