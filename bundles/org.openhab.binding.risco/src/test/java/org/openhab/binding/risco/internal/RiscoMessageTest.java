@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  */
-package org.openhab.binding.risco.internal.message;
+package org.openhab.binding.risco.internal;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
@@ -20,16 +20,15 @@ import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.openhab.binding.risco.internal.MessageReaderUtil;
-import org.openhab.binding.risco.internal.RiscoCrypt;
+import org.openhab.binding.risco.internal.RiscoMessage;
 
 /**
- * Test class for Risco encryption
+ * Test class for Risco Message.
  *
  * @author Georgios Moutsos - Initial contribution
  */
 @NonNullByDefault
-public class RiscoCryptTest {
+public class RiscoMessageTest {
 
     // @formatter:off
     public static final List<Object[]> data() {
@@ -45,19 +44,20 @@ public class RiscoCryptTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testDecryptEncrypt(String messageName) {
-        RiscoCrypt rc = new RiscoCrypt(1, "UTF-8");
         byte[] bytes = MessageReaderUtil.readRiscoMessage(messageName);
 
-        Object[] obj = rc.decodeMessage(bytes);
-        if (obj.length == 4) {
-            Integer cmdId = (Integer) obj[0];
-            String commandStr = (String) obj[1];
-            Boolean encrypted = (Boolean) obj[2];
-            // Boolean crcOk = (Boolean) obj[3];
+        // Decrypt
+        RiscoMessage msg = new RiscoMessage(1, "UTF-8", bytes);
 
-            byte[] encodedBuffer = rc.getCommandBuffer(commandStr, cmdId, encrypted);
+        // Get parts
+        Integer cmdId = msg.getCommandId();
+        String commandStr = msg.getCommand();
+        Boolean encrypted = msg.isEncrypted();
 
-            assertArrayEquals(bytes, encodedBuffer);
+        if (cmdId != null) {
+            RiscoMessage msg2 = new RiscoMessage(1, "UTF-8", cmdId, commandStr, encrypted);
+            assertArrayEquals(msg.getEncryptedMessage(), msg2.getEncryptedMessage());
+            assertArrayEquals(msg.getDecryptedMessage(), msg2.getDecryptedMessage());
         }
     }
 }
