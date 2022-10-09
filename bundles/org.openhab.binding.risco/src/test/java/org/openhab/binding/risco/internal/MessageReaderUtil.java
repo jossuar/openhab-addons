@@ -28,7 +28,7 @@ import org.openhab.core.util.HexUtils;
  */
 @NonNullByDefault
 public final class MessageReaderUtil {
-    private static final String MESSAGE_EXT = ".msg";
+    private static final String MESSAGE_EXT = ".txt";
 
     private MessageReaderUtil() {
         // Util class
