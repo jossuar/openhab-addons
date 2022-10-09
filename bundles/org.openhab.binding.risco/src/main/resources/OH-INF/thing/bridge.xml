@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<thing:thing-descriptions bindingId="caddx"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
+	xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
+
+	<bridge-type id="bridge">
+		<label>Risco</label>
+		<description>This bridge represents the Risco TCP interface.</description>
+
+		<channels>
+			<channel id="send_command" typeId="command">
+				<label>Send Command</label>
+				<description>Sends an Alarm Panel Command</description>
+			</channel>
+		</channels>
+
+		<config-description>
+			<parameter name="hostname" type="text" required="true">
+				<label>Risco Panel Host name or IP address</label>
+				<description>The hostname or IP address of the panel</description>
+			</parameter>
+			<parameter name="port" type="integer" required="true">
+				<label>Risco Panel port</label>
+				<description>The TCP port of the panel. Default port is 1000</description>
+				<default>1000</default>
+			</parameter>
+
+			<parameter name="id" type="integer" required="true">
+				<label>Risco Panel ID</label>
+				<description>The panel ID. Panel's default value is 1</description>
+				<default>1</default>
+			</parameter>
+			<parameter name="password" type="text" required="true">
+				<label>Risco Panel communication password</label>
+				<description>The panel's communication password. Panel's default value is 5678</description>
+				<default>5678</default>
+			</parameter>
+
+			<parameter name="encoding" type="text" required="true">
+				<label>Risco Panel communication encoding</label>
+				<description>The encoding used in the communication with the panel. Default value UTF-8</description>
+				<default>UTF-8</default>
+			</parameter>
+			<parameter name="connectionDelay" type="integer" required="true">
+				<limitToOptions>false</limitToOptions>
+				<label>Connection delay</label>
+				<description>Older panels require a delay after the initial connect.Usually 10000 msec. Default value is 0</description>
+				<default>0</default>
+				<options>
+					<option value="0">0</option>
+					<option value="10000">10000</option>
+				</options>
+			</parameter>
+		</config-description>
+	</bridge-type>
+
+</thing:thing-descriptions>
