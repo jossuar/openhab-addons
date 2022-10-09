@@ -13,75 +13,75 @@
 		<description>Represents a partition within a Risco Alarm System</description>
 
 		<channels>
-			<channel id="alarm" typeId="partition_condition">
+			<channel id="alarm" typeId="partition_switch">
 				<label>Alarm</label>
 				<description>Alarm or Stand By</description>
 			</channel>
-			<channel id="duress" typeId="partition_condition">
+			<channel id="duress" typeId="partition_switch">
 				<label>Duress</label>
 				<description>Duress or Free</description>
 			</channel>
-			<channel id="false_code" typeId="partition_condition">
+			<channel id="false_code" typeId="partition_switch">
 				<label>False Code</label>
 				<description>False Code or Code Ok</description>
 			</channel>
-			<channel id="fire" typeId="partition_condition">
+			<channel id="fire" typeId="partition_switch">
 				<label>Fire</label>
 				<description>Fire or No Fire</description>
 			</channel>
-			<channel id="panic" typeId="partition_condition">
+			<channel id="panic" typeId="partition_switch">
 				<label>Panic</label>
 				<description>Panic or No Panic</description>
 			</channel>
-			<channel id="medic" typeId="partition_condition">
+			<channel id="medic" typeId="partition_switch">
 				<label>Medic</label>
 				<description>Medic or No Medic</description>
 			</channel>
-			<channel id="arm" typeId="partition_condition">
+			<channel id="arm" typeId="partition_switch">
 				<label>Arm</label>
 				<description>Armed or Disarmed</description>
 			</channel>
-			<channel id="home_stay" typeId="partition_condition">
+			<channel id="home_stay" typeId="partition_switch">
 				<label>Home Stay</label>
 				<description>Home Stay or Home Disarmed</description>
 			</channel>
-			<channel id="ready" typeId="partition_condition">
+			<channel id="ready" typeId="partition_switch">
 				<label>Ready</label>
 				<description>Ready or Not Ready</description>
 			</channel>
-			<channel id="open" typeId="partition_condition">
+			<channel id="open" typeId="partition_switch">
 				<label>Open</label>
 				<description>Zone Open or Zones Closed</description>
 			</channel>
-			<channel id="exist" typeId="partition_condition">
+			<channel id="exist" typeId="partition_switch">
 				<label>Exist</label>
 				<description>Exist or Not Exist</description>
 			</channel>
-			<channel id="reset_required" typeId="partition_condition">
+			<channel id="reset_required" typeId="partition_switch">
 				<label>Reset Required</label>
 				<description>Memory Event or Memory Ack</description>
 			</channel>
-			<channel id="no_activity" typeId="partition_condition">
+			<channel id="no_activity" typeId="partition_switch">
 				<label>No Activity</label>
 				<description>Activity Alert or Activity Ok</description>
 			</channel>
-			<channel id="group_a_arm" typeId="partition_condition">
+			<channel id="group_a_arm" typeId="partition_switch">
 				<label>Group A Arm</label>
 				<description>Group A Armed or Group A Disarmed</description>
 			</channel>
-			<channel id="group_b_arm" typeId="partition_condition">
+			<channel id="group_b_arm" typeId="partition_switch">
 				<label>Group B Arm</label>
 				<description>Group B Armed or Group B Disarmed</description>
 			</channel>
-			<channel id="group_c_arm" typeId="partition_condition">
+			<channel id="group_c_arm" typeId="partition_switch">
 				<label>Group C Arm</label>
 				<description>Group C Armed or Group C Disarmed</description>
 			</channel>
-			<channel id="group_d_arm" typeId="partition_condition">
+			<channel id="group_d_arm" typeId="partition_switch">
 				<label>Group D Arm</label>
 				<description>Group D Armed or Group D Disarmed</description>
 			</channel>
-			<channel id="trouble" typeId="partition_condition">
+			<channel id="trouble" typeId="partition_switch">
 				<label>Trouble</label>
 				<description>Trouble or Ok</description>
 			</channel>
