@@ -141,7 +141,6 @@ public class RiscoCommunicator {
                 if (m == null) {
                     return;
                 }
-
             }
         }
 
