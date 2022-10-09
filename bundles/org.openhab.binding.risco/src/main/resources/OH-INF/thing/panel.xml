@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<thing:thing-descriptions bindingId="caddx"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
+	xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
+
+	<thing-type id="panel">
+		<supported-bridge-type-refs>
+			<bridge-type-ref id="bridge"/>
+		</supported-bridge-type-refs>
+
+		<label>Caddx Alarm Panel</label>
+		<description>The basic representation of the Caddx Alarm System.</description>
+
+		<channels>
+			<channel id="name" typeId="panel_text">
+				<label>Name</label>
+				<description>Name</description>
+			</channel>
+
+			<channel id="low_battery_trouble" typeId="panel_flag">
+				<label>Low Battery Trouble</label>
+				<description>Low Battery or Battery Ok</description>
+			</channel>
+			<channel id="ac_trouble" typeId="panel_flag">
+				<label>AC Trouble</label>
+				<description>AC Unplugged or AC Plugged</description>
+			</channel>
+			<channel id="phone_line_trouble" typeId="panel_flag">
+				<label>Phone Line Trouble</label>
+				<description>Phone Line Trouble or Phone Line Ok</description>
+			</channel>
+			<channel id="clock_trouble" typeId="panel_flag">
+				<label>Clock Trouble</label>
+				<description>Clock Trouble or Clock Ok</description>
+			</channel>
+			<channel id="default_switch" typeId="panel_flag">
+				<label>Default Switch</label>
+				<description>Default Switch On or Default Switch Off</description>
+			</channel>
+			<channel id="ms_1_report_trouble" typeId="panel_flag">
+				<label>MS 1 Report Trouble</label>
+				<description>MS 1 Report Trouble or MS 1 Report Ok</description>
+			</channel>
+			<channel id="ms_2_report_trouble" typeId="panel_flag">
+				<label>MS 2 Report Trouble</label>
+				<description>MS 2 Report Trouble or MS 2 Report Ok</description>
+			</channel>
+			<channel id="ms_3_report_trouble" typeId="panel_flag">
+				<label>MS 3 Report Trouble</label>
+				<description>MS 3 Report Trouble or MS 3 Report Ok</description>
+			</channel>
+			<channel id="box_tamper" typeId="panel_contact">
+				<label>Box Tamper</label>
+				<description>Box Tamper Open or Box Tamper Closed</description>
+			</channel>
+			<channel id="jamming_trouble" typeId="panel_flag">
+				<label>Jamming Trouble</label>
+				<description>Jamming Trouble or Jamming Ok</description>
+			</channel>
+			<channel id="prog_mode" typeId="panel_flag">
+				<label>Prog Mode</label>
+				<description>Prog Mode On or Prog Mode Off</description>
+			</channel>
+			<channel id="learn_mode" typeId="panel_flag">
+				<label>Learn Mode</label>
+				<description>Learn Mode On or Learn Mode Off</description>
+			</channel>
+			<channel id="three_min_bypass" typeId="panel_flag">
+				<label>Three Min Bypass</label>
+				<description>Three Min Bypass On or Three Min Bypass Off</description>
+			</channel>
+			<channel id="walk_test" typeId="panel_flag">
+				<label>Walk Test</label>
+				<description>Walk Test On or Walk Test Off</description>
+			</channel>
+			<channel id="aux_trouble" typeId="panel_flag">
+				<label>AUX Trouble</label>
+				<description>Aux Trouble or Aux Ok</description>
+			</channel>
+			<channel id="rs485_bus_trouble" typeId="panel_flag">
+				<label>RS485 Bus Trouble</label>
+				<description>RS485 Bus Trouble or RS485 Bus Ok</description>
+			</channel>
+			<channel id="ls_switch" typeId="panel_flag">
+				<label>Ls Switch</label>
+				<description>Ls Switch On or Ls Switch Off</description>
+			</channel>
+			<channel id="bell_switch" typeId="panel_flag">
+				<label>Bell Switch</label>
+				<description>Bell Switch On or Bell Switch Off</description>
+			</channel>
+			<channel id="bell_trouble" typeId="panel_flag">
+				<label>Bell Trouble</label>
+				<description>Bell Trouble or Bell Ok</description>
+			</channel>
+			<channel id="bell_tamper" typeId="panel_flag">
+				<label>Bell Tamper</label>
+				<description>Bell Tamper or Bell Tamper Ok</description>
+			</channel>
+			<channel id="service_expired" typeId="panel_flag">
+				<label>Service Expired</label>
+				<description>Service Expired or Service Ok</description>
+			</channel>
+			<channel id="payment_expired" typeId="panel_flag">
+				<label>Payment Expired</label>
+				<description>Payment Expired or Payment Ok</description>
+			</channel>
+			<channel id="service_mode" typeId="panel_flag">
+				<label>Service Mode</label>
+				<description>Service Mode On or Service Mode Off</description>
+			</channel>
+			<channel id="dual_path" typeId="panel_flag">
+				<label>Dual Path</label>
+				<description>Dual Path On or Dual Path Off</description>
+			</channel>
+		</channels>
+	</thing-type>
+
+</thing:thing-descriptions>
