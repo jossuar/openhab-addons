@@ -16,6 +16,9 @@ import java.io.IOException;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.junit.jupiter.api.Test;
+import org.openhab.binding.risco.internal.RiscoCommunicator.RiscoPanelListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Test class for Risco communication.
@@ -23,28 +26,44 @@ import org.junit.jupiter.api.Test;
  * @author Georgios Moutsos - Initial contribution
  */
 @NonNullByDefault
-public class RiscoCommTest {
+public class RiscoCommTest implements RiscoPanelListener {
+    private final Logger logger = LoggerFactory.getLogger(RiscoCommTest.class);
 
     @Test
     public void testCommunication() throws IOException {
         RiscoCommunicator comm = new RiscoCommunicator("risco", "192.168.1.120", 1000, 1, "UTF-8");
+        comm.addListener(this);
 
-        comm.send("RMT=5678");
-        comm.send("LCL");
-        comm.send("ZLBL*1:8?");
-        comm.send("PNLCNF");
-        comm.send("SYSLBL?");
-        comm.send("SSTT?");
-        comm.send("ZTYPE*1?");
-        comm.send("ZPART&*1?");
-        comm.send("ZAREA&*1?");
+        int i = 0;
+        while (i++ < 30) {
+            comm.send("RMT=5678");
+            comm.send("LCL");
+            comm.send("ZLBL*1:8?");
+            comm.send("PNLCNF");
+            comm.send("SYSLBL?");
+            comm.send("SSTT?");
+            comm.send("ZTYPE*1?");
+            comm.send("ZPART&*1?");
+            comm.send("ZAREA&*1?");
+
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
 
         try {
-            Thread.sleep(20000);
+            Thread.sleep(200000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
         comm.stop();
+    }
+
+    @Override
+    public void handleRiscoMessage(RiscoMessagePair pair) {
+        logger.warn("ooooooooooooooooooooooooooooooooooooooooooooooooooo Updating the channels");
     }
 }
