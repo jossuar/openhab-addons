@@ -17,6 +17,8 @@ import java.io.IOException;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.binding.risco.internal.RiscoCommunicator;
+import org.openhab.binding.risco.internal.RiscoCommunicator.RiscoPanelListener;
+import org.openhab.binding.risco.internal.RiscoMessagePair;
 import org.openhab.binding.risco.internal.config.RiscoBridgeConfiguration;
 import org.openhab.core.thing.Bridge;
 import org.openhab.core.thing.Channel;
@@ -35,8 +37,7 @@ import org.slf4j.LoggerFactory;
  * @author Georgios Moutsos - Initial contribution
  */
 @NonNullByDefault
-public class RiscoBridgeHandler extends BaseBridgeHandler {
-
+public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelListener {
     private final Logger logger = LoggerFactory.getLogger(RiscoBridgeHandler.class);
 
     public RiscoBridgeHandler(Bridge bridge) {
@@ -75,10 +76,10 @@ public class RiscoBridgeHandler extends BaseBridgeHandler {
             return;
         }
 
-        // RiscoCommunicator comm = communicator;
-        // if (comm != null) {
-        // comm.addListener(this);
-        // }
+        RiscoCommunicator communicator = this.communicator;
+        if (communicator != null) {
+            communicator.addListener(this);
+        }
         updateStatus(ThingStatus.ONLINE);
 
         // list all channels
@@ -122,5 +123,13 @@ public class RiscoBridgeHandler extends BaseBridgeHandler {
 
         // Initialize again
         initialize();
+    }
+
+    @Override
+    public void handleRiscoMessage(RiscoMessagePair pair) {
+        logger.warn("ooooooooooooooooooooooooooooooooooooooooooooooooooo Updating the channels");
+
+        // TODO Auto-generated method stub
+
     }
 }

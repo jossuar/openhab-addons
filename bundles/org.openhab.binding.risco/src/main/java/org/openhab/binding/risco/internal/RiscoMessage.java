@@ -17,7 +17,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.core.util.HexUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +35,7 @@ public class RiscoMessage {
     private final byte[] encryptedMessage;
     private final byte[] decryptedMessage;
     private final String stringMessage;
-    private final @Nullable Integer commandId;
+    private final int commandId;
     private final String command;
     private final String crcValue;
 
@@ -50,7 +49,7 @@ public class RiscoMessage {
         this.stringMessage = bytesToString(decryptedMessage);
 
         if (stringMessage.startsWith("N") || stringMessage.startsWith("B")) {
-            this.commandId = null;
+            this.commandId = -1;
             this.command = stringMessage.substring(0, stringMessage.indexOf(ETB));
             this.crcValue = stringMessage.substring(stringMessage.indexOf(ETB) + 1);
         } else {
@@ -96,8 +95,9 @@ public class RiscoMessage {
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        sb.append("Message: ");
-        sb.append(command);
+        sb.append("ENC: ").append(isEncrypted());
+        sb.append(", MO: ").append(getMessageOrigin());
+        sb.append(", MSG: ").append(commandId).append("-").append(this.crcValue).append("-").append(stringMessage);
 
         return sb.toString();
     }
@@ -106,7 +106,7 @@ public class RiscoMessage {
         return encryptedMessage[1] == 17;
     }
 
-    public @Nullable Integer getCommandId() {
+    public Integer getCommandId() {
         return commandId;
     }
 
@@ -136,6 +136,16 @@ public class RiscoMessage {
                 crcValue);
 
         return crcOK;
+    }
+
+    public MessageOrigin getMessageOrigin() {
+        if (commandId >= 0 && commandId < 50) {
+            return MessageOrigin.BINDING;
+        } else if (commandId >= 50 && commandId < 100) {
+            return MessageOrigin.PANEL;
+        } else {
+            return MessageOrigin.UNKNOWN;
+        }
     }
 
     /**
