@@ -9,7 +9,9 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 
@@ -36,12 +38,25 @@ public class RiscoCommunicator {
 
     // send
     private final Thread riscoSender;
-    private final BlockingDeque<RiscoMessage> sendQueue = new LinkedBlockingDeque<RiscoMessage>(50);
+    private final BlockingDeque<RiscoMessage> sendQueue = new LinkedBlockingDeque<>(50);
     private int sendCommandId = 0;
 
     // receive
     private final Thread riscoReceiver;
-    private final BlockingDeque<RiscoMessage> receiveQueue = new LinkedBlockingDeque<>();
+
+    // in-flight
+    private final BlockingDeque<RiscoMessagePair> inFlightQueue = new LinkedBlockingDeque<>();
+
+    // listener
+    private final Set<RiscoPanelListener> listenerQueue = new HashSet<>();
+
+    public interface RiscoPanelListener {
+        public void handleRiscoMessage(RiscoMessagePair pair);
+    }
+
+    public void addListener(RiscoPanelListener listener) {
+        listenerQueue.add(listener);
+    }
 
     public RiscoCommunicator(String uid, String hostname, int port, int panelId, String encoding) throws IOException {
         logger.warn("openConnection(): Connecting to Risco panel");
@@ -110,15 +125,18 @@ public class RiscoCommunicator {
         connected = false;
     }
 
-    public void send(String command) {
+    public synchronized void send(String command) {
         RiscoMessage msg = new RiscoMessage(panelId, encoding, sendCommandId, command, true);
-        sendQueue.add(msg);
+        RiscoMessagePair pair = new RiscoMessagePair(msg);
 
         // adjust command id For next send (0-49)
         sendCommandId++;
         if (sendCommandId == 50) {
             sendCommandId = 0;
         }
+
+        inFlightQueue.add(pair);
+        sendQueue.add(msg);
     }
 
     public void sendFirst(int commandId, String command) {
@@ -127,33 +145,74 @@ public class RiscoCommunicator {
         sendQueue.addFirst(msg);
     }
 
+    @SuppressWarnings({ "null", "unused" })
     private void handleIncomingMessage(RiscoMessage msg) {
-        logger.warn("Handle message {} - {}", msg.getCommandId(), msg.getCommand());
+        logger.warn("handleIncomingMessage {}", msg);
 
-        Integer id = msg.getCommandId();
-        if (id != null) {
-            if (id >= 50) {
-                sendFirst(id, "ACK");
+        if (msg.getMessageOrigin() == MessageOrigin.PANEL) {
+            sendFirst(msg.getCommandId(), "ACK");
 
-                receiveQueue.add(msg);
-            } else {
-                RiscoMessage m = findInSendQueue(msg.getCommandId());
-                if (m == null) {
-                    return;
+            RiscoMessagePair pair = new RiscoMessagePair(msg);
+            inFlightQueue.add(pair);
+        } else if (msg.getMessageOrigin() == MessageOrigin.BINDING) {
+            RiscoMessagePair m = findInInFlightQueue(msg.getCommandId());
+            if (m != null) {
+                m.setResponse(msg);
+            }
+
+            while ((m = inFlightQueue.peek()) != null) {
+                if (!m.hasResponse()) {
+                    break;
+                }
+
+                m = inFlightQueue.poll();
+                for (RiscoPanelListener listener : listenerQueue) {
+                    listener.handleRiscoMessage(m);
                 }
             }
-        }
 
-        msg.getCommandId();
+        } else {
+            // Unknown message origin
+            logger.debug("Unknown message origin. Abnormal situation. {}", msg);
+        }
     }
 
-    private @Nullable RiscoMessage findInSendQueue(@Nullable Integer commandId) {
-        RiscoMessage msg = null;
-        Iterator<RiscoMessage> itr = sendQueue.iterator();
+    @SuppressWarnings({ "null", "unused" })
+    private void handleOutgoingMessage(RiscoMessage msg) {
+        logger.warn("handleOutgoingMessage {}", msg);
+
+        if (msg.getMessageOrigin() == MessageOrigin.PANEL) {
+            RiscoMessagePair m = findInInFlightQueue(msg.getCommandId());
+            if (m != null) {
+                m.setResponse(msg);
+            }
+
+            while ((m = inFlightQueue.poll()) != null) {
+                if (!m.hasResponse()) {
+                    break;
+                }
+
+                for (RiscoPanelListener listener : listenerQueue) {
+                    logger.warn("Informing listener: {}", listener);
+                    listener.handleRiscoMessage(m);
+                }
+            }
+
+        } else if (msg.getMessageOrigin() == MessageOrigin.BINDING) {
+            // Nothing to be done
+        } else {
+            // Unknown message origin
+            logger.debug("Unknown message origin. Abnormal situation. {}", msg);
+        }
+    }
+
+    private @Nullable RiscoMessagePair findInInFlightQueue(int commandId) {
+        RiscoMessagePair msg = null;
+        Iterator<RiscoMessagePair> itr = inFlightQueue.iterator();
 
         while (itr.hasNext()) {
             msg = itr.next();
-            if (msg.getCommandId() == commandId) {
+            if (msg.getRequest().getCommandId() == commandId) {
                 break;
             }
         }
@@ -274,10 +333,10 @@ public class RiscoCommunicator {
         public void run() {
             try {
                 while (!Thread.currentThread().isInterrupted()) {
-                    RiscoMessage outgoingMessage = sendQueue.take();
-                    write(outgoingMessage.getEncryptedMessage());
+                    RiscoMessage rm = sendQueue.take();
+                    write(rm.getEncryptedMessage());
 
-                    logger.warn("->: {}", outgoingMessage);
+                    handleOutgoingMessage(rm);
                 }
 
                 logger.warn("RiscoCommunicator.SenderThread: Thread interrupted.");
@@ -294,7 +353,7 @@ public class RiscoCommunicator {
         private void write(byte[] buffer) throws IOException {
             tcpOutput.write(buffer);
             tcpOutput.flush();
-            logger.warn("write(): Message Sent: {}", buffer);
+            logger.trace("write(): Message Sent: {}", buffer);
         }
     }
 }
