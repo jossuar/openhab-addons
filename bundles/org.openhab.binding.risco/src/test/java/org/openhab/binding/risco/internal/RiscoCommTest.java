@@ -20,6 +20,8 @@ import org.openhab.binding.risco.internal.RiscoCommunicator.RiscoPanelListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ch.qos.logback.classic.Level;
+
 /**
  * Test class for Risco communication.
  *
@@ -31,32 +33,40 @@ public class RiscoCommTest implements RiscoPanelListener {
 
     @Test
     public void testCommunication() throws IOException {
+        Logger root = LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
+        ((ch.qos.logback.classic.Logger) root).setLevel(Level.DEBUG);
+
+        logger.trace("Hello trace message");
+        logger.debug("Hello debug message");
+        logger.warn("Hello trace message");
+
         RiscoCommunicator comm = new RiscoCommunicator("risco", "192.168.1.120", 1000, 1, "UTF-8");
         comm.addListener(this);
 
-        int i = 0;
-        while (i++ < 30) {
-            comm.send("RMT=5678");
-            comm.send("LCL");
-            comm.send("ZLBL*1:8?");
-            comm.send("PNLCNF");
-            comm.send("SYSLBL?");
-            comm.send("SSTT?");
-            comm.send("ZTYPE*1?");
-            comm.send("ZPART&*1?");
-            comm.send("ZAREA&*1?");
+        comm.send("RMT=5678");
+        comm.send("LCL");
+        comm.send("ZLBL*1:8?");
+        comm.send("PNLCNF");
+        comm.send("SYSLBL?");
+        comm.send("SSTT?");
+        comm.send("ZTYPE*1?");
+        comm.send("ZPART&*1?");
+        comm.send("ZAREA&*1?");
 
+        int mins = 0;
+        int max_mins = 6 * 60;
+        while (true) {
             try {
-                Thread.sleep(2000);
+                comm.send("CLOCK");
+
+                Thread.sleep(60 * 1000);
+                mins++;
+                if (mins >= max_mins) {
+                    break;
+                }
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        }
-
-        try {
-            Thread.sleep(200000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
 
         comm.stop();
@@ -64,6 +74,6 @@ public class RiscoCommTest implements RiscoPanelListener {
 
     @Override
     public void handleRiscoMessage(RiscoMessagePair pair) {
-        logger.warn("ooooooooooooooooooooooooooooooooooooooooooooooooooo Updating the channels");
+        // logger.warn("ooooooooooooooooooooooooooooooooooooooooooooooooooo Updating the channels");
     }
 }
