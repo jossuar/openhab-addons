@@ -132,7 +132,7 @@ public class RiscoMessage {
         String computedCrc = getCommandCRC(command);
         boolean crcOK = crcValue.equals(computedCrc);
 
-        logger.debug("Command[{}] crcOK:{}, Computed CRC: {}, Message CRC: {}", commandId, crcOK, computedCrc,
+        logger.trace("Command[{}] crcOK:{}, Computed CRC: {}, Message CRC: {}", commandId, crcOK, computedCrc,
                 crcValue);
 
         return crcOK;
@@ -201,7 +201,7 @@ public class RiscoMessage {
             Arrays.fill(pseudoBuffer, (byte) 0);
         }
 
-        logger.debug("Pseudo Buffer Created for Panel Id({})", panelId);
+        logger.trace("Pseudo Buffer Created for Panel Id({})", panelId);
 
         return pseudoBuffer;
     }
@@ -264,13 +264,13 @@ public class RiscoMessage {
             }
 
             outputStream.write(encryptedWithoutDle[i]);
-            logger.debug("Position: {}, i: {}, chars[i]: {}", position, i, encryptedWithoutDle[i]);
+            logger.trace("Position: {}, i: {}, chars[i]: {}", position, i, encryptedWithoutDle[i]);
 
             position++;
         }
         byte[] decrypted = outputStream.toByteArray();
 
-        logger.debug("Decrypted buffer: {}", HexUtils.bytesToHex(decrypted, "-"));
+        logger.trace("Decrypted buffer: {}", HexUtils.bytesToHex(decrypted, "-"));
 
         return decrypted;
     }
