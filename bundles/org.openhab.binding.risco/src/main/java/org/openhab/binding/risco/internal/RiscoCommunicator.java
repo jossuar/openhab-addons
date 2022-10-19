@@ -59,7 +59,7 @@ public class RiscoCommunicator {
     }
 
     public RiscoCommunicator(String uid, String hostname, int port, int panelId, String encoding) throws IOException {
-        logger.warn("openConnection(): Connecting to Risco panel");
+        logger.debug("openConnection(): Connecting to Risco panel");
 
         this.panelId = panelId;
         this.encoding = encoding;
@@ -86,7 +86,7 @@ public class RiscoCommunicator {
     }
 
     public void stop() {
-        logger.trace("RiscoCommunicator stopping");
+        logger.debug("RiscoCommunicator stopping");
 
         // Interrupt threads
         riscoReceiver.interrupt();
@@ -105,11 +105,11 @@ public class RiscoCommunicator {
         // Close socket
         try {
             tcpSocket.close();
-            logger.warn("closeConnection(): Closed TCP Connection!");
+            logger.debug("closeConnection(): Closed TCP Connection!");
         } catch (IOException ioException) {
-            logger.error("closeConnection(): Unable to close connection - {}", ioException.getMessage());
+            logger.debug("closeConnection(): Unable to close connection - {}", ioException.getMessage());
         } catch (Exception exception) {
-            logger.error("closeConnection(): Error closing connection - {}", exception.getMessage());
+            logger.debug("closeConnection(): Error closing connection - {}", exception.getMessage());
         }
 
         // Wait until communication threads exit
@@ -147,7 +147,7 @@ public class RiscoCommunicator {
 
     @SuppressWarnings({ "null", "unused" })
     private void handleIncomingMessage(RiscoMessage msg) {
-        logger.warn("handleIncomingMessage {}", msg);
+        logger.debug("<---- {}", msg);
 
         if (msg.getMessageOrigin() == MessageOrigin.PANEL) {
             sendFirst(msg.getCommandId(), "ACK");
@@ -179,7 +179,7 @@ public class RiscoCommunicator {
 
     @SuppressWarnings({ "null", "unused" })
     private void handleOutgoingMessage(RiscoMessage msg) {
-        logger.warn("handleOutgoingMessage {}", msg);
+        logger.debug("------> {}", msg);
 
         if (msg.getMessageOrigin() == MessageOrigin.PANEL) {
             RiscoMessagePair m = findInInFlightQueue(msg.getCommandId());
@@ -193,7 +193,7 @@ public class RiscoCommunicator {
                 }
 
                 for (RiscoPanelListener listener : listenerQueue) {
-                    logger.warn("Informing listener: {}", listener);
+                    logger.trace("Informing listener: {}", listener);
                     listener.handleRiscoMessage(m);
                 }
             }
@@ -240,7 +240,7 @@ public class RiscoCommunicator {
                 readMessageBuffer();
             }
 
-            logger.warn("RiscoReceiver. Thread stopped.");
+            logger.debug("RiscoReceiver. Thread stopped.");
         }
 
         private void readMessageBuffer() {
@@ -264,7 +264,7 @@ public class RiscoCommunicator {
                     buffer[bufferIndex] = (byte) b;
                     bufferIndex++;
                     if (bufferIndex == MAX_MESSAGE_SIZE) {
-                        logger.trace("Message exceeded {} bytes.", MAX_MESSAGE_SIZE);
+                        logger.debug("Message exceeded {} bytes.", MAX_MESSAGE_SIZE);
 
                         // Stop the receiver
                         Thread.currentThread().interrupt();
@@ -283,7 +283,7 @@ public class RiscoCommunicator {
             } catch (EOFException e) {
                 return;
             } catch (IOException e) {
-                logger.trace("IOException caught.");
+                logger.debug("IOException caught.");
                 Thread.currentThread().interrupt();
             }
         }
@@ -339,15 +339,15 @@ public class RiscoCommunicator {
                     handleOutgoingMessage(rm);
                 }
 
-                logger.warn("RiscoCommunicator.SenderThread: Thread interrupted.");
+                logger.debug("RiscoCommunicator.SenderThread: Thread interrupted.");
             } catch (InterruptedException e) {
                 // Just exit the loop
-                logger.warn("RiscoCommunicator.SenderThread: InterruptedException caught.");
+                logger.debug("RiscoCommunicator.SenderThread: InterruptedException caught.");
             } catch (IOException e) {
-                logger.warn("RiscoCommunicator.SenderThread: IOException caught. {}", e);
+                logger.debug("RiscoCommunicator.SenderThread: IOException caught. {}", e);
             }
 
-            logger.warn("RiscoSender. Thread stopped.");
+            logger.debug("RiscoSender. Thread stopped.");
         }
 
         private void write(byte[] buffer) throws IOException {
