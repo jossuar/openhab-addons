@@ -68,7 +68,7 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
 
         try {
             communicator = new RiscoCommunicator(getThing().getUID().getAsString(), hostname, port,
-                    configuration.getId(), configuration.getEncoding());
+                    configuration.getId(), configuration.getEncoding(), scheduler);
         } catch (IOException e) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR,
                     "Communication cannot be initialized. " + e.toString());
@@ -79,8 +79,19 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
         RiscoCommunicator communicator = this.communicator;
         if (communicator != null) {
             communicator.addListener(this);
+
+            communicator.send("RMT=5678");
+            communicator.send("LCL");
+            communicator.send("ZLBL*1:8?");
+            communicator.send("PNLCNF");
+            communicator.send("SYSLBL?");
+            communicator.send("SSTT?");
+            communicator.send("ZTYPE*1?");
+            communicator.send("ZPART&*1?");
+            communicator.send("ZAREA&*1?");
+
+            updateStatus(ThingStatus.ONLINE);
         }
-        updateStatus(ThingStatus.ONLINE);
 
         // list all channels
         if (logger.isTraceEnabled()) {
