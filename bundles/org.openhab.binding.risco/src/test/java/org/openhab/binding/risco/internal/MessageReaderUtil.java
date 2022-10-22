@@ -34,12 +34,6 @@ public final class MessageReaderUtil {
         // Util class
     }
 
-    /**
-     * Reads the raw bytes of the message given the file relative to this package and returns the objects.
-     *
-     * @param messageName name of the telegram file to read
-     * @return The raw bytes of a telegram
-     */
     public static byte[] readRawMessage(String messageName) {
         try (InputStream is = MessageReaderUtil.class.getResourceAsStream(messageName + MESSAGE_EXT);
                 InputStreamReader isr = new InputStreamReader(is);
@@ -52,12 +46,6 @@ public final class MessageReaderUtil {
         }
     }
 
-    /**
-     * Reads a message given the file relative to this package and returns the object.
-     *
-     * @param messageName name of the message file to read
-     * @return a CaddxMessage object
-     */
     public static byte[] readRiscoMessage(String messageName) {
         byte[] bytes = readRawMessage(messageName);
         return bytes;

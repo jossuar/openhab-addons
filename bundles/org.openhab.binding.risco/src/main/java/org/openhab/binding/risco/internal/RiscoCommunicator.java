@@ -8,12 +8,16 @@ import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -29,26 +33,36 @@ import org.slf4j.LoggerFactory;
 public class RiscoCommunicator {
     private final Logger logger = LoggerFactory.getLogger(RiscoCommunicator.class);
 
+    private final String uid;
+    private final String hostname;
+    private final int port;
     private final int panelId;
     private final String encoding;
-    private final Socket tcpSocket;
-    private final BufferedOutputStream tcpOutput;
-    private final BufferedInputStream tcpInput;
+
+    private Socket tcpSocket;
+    private BufferedOutputStream tcpOutput;
+    private BufferedInputStream tcpInput;
     private Boolean connected = false;
 
     // send
-    private final Thread riscoSender;
+    private Thread riscoSender;
     private final BlockingDeque<RiscoMessage> sendQueue = new LinkedBlockingDeque<>(50);
     private int sendCommandId = 0;
 
     // receive
-    private final Thread riscoReceiver;
+    private Thread riscoReceiver;
 
     // in-flight
     private final BlockingDeque<RiscoMessagePair> inFlightQueue = new LinkedBlockingDeque<>();
 
     // listener
     private final Set<RiscoPanelListener> listenerQueue = new HashSet<>();
+
+    // watchdog
+    private ZonedDateTime lastSendTime = ZonedDateTime.now();
+    private ZonedDateTime lastReceiveTime = ZonedDateTime.now();
+
+    private @Nullable ScheduledExecutorService scheduler;
 
     public interface RiscoPanelListener {
         public void handleRiscoMessage(RiscoMessagePair pair);
@@ -58,11 +72,16 @@ public class RiscoCommunicator {
         listenerQueue.add(listener);
     }
 
-    public RiscoCommunicator(String uid, String hostname, int port, int panelId, String encoding) throws IOException {
+    public RiscoCommunicator(String uid, String hostname, int port, int panelId, String encoding,
+            @Nullable ScheduledExecutorService scheduler) throws IOException {
         logger.debug("openConnection(): Connecting to Risco panel");
 
+        this.uid = uid;
+        this.hostname = hostname;
+        this.port = port;
         this.panelId = panelId;
         this.encoding = encoding;
+        this.scheduler = scheduler;
 
         // Open the socket and get the streams
         tcpSocket = new Socket();
@@ -71,8 +90,8 @@ public class RiscoCommunicator {
         tcpOutput = new BufferedOutputStream(tcpSocket.getOutputStream());
         tcpInput = new BufferedInputStream(tcpSocket.getInputStream());
 
-        // Start receiver and sender threads
-        riscoReceiver = new Thread(new RiscoReceiver(), "OH-binding-" + uid + "-riscoreceiver");
+        // Start sender, receiver and watchdog threads
+        riscoReceiver = new Thread(new RiscoReceiver(), "OH-binding-" + uid + "-riscorecevr");
         riscoReceiver.setDaemon(true);
         riscoReceiver.start();
 
@@ -80,13 +99,43 @@ public class RiscoCommunicator {
         riscoSender.setDaemon(true);
         riscoSender.start();
 
+        if (scheduler != null) {
+            scheduler.scheduleWithFixedDelay(new RiscoWatchdog(), 0, 60, TimeUnit.SECONDS);
+        }
+
         connected = true;
 
         logger.trace("RiscoCommunicator communication threads started successfully");
     }
 
+    private void start() throws IOException {
+        // Open the socket and get the streams
+        tcpSocket = new Socket();
+        SocketAddress socketAddress = new InetSocketAddress(hostname, port);
+        tcpSocket.connect(socketAddress, 5000);
+        tcpOutput = new BufferedOutputStream(tcpSocket.getOutputStream());
+        tcpInput = new BufferedInputStream(tcpSocket.getInputStream());
+
+        // Start sender, receiver and watchdog threads
+        riscoReceiver = new Thread(new RiscoReceiver(), "OH-binding-" + uid + "-riscorecevr");
+        riscoReceiver.setDaemon(true);
+        riscoReceiver.start();
+
+        riscoSender = new Thread(new RiscoSender(), "OH-binding-" + uid + "-riscosender");
+        riscoSender.setDaemon(true);
+        riscoSender.start();
+
+        if (scheduler != null) {
+            scheduler.scheduleWithFixedDelay(new RiscoWatchdog(), 0, 60, TimeUnit.SECONDS);
+        }
+
+        connected = true;
+    }
+
     public void stop() {
         logger.debug("RiscoCommunicator stopping");
+
+        connected = false;
 
         // Interrupt threads
         riscoReceiver.interrupt();
@@ -121,8 +170,6 @@ public class RiscoCommunicator {
             riscoSender.join(3000);
         } catch (InterruptedException e) {
         }
-
-        connected = false;
     }
 
     public synchronized void send(String command) {
@@ -142,7 +189,7 @@ public class RiscoCommunicator {
     public void sendFirst(int commandId, String command) {
         RiscoMessage msg = new RiscoMessage(panelId, encoding, commandId, command, true);
 
-        sendQueue.addFirst(msg);
+        sendQueue.add(msg);
     }
 
     @SuppressWarnings({ "null", "unused" })
@@ -159,6 +206,7 @@ public class RiscoCommunicator {
             if (m != null) {
                 m.setResponse(msg);
             }
+            lastSendTime = ZonedDateTime.now();
 
             while ((m = inFlightQueue.peek()) != null) {
                 if (!m.hasResponse()) {
@@ -179,13 +227,15 @@ public class RiscoCommunicator {
 
     @SuppressWarnings({ "null", "unused" })
     private void handleOutgoingMessage(RiscoMessage msg) {
-        logger.debug("------> {}", msg);
+        logger.debug("----> {}", msg);
 
         if (msg.getMessageOrigin() == MessageOrigin.PANEL) {
             RiscoMessagePair m = findInInFlightQueue(msg.getCommandId());
             if (m != null) {
                 m.setResponse(msg);
             }
+
+            lastReceiveTime = ZonedDateTime.now();
 
             while ((m = inFlightQueue.poll()) != null) {
                 if (!m.hasResponse()) {
@@ -326,9 +376,6 @@ public class RiscoCommunicator {
     }
 
     private class RiscoSender implements Runnable {
-        /**
-         * Run method. Runs the MessageListener thread
-         */
         @Override
         public void run() {
             try {
@@ -354,6 +401,33 @@ public class RiscoCommunicator {
             tcpOutput.write(buffer);
             tcpOutput.flush();
             logger.trace("write(): Message Sent: {}", buffer);
+        }
+    }
+
+    private void reconnect() throws IOException {
+        stop();
+        start();
+    }
+
+    private class RiscoWatchdog implements Runnable {
+        @Override
+        public void run() {
+            logger.debug("check lastSend: {}, lastRecv: {} ", lastSendTime, lastReceiveTime);
+
+            if (ChronoUnit.SECONDS.between(ZonedDateTime.now(), lastSendTime) > 120
+                    || ChronoUnit.SECONDS.between(ZonedDateTime.now(), lastReceiveTime) > 120) {
+                logger.debug("Reconnecting");
+                try {
+                    reconnect();
+                } catch (IOException e) {
+                    logger.warn("Could not reconnect to the panel. {}", e);
+                }
+                return;
+            } else {
+                logger.debug("ok");
+            }
+
+            send("CLOCK");
         }
     }
 }
