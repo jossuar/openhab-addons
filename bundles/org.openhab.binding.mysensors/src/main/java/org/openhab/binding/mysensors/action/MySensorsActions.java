@@ -64,9 +64,27 @@ public class MySensorsActions implements ThingActions {
         }
     }
 
+    /**
+     * Presentation thing action
+     */
+    @RuleAction(label = "presentation the node", description = "Presentation the MySensors Node")
+    public void presentation() {
+        MySensorsThingHandler nodeHandler = this.handler;
+        if (nodeHandler != null) {
+            nodeHandler.handleNodePresentation();
+        } else {
+            logger.warn("MySensors Actions service ThingHandler is null! ");
+        }
+    }
+
     // Static method for Rules DSL backward compatibility
     public static void reboot(ThingActions actions) {
         ((MySensorsActions) actions).reboot();
+    }
+
+    // Static method for Rules DSL backward compatibility
+    public static void presentation(ThingActions actions) {
+        ((MySensorsActions) actions).presentation();
     }
 
 }

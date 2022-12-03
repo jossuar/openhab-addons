@@ -332,6 +332,15 @@ public class MySensorsThingHandler extends BaseThingHandler implements MySensors
         myGateway.sendMessage(newMsg);
     }
 
+    public void handleNodePresentation() {
+        logger.debug("Send message for presentation Node: {}", configuration.nodeId);
+        // Create the real message to send
+        MySensorsMessage newMsg = new MySensorsMessage(configuration.nodeId,
+                MySensorsChild.MYSENSORS_CHILD_ID_RESERVED_255, MySensorsMessageType.INTERNAL,
+                MySensorsMessageAck.FALSE, false, MySensorsMessageSubType.I_PRESENTATION, "", configuration.smartSleep);
+        myGateway.sendMessage(newMsg);
+    }
+
     /**
      * For every thing there is a lastUpdate channel in which the date/time is stored
      * a message was received from this thing.
