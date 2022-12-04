@@ -54,12 +54,12 @@ public class RiscoHandlerFactory extends BaseThingHandlerFactory {
 
         if (RiscoBindingConstants.BRIDGE_THING_TYPE.equals(thingTypeUID)) {
             return new RiscoBridgeHandler((Bridge) thing);
-        } else if (RiscoBindingConstants.PANEL_THING_TYPE.equals(thingTypeUID)) {
+        } else if (RiscoBindingConstants.SYSTEM_THING_TYPE.equals(thingTypeUID)) {
             logger.debug("createHandler(): ThingHandler not implemented for {}", thingTypeUID);
         } else if (RiscoBindingConstants.PARTITION_THING_TYPE.equals(thingTypeUID)) {
             logger.debug("createHandler(): ThingHandler not implemented for {}", thingTypeUID);
         } else if (RiscoBindingConstants.ZONE_THING_TYPE.equals(thingTypeUID)) {
-            logger.debug("createHandler(): ThingHandler not implemented for {}", thingTypeUID);
+            return new RiscoZoneHandler(thing);
         } else if (RiscoBindingConstants.OUTPUT_THING_TYPE.equals(thingTypeUID)) {
             logger.debug("createHandler(): ThingHandler not implemented for {}", thingTypeUID);
         } else {
