@@ -35,23 +35,47 @@ public class RiscoBindingConstants {
     // List of bridge device types
     public static final String BRIDGE = "bridge";
     // List of device types
-    public static final String PANEL = "panel";
+    public static final String SYSTEM = "system";
     public static final String PARTITION = "partition";
     public static final String ZONE = "zone";
     public static final String OUTPUT = "output";
+    public static final String UTILITY_OUTPUT = "utility_output";
+    public static final String KEYPAD = "keypad";
+    public static final String KEYFOB = "keyfob";
+    public static final String BUS_EXPANDER = "bus_expander";
+    public static final String ZONE_EXPANDER = "zone_expander";
+    public static final String OUTPUT_EXPANDER = "output_expander";
+    public static final String WIRELESS_MODULE = "wireless_module";
+    public static final String VOICE_MODULE = "voice_module";
+    public static final String CELLULAR_ON_BUS = "cellular_on_bus";
+    public static final String SIREN = "siren";
 
     // List of all Bridge Thing Type UIDs
     public static final ThingTypeUID BRIDGE_THING_TYPE = new ThingTypeUID(BINDING_ID, BRIDGE);
 
     // List of all Thing Type UIDs
-    public static final ThingTypeUID PANEL_THING_TYPE = new ThingTypeUID(BINDING_ID, PANEL);
+    public static final ThingTypeUID SYSTEM_THING_TYPE = new ThingTypeUID(BINDING_ID, SYSTEM);
     public static final ThingTypeUID PARTITION_THING_TYPE = new ThingTypeUID(BINDING_ID, PARTITION);
     public static final ThingTypeUID ZONE_THING_TYPE = new ThingTypeUID(BINDING_ID, ZONE);
     public static final ThingTypeUID OUTPUT_THING_TYPE = new ThingTypeUID(BINDING_ID, OUTPUT);
+    public static final ThingTypeUID UTILITY_OUTPUT_THING_TYPE = new ThingTypeUID(BINDING_ID, UTILITY_OUTPUT);
+    public static final ThingTypeUID KEYPAD_THING_TYPE = new ThingTypeUID(BINDING_ID, KEYPAD);
+    public static final ThingTypeUID KEYFOB_THING_TYPE = new ThingTypeUID(BINDING_ID, KEYFOB);
+    public static final ThingTypeUID BUS_EXPANDER_THING_TYPE = new ThingTypeUID(BINDING_ID, BUS_EXPANDER);
+    public static final ThingTypeUID ZONE_EXPANDER_THING_TYPE = new ThingTypeUID(BINDING_ID, ZONE_EXPANDER);
+    public static final ThingTypeUID OUTPUT_EXPANDER_THING_TYPE = new ThingTypeUID(BINDING_ID, OUTPUT_EXPANDER);
+    public static final ThingTypeUID WIRELESS_MODULE_THING_TYPE = new ThingTypeUID(BINDING_ID, WIRELESS_MODULE);
+    public static final ThingTypeUID VOICE_MODULE_THING_TYPE = new ThingTypeUID(BINDING_ID, VOICE_MODULE);
+    public static final ThingTypeUID CELLULAR_ON_BUS_THING_TYPE = new ThingTypeUID(BINDING_ID, CELLULAR_ON_BUS);
+    public static final ThingTypeUID SIREN_THING_TYPE = new ThingTypeUID(BINDING_ID, SIREN);
 
     // Set of all supported Thing Type UIDs
-    public static final Set<ThingTypeUID> SUPPORTED_THING_TYPES_UIDS = Collections.unmodifiableSet(
-            Stream.of(BRIDGE_THING_TYPE, PANEL_THING_TYPE, PARTITION_THING_TYPE, ZONE_THING_TYPE, OUTPUT_THING_TYPE)
+    public static final Set<ThingTypeUID> SUPPORTED_THING_TYPES_UIDS = Collections
+            .unmodifiableSet(Stream
+                    .of(BRIDGE_THING_TYPE, SYSTEM_THING_TYPE, PARTITION_THING_TYPE, ZONE_THING_TYPE, OUTPUT_THING_TYPE,
+                            UTILITY_OUTPUT_THING_TYPE, KEYPAD_THING_TYPE, KEYFOB_THING_TYPE, BUS_EXPANDER_THING_TYPE,
+                            ZONE_EXPANDER_THING_TYPE, OUTPUT_EXPANDER_THING_TYPE, WIRELESS_MODULE_THING_TYPE,
+                            VOICE_MODULE_THING_TYPE, CELLULAR_ON_BUS_THING_TYPE, SIREN_THING_TYPE)
                     .collect(Collectors.toSet()));
 
     public static final int[] CRCArray = { 0x0000, 0xc0c1, 0xc181, 0x0140, 0xc301, 0x03c0, 0x0280, 0xc241, 0xc601,
