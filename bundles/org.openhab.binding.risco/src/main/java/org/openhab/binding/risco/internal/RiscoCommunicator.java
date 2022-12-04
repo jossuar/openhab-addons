@@ -17,6 +17,7 @@ import java.util.Set;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -46,14 +47,14 @@ public class RiscoCommunicator {
 
     // send
     private Thread riscoSender;
-    private final BlockingDeque<RiscoMessage> sendQueue = new LinkedBlockingDeque<>(50);
-    private int sendCommandId = 0;
+    private final LinkedBlockingDeque<RiscoMessage> sendQueue = new LinkedBlockingDeque<RiscoMessage>(50);
+    private int sendCommandId = 1;
 
     // receive
     private Thread riscoReceiver;
 
     // in-flight
-    private final BlockingDeque<RiscoMessagePair> inFlightQueue = new LinkedBlockingDeque<>();
+    private final BlockingDeque<RiscoMessagePair> inFlightQueue = new LinkedBlockingDeque<RiscoMessagePair>();
 
     // listener
     private final Set<RiscoPanelListener> listenerQueue = new HashSet<>();
@@ -61,8 +62,9 @@ public class RiscoCommunicator {
     // watchdog
     private ZonedDateTime lastSendTime = ZonedDateTime.now();
     private ZonedDateTime lastReceiveTime = ZonedDateTime.now();
+    private ScheduledFuture<?> riscoWatchdog;
 
-    private @Nullable ScheduledExecutorService scheduler;
+    private ScheduledExecutorService scheduler;
 
     public interface RiscoPanelListener {
         public void handleRiscoMessage(RiscoMessagePair pair);
@@ -73,7 +75,7 @@ public class RiscoCommunicator {
     }
 
     public RiscoCommunicator(String uid, String hostname, int port, int panelId, String encoding,
-            @Nullable ScheduledExecutorService scheduler) throws IOException {
+            ScheduledExecutorService scheduler) throws IOException {
         logger.debug("openConnection(): Connecting to Risco panel");
 
         this.uid = uid;
@@ -99,9 +101,7 @@ public class RiscoCommunicator {
         riscoSender.setDaemon(true);
         riscoSender.start();
 
-        if (scheduler != null) {
-            scheduler.scheduleWithFixedDelay(new RiscoWatchdog(), 0, 60, TimeUnit.SECONDS);
-        }
+        riscoWatchdog = scheduler.scheduleWithFixedDelay(new RiscoWatchdog(), 10, 20, TimeUnit.SECONDS);
 
         connected = true;
 
@@ -116,8 +116,8 @@ public class RiscoCommunicator {
         tcpOutput = new BufferedOutputStream(tcpSocket.getOutputStream());
         tcpInput = new BufferedInputStream(tcpSocket.getInputStream());
 
-        // Start sender, receiver and watchdog threads
-        riscoReceiver = new Thread(new RiscoReceiver(), "OH-binding-" + uid + "-riscorecevr");
+        // Start sender and receiver threads
+        riscoReceiver = new Thread(new RiscoReceiver(), "OH-binding-" + uid + "-riscorecvr");
         riscoReceiver.setDaemon(true);
         riscoReceiver.start();
 
@@ -125,9 +125,8 @@ public class RiscoCommunicator {
         riscoSender.setDaemon(true);
         riscoSender.start();
 
-        if (scheduler != null) {
-            scheduler.scheduleWithFixedDelay(new RiscoWatchdog(), 0, 60, TimeUnit.SECONDS);
-        }
+        // Start watchdog
+        scheduler.scheduleWithFixedDelay(new RiscoWatchdog(), 0, 60, TimeUnit.SECONDS);
 
         connected = true;
     }
@@ -170,16 +169,19 @@ public class RiscoCommunicator {
             riscoSender.join(3000);
         } catch (InterruptedException e) {
         }
+
+        // Stop watchdog
+        riscoWatchdog.cancel(true);
     }
 
     public synchronized void send(String command) {
         RiscoMessage msg = new RiscoMessage(panelId, encoding, sendCommandId, command, true);
         RiscoMessagePair pair = new RiscoMessagePair(msg);
 
-        // adjust command id For next send (0-49)
+        // adjust command id For next send (1-45)
         sendCommandId++;
-        if (sendCommandId == 50) {
-            sendCommandId = 0;
+        if (sendCommandId == 46) {
+            sendCommandId = 1;
         }
 
         inFlightQueue.add(pair);
@@ -192,7 +194,6 @@ public class RiscoCommunicator {
         sendQueue.add(msg);
     }
 
-    @SuppressWarnings({ "null", "unused" })
     private void handleIncomingMessage(RiscoMessage msg) {
         logger.debug("<---- {}", msg);
 
@@ -208,24 +209,27 @@ public class RiscoCommunicator {
             }
             lastSendTime = ZonedDateTime.now();
 
-            while ((m = inFlightQueue.peek()) != null) {
-                if (!m.hasResponse()) {
-                    break;
-                }
-
-                m = inFlightQueue.poll();
-                for (RiscoPanelListener listener : listenerQueue) {
-                    listener.handleRiscoMessage(m);
-                }
-            }
-
+            // try {
+            // while (true) {
+            // m = inFlightQueue.peek();
+            // if (m != null && !m.hasResponse()) {
+            // break;
+            // }
+            //
+            // m = inFlightQueue.poll();
+            // for (RiscoPanelListener listener : listenerQueue) {
+            // listener.handleRiscoMessage(m);
+            // }
+            // }
+            // } catch (NoSuchElementException e) {
+            // // thrown when queue is empty
+            // }
         } else {
             // Unknown message origin
             logger.debug("Unknown message origin. Abnormal situation. {}", msg);
         }
     }
 
-    @SuppressWarnings({ "null", "unused" })
     private void handleOutgoingMessage(RiscoMessage msg) {
         logger.debug("----> {}", msg);
 
@@ -237,16 +241,17 @@ public class RiscoCommunicator {
 
             lastReceiveTime = ZonedDateTime.now();
 
-            while ((m = inFlightQueue.poll()) != null) {
-                if (!m.hasResponse()) {
-                    break;
-                }
-
-                for (RiscoPanelListener listener : listenerQueue) {
-                    logger.trace("Informing listener: {}", listener);
-                    listener.handleRiscoMessage(m);
-                }
-            }
+            // while (true) {
+            // m = inFlightQueue.poll();
+            // if (m != null && !m.hasResponse()) {
+            // break;
+            // }
+            //
+            // for (RiscoPanelListener listener : listenerQueue) {
+            // logger.trace("Informing listener: {}", listener);
+            // listener.handleRiscoMessage(m);
+            // }
+            // }
 
         } else if (msg.getMessageOrigin() == MessageOrigin.BINDING) {
             // Nothing to be done
@@ -412,19 +417,26 @@ public class RiscoCommunicator {
     private class RiscoWatchdog implements Runnable {
         @Override
         public void run() {
-            logger.debug("check lastSend: {}, lastRecv: {} ", lastSendTime, lastReceiveTime);
 
-            if (ChronoUnit.SECONDS.between(ZonedDateTime.now(), lastSendTime) > 120
-                    || ChronoUnit.SECONDS.between(ZonedDateTime.now(), lastReceiveTime) > 120) {
+            if (ChronoUnit.SECONDS.between(lastSendTime, ZonedDateTime.now()) > 30
+                    || ChronoUnit.SECONDS.between(lastReceiveTime, ZonedDateTime.now()) > 70) {
+                logger.debug("check sendBefore: {}, recvBefore: {}, result: {}",
+                        ChronoUnit.SECONDS.between(lastSendTime, ZonedDateTime.now()),
+                        ChronoUnit.SECONDS.between(lastReceiveTime, ZonedDateTime.now()), "--");
+
                 logger.debug("Reconnecting");
                 try {
+                    lastSendTime = ZonedDateTime.now();
+                    lastReceiveTime = ZonedDateTime.now();
                     reconnect();
                 } catch (IOException e) {
                     logger.warn("Could not reconnect to the panel. {}", e);
                 }
                 return;
             } else {
-                logger.debug("ok");
+                logger.debug("check sendBefore: {}, recvBefore: {}, result: {}",
+                        ChronoUnit.SECONDS.between(lastSendTime, ZonedDateTime.now()),
+                        ChronoUnit.SECONDS.between(lastReceiveTime, ZonedDateTime.now()), "OK");
             }
 
             send("CLOCK");

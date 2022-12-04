@@ -53,10 +53,8 @@ public class RiscoMessageTest {
         String commandStr = msg.getCommand();
         Boolean encrypted = msg.isEncrypted();
 
-        if (cmdId != null) {
-            RiscoMessage msg2 = new RiscoMessage(1, "UTF-8", cmdId, commandStr, encrypted);
-            assertArrayEquals(msg.getEncryptedMessage(), msg2.getEncryptedMessage());
-            assertArrayEquals(msg.getDecryptedMessage(), msg2.getDecryptedMessage());
-        }
+        RiscoMessage msg2 = new RiscoMessage(1, "UTF-8", cmdId, commandStr, encrypted);
+        assertArrayEquals(msg.getEncryptedMessage(), msg2.getEncryptedMessage());
+        assertArrayEquals(msg.getDecryptedMessage(), msg2.getDecryptedMessage());
     }
 }
