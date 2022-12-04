@@ -13,6 +13,7 @@
 package org.openhab.binding.risco.internal;
 
 import java.io.IOException;
+import java.util.concurrent.Executors;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.junit.jupiter.api.Test;
@@ -61,16 +62,19 @@ public class RiscoCommTest implements RiscoPanelListener {
         logger.debug("Root debug message");
         logger.warn("Root trace message");
 
-        RiscoCommunicator comm = new RiscoCommunicator("risco", "192.168.1.120", 1000, 1, "UTF-8", null);
+        RiscoCommunicator comm = new RiscoCommunicator("risco", "192.168.1.120", 1000, 1, "UTF-8",
+                Executors.newScheduledThreadPool(1));
         comm.addListener(this);
 
         comm.send("RMT=5678");
         comm.send("LCL");
-        comm.send("ZLBL*1:8?");
+        comm.send("ZLBL*1:16?");
         comm.send("PNLCNF");
         comm.send("SYSLBL?");
         comm.send("SSTT?");
-        comm.send("ZTYPE*1?");
+        comm.send("UOSTT1?");
+        comm.send("OSTT1?");
+        comm.send("ZTYPE*1:8?");
         comm.send("ZPART&*1?");
         comm.send("ZAREA&*1?");
 
@@ -78,8 +82,6 @@ public class RiscoCommTest implements RiscoPanelListener {
         int max_mins = 100 * 6 * 60;
         while (true) {
             try {
-                comm.send("CLOCK");
-
                 Thread.sleep(3 * 1000);
                 mins++;
                 if (mins >= max_mins) {
