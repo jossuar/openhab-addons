@@ -13,6 +13,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
@@ -39,6 +40,7 @@ public class RiscoCommunicator {
     private final int port;
     private final int panelId;
     private final String encoding;
+    private final String password;
 
     private Socket tcpSocket;
     private BufferedOutputStream tcpOutput;
@@ -48,7 +50,7 @@ public class RiscoCommunicator {
     // send
     private Thread riscoSender;
     private final LinkedBlockingDeque<RiscoMessage> sendQueue = new LinkedBlockingDeque<RiscoMessage>(50);
-    private int sendCommandId = 1;
+    private int sendCommandId = 2;
 
     // receive
     private Thread riscoReceiver;
@@ -74,15 +76,16 @@ public class RiscoCommunicator {
         listenerQueue.add(listener);
     }
 
-    public RiscoCommunicator(String uid, String hostname, int port, int panelId, String encoding,
+    public RiscoCommunicator(String uid, String hostname, int port, int panelId, String encoding, String password,
             ScheduledExecutorService scheduler) throws IOException {
-        logger.debug("openConnection(): Connecting to Risco panel");
+        logger.debug("RiscoCommunicator(): Connecting to Risco panel");
 
         this.uid = uid;
         this.hostname = hostname;
         this.port = port;
         this.panelId = panelId;
         this.encoding = encoding;
+        this.password = password;
         this.scheduler = scheduler;
 
         // Open the socket and get the streams
@@ -105,10 +108,18 @@ public class RiscoCommunicator {
 
         connected = true;
 
+        // Initialize the communication with the panel
+        send(String.format("RMT=%s", password)); // REMOTE
+        send("LCL"); // LOCAL
+
         logger.trace("RiscoCommunicator communication threads started successfully");
     }
 
-    private void start() throws IOException {
+    public void start() throws IOException {
+        logger.debug("start(): RiscoCommunicator stopping");
+        // Reset command id
+        sendCommandId = 2;
+
         // Open the socket and get the streams
         tcpSocket = new Socket();
         SocketAddress socketAddress = new InetSocketAddress(hostname, port);
@@ -126,15 +137,22 @@ public class RiscoCommunicator {
         riscoSender.start();
 
         // Start watchdog
-        scheduler.scheduleWithFixedDelay(new RiscoWatchdog(), 0, 60, TimeUnit.SECONDS);
+        riscoWatchdog = scheduler.scheduleWithFixedDelay(new RiscoWatchdog(), 10, 20, TimeUnit.SECONDS);
 
         connected = true;
+
+        // Initialize the communication with the panel
+        send(String.format("RMT=%s", password)); // REMOTE
+        send("LCL"); // LOCAL
     }
 
     public void stop() {
-        logger.debug("RiscoCommunicator stopping");
+        logger.debug("stop(): RiscoCommunicator stopping");
 
         connected = false;
+
+        // Disconnect command
+        send("DCN");
 
         // Interrupt threads
         riscoReceiver.interrupt();
@@ -209,21 +227,21 @@ public class RiscoCommunicator {
             }
             lastSendTime = ZonedDateTime.now();
 
-            // try {
-            // while (true) {
-            // m = inFlightQueue.peek();
-            // if (m != null && !m.hasResponse()) {
-            // break;
-            // }
-            //
-            // m = inFlightQueue.poll();
-            // for (RiscoPanelListener listener : listenerQueue) {
-            // listener.handleRiscoMessage(m);
-            // }
-            // }
-            // } catch (NoSuchElementException e) {
-            // // thrown when queue is empty
-            // }
+            try {
+                while (true) {
+                    m = inFlightQueue.peek();
+                    if (m == null || !m.hasResponse()) {
+                        break;
+                    }
+
+                    m = inFlightQueue.poll();
+                    for (RiscoPanelListener listener : listenerQueue) {
+                        listener.handleRiscoMessage(m);
+                    }
+                }
+            } catch (NoSuchElementException e) {
+                // thrown when queue is empty
+            }
         } else {
             // Unknown message origin
             logger.debug("Unknown message origin. Abnormal situation. {}", msg);
@@ -338,7 +356,6 @@ public class RiscoCommunicator {
             } catch (EOFException e) {
                 return;
             } catch (IOException e) {
-                logger.debug("IOException caught.");
                 Thread.currentThread().interrupt();
             }
         }
