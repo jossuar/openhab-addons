@@ -35,7 +35,7 @@ public class RiscoBridgeConfiguration {
     private @Nullable String hostname;
     private int port = 1000;
     private int id = 1;
-    private @Nullable String password;
+    private String password = "5678";
     private String encoding = "utf-8";
     private int connectionDelay = 0;
 
@@ -51,7 +51,7 @@ public class RiscoBridgeConfiguration {
         return id;
     }
 
-    public @Nullable String getPassword() {
+    public String getPassword() {
         return password;
     }
 

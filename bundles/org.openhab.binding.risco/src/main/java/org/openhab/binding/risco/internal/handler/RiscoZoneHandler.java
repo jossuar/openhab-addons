@@ -88,12 +88,10 @@ public class RiscoZoneHandler extends BaseThingHandler {
     }
 
     public void updateChannel(ChannelUID channelUID, String data) {
-
     }
 
     @Override
     public void handleCommand(ChannelUID channelUID, Command command) {
-
     }
 
     public @Nullable Channel getChannel(ChannelUID channelUID) {

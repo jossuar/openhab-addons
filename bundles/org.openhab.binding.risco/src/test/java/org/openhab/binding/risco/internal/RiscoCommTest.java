@@ -62,12 +62,12 @@ public class RiscoCommTest implements RiscoPanelListener {
         logger.debug("Root debug message");
         logger.warn("Root trace message");
 
-        RiscoCommunicator comm = new RiscoCommunicator("risco", "192.168.1.120", 1000, 1, "UTF-8",
+        RiscoCommunicator comm = new RiscoCommunicator("risco", "192.168.1.120", 1000, 1, "UTF-8", "5678",
                 Executors.newScheduledThreadPool(1));
         comm.addListener(this);
 
-        comm.send("RMT=5678");
-        comm.send("LCL");
+        // comm.send("RMT=5678");
+        // comm.send("LCL");
         comm.send("ZLBL*1:16?");
         comm.send("PNLCNF");
         comm.send("SYSLBL?");

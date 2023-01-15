@@ -20,13 +20,13 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.openhab.binding.risco.internal.MessageOrigin;
+import org.openhab.binding.risco.internal.RiscoBindingConstants;
 import org.openhab.binding.risco.internal.RiscoCommunicator;
 import org.openhab.binding.risco.internal.RiscoCommunicator.RiscoPanelListener;
-import org.openhab.binding.risco.internal.RiscoDiscoveryService;
 import org.openhab.binding.risco.internal.RiscoMessage;
 import org.openhab.binding.risco.internal.RiscoMessagePair;
 import org.openhab.binding.risco.internal.config.RiscoBridgeConfiguration;
+import org.openhab.binding.risco.internal.discovery.RiscoDiscoveryService;
 import org.openhab.binding.risco.internal.message.RiscoMessageType;
 import org.openhab.core.thing.Bridge;
 import org.openhab.core.thing.Channel;
@@ -83,7 +83,7 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
 
         try {
             communicator = new RiscoCommunicator(getThing().getUID().getAsString(), hostname, port,
-                    configuration.getId(), configuration.getEncoding(), scheduler);
+                    configuration.getId(), configuration.getEncoding(), configuration.getPassword(), scheduler);
         } catch (IOException e) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR,
                     "Communication cannot be initialized. " + e.toString());
@@ -91,32 +91,64 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
             return;
         }
 
+        try {
+            Thread.sleep(12000);
+        } catch (InterruptedException e) {
+        }
+
         RiscoCommunicator communicator = this.communicator;
         if (communicator != null) {
             communicator.addListener(this);
-
-            communicator.send("RMT=5678");
-            communicator.send("LCL");
-            communicator.send("ZLBL*1:8?");
-            communicator.send("ZONEQTY?");
-            communicator.send("PNLCNF");
-            communicator.send("SYSLBL?");
-            communicator.send("SSTT?");
-            communicator.send("ZTYPE*1?");
-            communicator.send("ZPART&*1?");
-            communicator.send("ZAREA&*1?");
-            communicator.send("PNLVER?");
-            communicator.send("PNLSERD?");
-            communicator.send("MAINBAT?");
-            communicator.send("WIFIPASS?");
-            communicator.send("GETSNF1?");
-            communicator.send("KRSTT1?");
-
-            communicator.send("PSSTT1?");
-            communicator.send("SNSTT1?");
-            communicator.send("ZESTT1?");
-            communicator.send("OESTT1?");
-            communicator.send("OSTT1?");
+            communicator.send("ZSTT1?");
+            communicator.send("ZSTT2?");
+            communicator.send("ZSTT3?");
+            communicator.send("ZSTT4?");
+            communicator.send("ZSTT5?");
+            communicator.send("ZSTT6?");
+            communicator.send("ZSTT7?");
+            communicator.send("ZSTT8?");
+            communicator.send("ZSTT9?");
+            communicator.send("ZSTT10?");
+            communicator.send("ZSTT11?");
+            communicator.send("ZSTT12?");
+            communicator.send("ZSTT13?");
+            communicator.send("ZSTT14?");
+            communicator.send("ZSTT15?");
+            communicator.send("ZSTT16?");
+            communicator.send("ZSTT17?");
+            communicator.send("ZSTT18?");
+            communicator.send("ZSTT19?");
+            communicator.send("ZSTT20?");
+            communicator.send("ZSTT21?");
+            communicator.send("ZSTT22?");
+            communicator.send("ZSTT23?");
+            communicator.send("ZSTT24?");
+            communicator.send("ZSTT25?");
+            communicator.send("ZSTT26?");
+            communicator.send("ZSTT27?");
+            communicator.send("ZSTT28?");
+            communicator.send("ZSTT29?");
+            communicator.send("ZSTT30?");
+            // communicator.send("ZLBL*1:8?");
+            // communicator.send("ZONEQTY?");
+            // communicator.send("PNLCNF");
+            // communicator.send("SYSLBL?");
+            // communicator.send("SSTT?");
+            // communicator.send("ZTYPE*1?");
+            // communicator.send("ZPART&*1?");
+            // communicator.send("ZAREA&*1?");
+            // communicator.send("PNLVER?");
+            // communicator.send("PNLSERD?");
+            // communicator.send("MAINBAT?");
+            // communicator.send("WIFIPASS?");
+            // communicator.send("GETSNF1?");
+            // communicator.send("KRSTT1?");
+            //
+            // communicator.send("PSSTT1?");
+            // communicator.send("SNSTT1?");
+            // communicator.send("ZESTT1?");
+            // communicator.send("OESTT1?");
+            // communicator.send("OSTT1?");
 
             // communicator.send("ZAREA(@INX@)");
 
@@ -124,7 +156,9 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
         }
 
         // list all channels
-        if (logger.isTraceEnabled()) {
+        if (logger.isTraceEnabled())
+
+        {
             logger.trace("list all {} channels:", getThing().getChannels().size());
             for (Channel c : getThing().getChannels()) {
                 logger.trace("Channel Type {} UID {}", c.getChannelTypeUID(), c.getUID());
@@ -170,11 +204,12 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
     public void handleRiscoMessage(RiscoMessagePair pair) {
         RiscoMessage msg;
 
-        if (pair.getMessageOrigin() == MessageOrigin.BINDING) {
-            msg = pair.getRequest();
-        } else {
-            msg = pair.getResponse();
-        }
+        msg = pair.getResponse();
+        // if (pair.getMessageOrigin() == MessageOrigin.BINDING) {
+        // msg = pair.getRequest();
+        // } else {
+        // msg = pair.getResponse();
+        // }
 
         if (msg == null) {
             return;
@@ -194,15 +229,15 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
             // thingHandler.caddxEventReceived(event, thing);
             // }
         } else {
-            if (discoveryService != null) {
+            if (discoveryService != null && msg.getCommand().startsWith("ZSTT")) {
                 RiscoMessageType mt = RiscoMessageType.STATUS_ZONE;
-                String thingId = String.format(mt.thingIdFormat, 1);
-                String thingLabel = String.format(mt.thingLabelFormat, 1);
-                ThingUID thingUID = new ThingUID(mt.thingType, getThing().getUID(), mt.thingType + "1");
-                discoveryService.addThing(getThing(), thingUID, thingLabel, "zoneNumber", 1);
+                int index = Integer.valueOf(msg.getCommand().substring(4, msg.getCommand().indexOf("=")));
+                String thingId = String.format(mt.thingIdFormat, index);
+                String thingLabel = String.format(mt.thingLabelFormat, index);
+                ThingUID thingUID = new ThingUID(RiscoBindingConstants.ZONE_THING_TYPE, getThing().getUID(), thingId);
+                discoveryService.addThing(getThing(), thingUID, thingLabel, "zoneNumber", index);
             }
         }
-
     }
 
     /**

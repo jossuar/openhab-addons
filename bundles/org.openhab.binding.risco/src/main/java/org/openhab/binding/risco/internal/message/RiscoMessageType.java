@@ -35,7 +35,7 @@ public enum RiscoMessageType {
             new RiscoMessageTypeProperty("group_b_arm", "2"), new RiscoMessageTypeProperty("group_c_arm", "3"),
             new RiscoMessageTypeProperty("group_d_arm", "4"), new RiscoMessageTypeProperty("trouble", "T")),
 
-    STATUS_ZONE("ZSTT", RiscoBindingConstants.ZONE, true, "zone{}", "Zone {}",
+    STATUS_ZONE("ZSTT", RiscoBindingConstants.ZONE, true, "zone%d", "Zone %d",
             new RiscoMessageTypeProperty("open", "O"), new RiscoMessageTypeProperty("arm", "A"),
             new RiscoMessageTypeProperty("alarm", "a"), new RiscoMessageTypeProperty("tamper", "T"),
             new RiscoMessageTypeProperty("trouble", "R"), new RiscoMessageTypeProperty("lost", "L"),
