@@ -62,6 +62,26 @@ public class RiscoHandlerFactory extends BaseThingHandlerFactory {
             return new RiscoZoneHandler(thing);
         } else if (RiscoBindingConstants.OUTPUT_THING_TYPE.equals(thingTypeUID)) {
             logger.debug("createHandler(): ThingHandler not implemented for {}", thingTypeUID);
+        } else if (RiscoBindingConstants.UTILITY_OUTPUT_THING_TYPE.equals(thingTypeUID)) {
+            logger.debug("createHandler(): ThingHandler not implemented for {}", thingTypeUID);
+        } else if (RiscoBindingConstants.KEYPAD_THING_TYPE.equals(thingTypeUID)) {
+            logger.debug("createHandler(): ThingHandler not implemented for {}", thingTypeUID);
+        } else if (RiscoBindingConstants.KEYFOB_THING_TYPE.equals(thingTypeUID)) {
+            logger.debug("createHandler(): ThingHandler not implemented for {}", thingTypeUID);
+        } else if (RiscoBindingConstants.BUS_EXPANDER_THING_TYPE.equals(thingTypeUID)) {
+            logger.debug("createHandler(): ThingHandler not implemented for {}", thingTypeUID);
+        } else if (RiscoBindingConstants.ZONE_EXPANDER_THING_TYPE.equals(thingTypeUID)) {
+            logger.debug("createHandler(): ThingHandler not implemented for {}", thingTypeUID);
+        } else if (RiscoBindingConstants.OUTPUT_EXPANDER_THING_TYPE.equals(thingTypeUID)) {
+            logger.debug("createHandler(): ThingHandler not implemented for {}", thingTypeUID);
+        } else if (RiscoBindingConstants.WIRELESS_MODULE_THING_TYPE.equals(thingTypeUID)) {
+            logger.debug("createHandler(): ThingHandler not implemented for {}", thingTypeUID);
+        } else if (RiscoBindingConstants.VOICE_MODULE_THING_TYPE.equals(thingTypeUID)) {
+            logger.debug("createHandler(): ThingHandler not implemented for {}", thingTypeUID);
+        } else if (RiscoBindingConstants.CELLULAR_ON_BUS_THING_TYPE.equals(thingTypeUID)) {
+            logger.debug("createHandler(): ThingHandler not implemented for {}", thingTypeUID);
+        } else if (RiscoBindingConstants.SIREN_THING_TYPE.equals(thingTypeUID)) {
+            logger.debug("createHandler(): ThingHandler not implemented for {}", thingTypeUID);
         } else {
             logger.debug("createHandler(): ThingHandler not found for {}", thingTypeUID);
             return null;
