@@ -1,6 +1,10 @@
 package org.openhab.binding.risco.internal.message;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -100,16 +104,16 @@ public enum RiscoMessageType {
 
     ;
 
-    public final String messageType;
+    public final String commandName;
     public final String thingType;
     public final boolean hasIndex;
     public final String thingIdFormat;
     public final String thingLabelFormat;
     public final RiscoMessageTypeProperty[] properties;
 
-    RiscoMessageType(String messageType, String thingType, boolean hasIndex, String thingIdFormat,
+    RiscoMessageType(String commandName, String thingType, boolean hasIndex, String thingIdFormat,
             String thingLabelFormat, RiscoMessageTypeProperty... properties) {
-        this.messageType = messageType;
+        this.commandName = commandName;
         this.thingType = thingType;
         this.hasIndex = hasIndex;
         this.thingIdFormat = thingIdFormat;
@@ -118,14 +122,36 @@ public enum RiscoMessageType {
     }
 
     private static final Map<String, RiscoMessageType> BY_MESSAGE_TYPE = new HashMap<>();
+    private static final List<String> BY_MESSAGE_LENGTH = Arrays.asList();
 
     static {
         for (RiscoMessageType mt : values()) {
-            BY_MESSAGE_TYPE.put(mt.messageType, mt);
+            BY_MESSAGE_TYPE.put(mt.commandName, mt);
+            BY_MESSAGE_LENGTH.add(mt.commandName);
         }
+
+        Comparator<String> comparator = new Comparator<String>() {
+            @Override
+            public int compare(String o1, String o2) {
+                Integer L1 = o1.length();
+                return L1.compareTo(o2.length()) * -1;
+            }
+        };
+
+        Collections.sort(BY_MESSAGE_LENGTH, comparator);
     }
 
     public static @Nullable RiscoMessageType valueOfMessageType(String messageType) {
         return BY_MESSAGE_TYPE.get(messageType);
+    }
+
+    public static @Nullable RiscoMessageType valueOfCommandName(String commandName) {
+        for (String name : BY_MESSAGE_LENGTH) {
+            if (name.equals(commandName)) {
+                return BY_MESSAGE_TYPE.get(commandName);
+            }
+        }
+
+        return null;
     }
 }
