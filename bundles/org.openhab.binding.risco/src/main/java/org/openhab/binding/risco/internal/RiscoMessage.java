@@ -67,7 +67,7 @@ public class RiscoMessage {
 
         // Add Cmd_Id to command and Separator character between Cmd and CRC value
         String cmd = String.format("%02d", commandId) + command + ETB;
-        this.crcValue = this.getCommandCRC(cmd);
+        this.crcValue = this.calcCommandCRC(cmd);
 
         // Encrypt command string
         byte[] e = encrypt(cmd + crcValue, encrypt);
@@ -97,7 +97,8 @@ public class RiscoMessage {
 
         sb.append("ENC: ").append(isEncrypted());
         sb.append(", MO: ").append(getMessageOrigin());
-        sb.append(", MSG: ").append(commandId).append("-").append(this.crcValue).append("-").append(stringMessage);
+        sb.append(", MSG: ").append(command);
+        // sb.append(", MSG: ").append(commandId).append("-").append(this.crcValue).append("-").append(stringMessage);
 
         return sb.toString();
     }
@@ -129,7 +130,7 @@ public class RiscoMessage {
             }
         }
 
-        String computedCrc = getCommandCRC(command);
+        String computedCrc = calcCommandCRC(command);
         boolean crcOK = crcValue.equals(computedCrc);
 
         logger.trace("Command[{}] crcOK:{}, Computed CRC: {}, Message CRC: {}", commandId, crcOK, computedCrc,
@@ -148,11 +149,19 @@ public class RiscoMessage {
         }
     }
 
+    public byte[] getEncryptedMessage() {
+        return encryptedMessage;
+    }
+
+    public byte[] getDecryptedMessage() {
+        return decryptedMessage;
+    }
+
     /**
      * Calculate CRC for Command based on original character(not encrypted)
      * and CRC array Value
      */
-    private String getCommandCRC(String cmdStr) {
+    private String calcCommandCRC(String cmdStr) {
         byte[] cmdBytes = cmdStr.getBytes();
         int sum = 65535;
 
@@ -165,14 +174,6 @@ public class RiscoMessage {
         byte[] bts = new byte[] { b1, b2 };
 
         return HexUtils.bytesToHex(bts);
-    }
-
-    public byte[] getEncryptedMessage() {
-        return encryptedMessage;
-    }
-
-    public byte[] getDecryptedMessage() {
-        return decryptedMessage;
     }
 
     /*
