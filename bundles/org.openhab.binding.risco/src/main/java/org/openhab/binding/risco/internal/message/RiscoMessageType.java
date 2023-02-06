@@ -13,6 +13,8 @@ import org.openhab.binding.risco.internal.RiscoBindingConstants;
 
 @NonNullByDefault
 public enum RiscoMessageType {
+    UNKNOWN("", "", false, "unknown", "Unknown"),
+
     STATUS_SYSTEM("SSTT", RiscoBindingConstants.SYSTEM, false, "system", "System",
             new RiscoMessageTypeProperty("low_battery_trouble", "B"), new RiscoMessageTypeProperty("ac_trouble", "A"),
             new RiscoMessageTypeProperty("phone_line_trouble", "P"), new RiscoMessageTypeProperty("clock_trouble", "C"),
@@ -141,11 +143,11 @@ public enum RiscoMessageType {
         Collections.sort(BY_MESSAGE_LENGTH, comparator);
     }
 
-    public static @Nullable RiscoMessageType valueOfMessageType(String messageType) {
-        return BY_MESSAGE_TYPE.get(messageType);
+    public static @Nullable RiscoMessageType valueOfMessage(String commandName) {
+        return BY_MESSAGE_TYPE.get(commandName);
     }
 
-    public static @Nullable RiscoMessageType valueOfCommandName(String commandName) {
+    public static @Nullable RiscoMessageType valueOfCommand(String commandName) {
         for (String name : BY_MESSAGE_LENGTH) {
             if (name.equals(commandName)) {
                 return BY_MESSAGE_TYPE.get(commandName);
