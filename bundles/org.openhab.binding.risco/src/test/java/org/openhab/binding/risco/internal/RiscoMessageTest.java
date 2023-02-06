@@ -12,7 +12,7 @@
  */
 package org.openhab.binding.risco.internal;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -32,17 +32,25 @@ public class RiscoMessageTest {
     // @formatter:off
     public static final List<Object[]> data() {
         return Arrays.asList(new Object [][]{
-            {"unencrypted_message",},
-            {"checksum_message",},
-            {"checksum2_message",},
-            {"correct_message",},
+            //{"",},
+            { "CLOCK_write", "CLOCK", },
+            { "CUSTLST_write", "CUSTLST", },
+            { "DTYPZ_1-8_read", "DTYPZ", },
+            { "DTYPZ_1-8_write", "DTYPZ", },
+            { "N13", "N", },
+            { "ZLBL_1-8_write", "ZLBL", },
+            { "ZSTT_1-8_read", "ZSTT", },
+            { "ZSTT_19_read", "ZSTT", },
+            { "ZSTT_19_write_on", "ZSTT", },
+            { "ZSTT_19_write_off", "ZSTT", },
+            { "ZTYPE_17-24_write", "ZTYPE", },
         });
     }
     // @formatter:on
 
     @ParameterizedTest
     @MethodSource("data")
-    public void testDecryptEncrypt(String messageName) {
+    public void testDecryptEncrypt(String messageName, String commandName) {
         byte[] bytes = MessageReaderUtil.readRiscoMessage(messageName);
 
         // Decrypt
@@ -52,6 +60,9 @@ public class RiscoMessageTest {
         Integer cmdId = msg.getCommandId();
         String commandStr = msg.getCommand();
         Boolean encrypted = msg.isEncrypted();
+        String name = msg.getCommandName();
+
+        assertEquals(commandName, name);
 
         RiscoMessage msg2 = new RiscoMessage(1, "UTF-8", cmdId, commandStr, encrypted);
         assertArrayEquals(msg.getEncryptedMessage(), msg2.getEncryptedMessage());
