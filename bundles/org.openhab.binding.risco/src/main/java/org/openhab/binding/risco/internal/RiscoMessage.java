@@ -39,6 +39,12 @@ public class RiscoMessage {
     private final String command;
     private final String crcValue;
 
+    private final String commandName;
+    private final boolean multiIndex;
+    private final int indexFrom;
+    private final int indexTo;
+    private final String[] commandValue;
+
     private final String ETB = Character.toString((char) 23);
 
     public RiscoMessage(int panelId, String encoding, byte[] encryptedMessage) {
@@ -57,6 +63,14 @@ public class RiscoMessage {
             this.command = stringMessage.substring(2, stringMessage.indexOf(ETB));
             this.crcValue = stringMessage.substring(stringMessage.indexOf(ETB) + 1);
         }
+
+        // Computed information
+        Object[] objs = splitCommand();
+        this.commandName = (String) objs[0];
+        this.multiIndex = (boolean) objs[1];
+        this.indexFrom = (int) objs[2];
+        this.indexTo = (int) objs[3];
+        this.commandValue = (String[]) objs[4];
     }
 
     public RiscoMessage(int panelId, String encoding, Integer commandId, String command, Boolean encrypt) {
@@ -81,9 +95,17 @@ public class RiscoMessage {
         encrypedOutputStream.write(e, 0, e.length);
         encrypedOutputStream.write(3);
 
+        // Computed information
         this.encryptedMessage = encrypedOutputStream.toByteArray();
         this.decryptedMessage = decrypt(encryptedMessage);
         this.stringMessage = bytesToString(decryptedMessage);
+
+        Object[] objs = splitCommand();
+        this.commandName = (String) objs[0];
+        this.multiIndex = (boolean) objs[1];
+        this.indexFrom = (int) objs[2];
+        this.indexTo = (int) objs[3];
+        this.commandValue = (String[]) objs[4];
     }
 
     /**
@@ -97,7 +119,10 @@ public class RiscoMessage {
 
         sb.append("ENC: ").append(isEncrypted());
         sb.append(", MO: ").append(getMessageOrigin());
+        sb.append(", CMD: ").append(commandName);
         sb.append(", MSG: ").append(command);
+        sb.append(", VALUE: ").append(HexUtils.bytesToHex(command.getBytes(), " "));
+
         // sb.append(", MSG: ").append(commandId).append("-").append(this.crcValue).append("-").append(stringMessage);
 
         return sb.toString();
@@ -119,6 +144,98 @@ public class RiscoMessage {
         return crcValue;
     }
 
+    public MessageOrigin getMessageOrigin() {
+        if (commandId >= 0 && commandId < 50) {
+            return MessageOrigin.BINDING;
+        } else if (commandId >= 50 && commandId < 100) {
+            return MessageOrigin.PANEL;
+        } else {
+            return MessageOrigin.UNKNOWN;
+        }
+    }
+
+    public byte[] getEncryptedMessage() {
+        return encryptedMessage;
+    }
+
+    public byte[] getDecryptedMessage() {
+        return decryptedMessage;
+    }
+
+    public String getCommandName() {
+        return this.commandName;
+    }
+
+    public boolean isMultiIndex() {
+        return multiIndex;
+    }
+
+    public int getIndexFrom() {
+        return indexFrom;
+    }
+
+    public int getIndexTo() {
+        return indexTo;
+    }
+
+    private Object[] splitCommand() {
+        String name = "";
+        boolean isMulti = false;
+        int from = -1;
+        int to = -1;
+        String[] values = null;
+
+        int indexReadSign = command.indexOf('?');
+        int indexWriteSign = command.indexOf('=');
+
+        String commandAndIndex;
+        String commandValue;
+
+        if (indexReadSign > 0) {
+            commandAndIndex = command.substring(0, indexReadSign);
+            commandValue = "";
+        } else if (indexWriteSign > 0) {
+            commandAndIndex = command.substring(0, indexWriteSign);
+            commandValue = command.substring(indexWriteSign + 1);
+        } else {
+            commandAndIndex = command;
+            commandValue = "";
+        }
+
+        try {
+            int indexStarSign = commandAndIndex.indexOf('*');
+            if (indexStarSign > 0) {
+                name = commandAndIndex.substring(0, indexStarSign);
+                isMulti = true;
+                int indexColonSign = commandAndIndex.indexOf(':');
+                from = Integer.valueOf(commandAndIndex.substring(indexStarSign + 1, indexColonSign));
+                to = Integer.valueOf(commandAndIndex.substring(indexColonSign + 1));
+                values = commandValue.split("\t");
+            } else {
+                name = commandAndIndex.replaceAll("[^A-Z]+", "");
+                isMulti = false;
+                from = Integer.valueOf(commandAndIndex.replaceAll("[^0-9]+", ""));
+                to = from;
+                values = new String[] { commandValue };
+            }
+        } catch (NumberFormatException e) {
+            name = "";
+            isMulti = false;
+            from = -1;
+            to = -1;
+            values = null;
+        }
+
+        Object[] arr = new Object[5];
+        arr[0] = name;
+        arr[1] = isMulti;
+        arr[2] = from;
+        arr[3] = to;
+        arr[4] = values;
+
+        return arr;
+    }
+
     public boolean isValidCRC() {
         if (crcValue.length() != 4) {
             return false;
@@ -137,24 +254,6 @@ public class RiscoMessage {
                 crcValue);
 
         return crcOK;
-    }
-
-    public MessageOrigin getMessageOrigin() {
-        if (commandId >= 0 && commandId < 50) {
-            return MessageOrigin.BINDING;
-        } else if (commandId >= 50 && commandId < 100) {
-            return MessageOrigin.PANEL;
-        } else {
-            return MessageOrigin.UNKNOWN;
-        }
-    }
-
-    public byte[] getEncryptedMessage() {
-        return encryptedMessage;
-    }
-
-    public byte[] getDecryptedMessage() {
-        return decryptedMessage;
     }
 
     /**
@@ -271,6 +370,7 @@ public class RiscoMessage {
         }
         byte[] decrypted = outputStream.toByteArray();
 
+        logger.trace("Encrypted buffer: {}", HexUtils.bytesToHex(encrypted, " "));
         logger.trace("Decrypted buffer: {}", HexUtils.bytesToHex(decrypted, "-"));
 
         return decrypted;
