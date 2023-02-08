@@ -15,6 +15,8 @@ package org.openhab.binding.risco.internal;
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.openhab.core.util.HexUtils;
@@ -178,12 +180,16 @@ public class RiscoMessage {
         return indexTo;
     }
 
+    private static Pattern NAME = Pattern.compile("^([A-Z]+)$");
+    private static Pattern NAME_AND_INDEX = Pattern.compile("^([A-Z]+)(\\d+)$");
+    private static Pattern NAME_AND_INDEX_RANGE = Pattern.compile("^([A-Z]+)\\*(\\d+):(\\d+)$");
+
     private Object[] splitCommand() {
         String name = "";
         boolean isMulti = false;
         int from = -1;
         int to = -1;
-        String[] values = null;
+        String[] values;
 
         int indexReadSign = command.indexOf('?');
         int indexWriteSign = command.indexOf('=');
@@ -202,29 +208,62 @@ public class RiscoMessage {
             commandValue = "";
         }
 
-        try {
-            int indexStarSign = commandAndIndex.indexOf('*');
-            if (indexStarSign > 0) {
-                name = commandAndIndex.substring(0, indexStarSign);
-                isMulti = true;
-                int indexColonSign = commandAndIndex.indexOf(':');
-                from = Integer.valueOf(commandAndIndex.substring(indexStarSign + 1, indexColonSign));
-                to = Integer.valueOf(commandAndIndex.substring(indexColonSign + 1));
-                values = commandValue.split("\t");
-            } else {
-                name = commandAndIndex.replaceAll("[^A-Z]+", "");
-                isMulti = false;
-                from = Integer.valueOf(commandAndIndex.replaceAll("[^0-9]+", ""));
-                to = from;
-                values = new String[] { commandValue };
-            }
-        } catch (NumberFormatException e) {
-            name = "";
+        Matcher m0 = NAME.matcher(commandAndIndex);
+        if (m0.matches()) {
+            name = m0.group(1);
             isMulti = false;
             from = -1;
             to = -1;
-            values = null;
+            values = new String[] {};
+        } else {
+            Matcher m1 = NAME_AND_INDEX.matcher(commandAndIndex);
+            if (m1.matches()) {
+                name = m1.group(1);
+                isMulti = false;
+                from = Integer.valueOf(m1.group(2));
+                to = from;
+                values = new String[] { commandValue };
+            } else {
+                Matcher m2 = NAME_AND_INDEX_RANGE.matcher(commandAndIndex);
+                if (m2.matches()) {
+                    name = m2.group(1);
+                    isMulti = true;
+                    from = Integer.valueOf(m2.group(2));
+                    to = Integer.valueOf(m2.group(3));
+                    values = commandValue.split("\t");
+                } else {
+                    name = "";
+                    isMulti = false;
+                    from = -1;
+                    to = -1;
+                    values = null;
+                }
+            }
         }
+
+        // try {
+        // int indexStarSign = commandAndIndex.indexOf('*');
+        // if (indexStarSign > 0) {
+        // name = commandAndIndex.substring(0, indexStarSign);
+        // isMulti = true;
+        // int indexColonSign = commandAndIndex.indexOf(':');
+        // from = Integer.valueOf(commandAndIndex.substring(indexStarSign + 1, indexColonSign));
+        // to = Integer.valueOf(commandAndIndex.substring(indexColonSign + 1));
+        // values = commandValue.split("\t");
+        // } else {
+        // name = commandAndIndex.replaceAll("[^A-Z]+", "");
+        // isMulti = false;
+        // from = Integer.valueOf(commandAndIndex.replaceAll("[^0-9]+", ""));
+        // to = from;
+        // values = new String[] { commandValue };
+        // }
+        // } catch (NumberFormatException e) {
+        // name = "";
+        // isMulti = false;
+        // from = -1;
+        // to = -1;
+        // values = null;
+        // }
 
         Object[] arr = new Object[5];
         arr[0] = name;
