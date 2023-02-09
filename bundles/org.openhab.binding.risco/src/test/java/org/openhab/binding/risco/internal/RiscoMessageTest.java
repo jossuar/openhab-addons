@@ -51,7 +51,7 @@ public class RiscoMessageTest {
 
     @ParameterizedTest
     @MethodSource("data")
-    public void testDecryptEncrypt(String messageName, String commandName, int indexFrom, int indexTo) {
+    public void testMessageHandling(String messageName, String commandName, int indexFrom, int indexTo) {
         byte[] bytes = MessageReaderUtil.readRiscoMessage(messageName);
 
         // Decrypt
@@ -65,6 +65,12 @@ public class RiscoMessageTest {
         assertEquals(commandName, msg.getCommandName());
         assertEquals(indexFrom, msg.getIndexFrom());
         assertEquals(indexTo, msg.getIndexTo());
+
+        System.out.println(msg);
+        String[] a = msg.getThingIds();
+        String s = Arrays.toString(a);
+        System.out.println(s);
+        System.out.println();
 
         RiscoMessage msg2 = new RiscoMessage(1, "UTF-8", cmdId, commandStr, encrypted);
         assertArrayEquals(msg.getEncryptedMessage(), msg2.getEncryptedMessage());
