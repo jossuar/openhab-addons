@@ -14,7 +14,9 @@ package org.openhab.binding.risco.internal.message;
 
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -181,6 +183,52 @@ public class RiscoMessage {
         return indexTo;
     }
 
+    public RiscoMessageType getMessageType() {
+        RiscoMessageType mt = RiscoMessageType.valueOfMessage(commandName);
+        if (mt == null) {
+            mt = RiscoMessageType.UNKNOWN;
+        }
+        return mt;
+    }
+
+    public String getThingType() {
+        return getMessageType().thingType;
+    }
+
+    public String[] getThingIds() {
+        RiscoMessageType mt = getMessageType();
+        List<String> ids = new ArrayList<String>();
+
+        if (mt.hasIndex) {
+            for (int i = getIndexFrom(); i <= getIndexTo(); i++) {
+                ids.add(String.format(mt.thingIdFormat, i));
+            }
+        } else {
+            ids.add(mt.thingIdFormat);
+        }
+        return ids.toArray(new String[0]);
+    }
+
+    public boolean isValidCRC() {
+        if (crcValue.length() != 4) {
+            return false;
+        }
+
+        for (int i = 0; i < 4; i++) {
+            if (crcValue.charAt(i) > 127) {
+                return false;
+            }
+        }
+
+        String computedCrc = calcCommandCRC(command);
+        boolean crcOK = crcValue.equals(computedCrc);
+
+        logger.trace("Command[{}] crcOK:{}, Computed CRC: {}, Message CRC: {}", commandId, crcOK, computedCrc,
+                crcValue);
+
+        return crcOK;
+    }
+
     private static Pattern NAME = Pattern.compile("^([A-Z]+)$");
     private static Pattern NAME_AND_INDEX = Pattern.compile("^([A-Z]+)(\\d+)$");
     private static Pattern NAME_AND_INDEX_RANGE = Pattern.compile("^([A-Z]+)\\*(\\d+):(\\d+)$");
@@ -242,30 +290,6 @@ public class RiscoMessage {
             }
         }
 
-        // try {
-        // int indexStarSign = commandAndIndex.indexOf('*');
-        // if (indexStarSign > 0) {
-        // name = commandAndIndex.substring(0, indexStarSign);
-        // isMulti = true;
-        // int indexColonSign = commandAndIndex.indexOf(':');
-        // from = Integer.valueOf(commandAndIndex.substring(indexStarSign + 1, indexColonSign));
-        // to = Integer.valueOf(commandAndIndex.substring(indexColonSign + 1));
-        // values = commandValue.split("\t");
-        // } else {
-        // name = commandAndIndex.replaceAll("[^A-Z]+", "");
-        // isMulti = false;
-        // from = Integer.valueOf(commandAndIndex.replaceAll("[^0-9]+", ""));
-        // to = from;
-        // values = new String[] { commandValue };
-        // }
-        // } catch (NumberFormatException e) {
-        // name = "";
-        // isMulti = false;
-        // from = -1;
-        // to = -1;
-        // values = null;
-        // }
-
         Object[] arr = new Object[5];
         arr[0] = name;
         arr[1] = isMulti;
@@ -274,26 +298,6 @@ public class RiscoMessage {
         arr[4] = values;
 
         return arr;
-    }
-
-    public boolean isValidCRC() {
-        if (crcValue.length() != 4) {
-            return false;
-        }
-
-        for (int i = 0; i < 4; i++) {
-            if (crcValue.charAt(i) > 127) {
-                return false;
-            }
-        }
-
-        String computedCrc = calcCommandCRC(command);
-        boolean crcOK = crcValue.equals(computedCrc);
-
-        logger.trace("Command[{}] crcOK:{}, Computed CRC: {}, Message CRC: {}", commandId, crcOK, computedCrc,
-                crcValue);
-
-        return crcOK;
     }
 
     /**
