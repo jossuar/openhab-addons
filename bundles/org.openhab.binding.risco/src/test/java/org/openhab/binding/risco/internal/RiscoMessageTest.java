@@ -20,6 +20,7 @@ import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.openhab.binding.risco.internal.message.RiscoMessage;
 
 /**
  * Test class for Risco Message.
