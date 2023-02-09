@@ -1,4 +1,4 @@
-package org.openhab.binding.risco.internal;
+package org.openhab.binding.risco.internal.message;
 
 public enum MessageOrigin {
     UNKNOWN,

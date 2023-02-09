@@ -23,6 +23,9 @@ import java.util.concurrent.TimeUnit;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.openhab.binding.risco.internal.message.MessageOrigin;
+import org.openhab.binding.risco.internal.message.RiscoMessage;
+import org.openhab.binding.risco.internal.message.RiscoMessagePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -18,6 +18,7 @@ import java.util.concurrent.Executors;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.junit.jupiter.api.Test;
 import org.openhab.binding.risco.internal.RiscoCommunicator.RiscoPanelListener;
+import org.openhab.binding.risco.internal.message.RiscoMessagePair;
 import org.slf4j.LoggerFactory;
 
 import ch.qos.logback.classic.Level;
