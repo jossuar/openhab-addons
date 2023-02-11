@@ -252,7 +252,7 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
             return;
         }
 
-        if (msg.getCommand().startsWith("ZSTT")) {
+        if (msg.getFullCommand().startsWith("ZSTT")) {
             logger.debug("", msg);
             // parse Zone Status message
 
@@ -266,9 +266,9 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
             // thingHandler.caddxEventReceived(event, thing);
             // }
         } else {
-            if (discoveryService != null && msg.getCommand().startsWith("ZSTT")) {
+            if (discoveryService != null && msg.getFullCommand().startsWith("ZSTT")) {
                 RiscoMessageType mt = RiscoMessageType.STATUS_ZONE;
-                int index = Integer.valueOf(msg.getCommand().substring(4, msg.getCommand().indexOf("=")));
+                int index = Integer.valueOf(msg.getFullCommand().substring(4, msg.getFullCommand().indexOf("=")));
                 String thingId = String.format(mt.thingIdFormat, index);
                 String thingLabel = String.format(mt.thingLabelFormat, index);
                 ThingUID thingUID = new ThingUID(RiscoBindingConstants.ZONE_THING_TYPE, getThing().getUID(), thingId);
