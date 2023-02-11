@@ -14,6 +14,7 @@ package org.openhab.binding.risco.internal;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.List;
 
@@ -21,6 +22,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.openhab.binding.risco.internal.message.RiscoMessage;
+import org.openhab.binding.risco.internal.message.RiscoMessageType;
 
 /**
  * Test class for Risco Message.
@@ -34,24 +36,25 @@ public class RiscoMessageTest {
     public static final List<Object[]> data() {
         return Arrays.asList(new Object [][]{
             //{"",},
-            { "CLOCK_write", "CLOCK", -1, -1},
-            { "CUSTLST_write", "CUSTLST", -1, -1},
-            { "DTYPZ_1-8_read", "DTYPZ", 1, 8},
-            { "DTYPZ_1-8_write", "DTYPZ", 1, 8},
-            { "N13", "N", 13, 13},
-            { "ZLBL_1-8_write", "ZLBL", 1, 8},
-            { "ZSTT_1-8_read", "ZSTT", 1, 8},
-            { "ZSTT_19_read", "ZSTT", 19, 19},
-            { "ZSTT_19_write_on", "ZSTT", 19, 19},
-            { "ZSTT_19_write_off", "ZSTT", 19, 19},
-            { "ZTYPE_17-24_write", "ZTYPE", 17, 24},
+            { "CLOCK_write", "CLOCK", -1, -1, RiscoMessageType.CLOCK },
+            { "CUSTLST_write", "CUSTLST", -1, -1, RiscoMessageType.UNKNOWN },
+            { "DTYPZ_1-8_read", "DTYPZ", 1, 8, RiscoMessageType.COMMAND_DTYPZ },
+            { "DTYPZ_1-8_write", "DTYPZ", 1, 8, RiscoMessageType.COMMAND_DTYPZ },
+            { "N13", "N", 13, 13, RiscoMessageType.UNKNOWN },
+            { "ZLBL_1-8_write", "ZLBL", 1, 8, RiscoMessageType.UNKNOWN },
+            { "ZSTT_1-8_read", "ZSTT", 1, 8, RiscoMessageType.STATUS_ZONE },
+            { "ZSTT_19_read", "ZSTT", 19, 19, RiscoMessageType.STATUS_ZONE },
+            { "ZSTT_19_write_on", "ZSTT", 19, 19, RiscoMessageType.STATUS_ZONE },
+            { "ZSTT_19_write_off", "ZSTT", 19, 19, RiscoMessageType.STATUS_ZONE },
+            { "ZTYPE_17-24_write", "ZTYPE", 17, 24, RiscoMessageType.UNKNOWN },
         });
     }
     // @formatter:on
 
     @ParameterizedTest
     @MethodSource("data")
-    public void testMessageHandling(String messageName, String commandName, int indexFrom, int indexTo) {
+    public void testMessageHandling(String messageName, String commandName, int indexFrom, int indexTo,
+            RiscoMessageType messageType) {
         byte[] bytes = MessageReaderUtil.readRiscoMessage(messageName);
 
         // Decrypt
@@ -59,18 +62,21 @@ public class RiscoMessageTest {
 
         // Get parts
         Integer cmdId = msg.getCommandId();
-        String commandStr = msg.getCommand();
+        String commandStr = msg.getFullCommand();
         Boolean encrypted = msg.isEncrypted();
 
         assertEquals(commandName, msg.getCommandName());
         assertEquals(indexFrom, msg.getIndexFrom());
         assertEquals(indexTo, msg.getIndexTo());
+        assertEquals(messageType, msg.getMessageType());
 
-        System.out.println(msg);
-        String[] a = msg.getThingIds();
-        String s = Arrays.toString(a);
-        System.out.println(s);
-        System.out.println();
+        PrintStream console = System.out;
+        if (console != null) {
+            console.println(msg);
+            console.println(Arrays.toString(msg.getThingIds()));
+            console.println(Arrays.toString(msg.getProperties()));
+            console.println();
+        }
 
         RiscoMessage msg2 = new RiscoMessage(1, "UTF-8", cmdId, commandStr, encrypted);
         assertArrayEquals(msg.getEncryptedMessage(), msg2.getEncryptedMessage());
