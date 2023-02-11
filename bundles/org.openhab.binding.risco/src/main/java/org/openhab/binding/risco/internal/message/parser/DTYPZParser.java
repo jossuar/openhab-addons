@@ -11,8 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @NonNullByDefault
-public class DTYPZValueParser implements ValueParser {
-    private final Logger logger = LoggerFactory.getLogger(DTYPZValueParser.class);
+public class DTYPZParser implements CommandParser {
+    private final Logger logger = LoggerFactory.getLogger(DTYPZParser.class);
     private final static Pattern PATTERN = Pattern.compile("^(\\d+),(\\d+),(\\d+),(\\d+),([A-Z]+)$");
 
     @Override
@@ -36,6 +36,6 @@ public class DTYPZValueParser implements ValueParser {
             logger.debug("Not expected DTYPZ Value [{}]", s);
         }
 
-        return (KeyValuePair[]) data.toArray();
+        return data.toArray(new KeyValuePair[0]);
     }
 }

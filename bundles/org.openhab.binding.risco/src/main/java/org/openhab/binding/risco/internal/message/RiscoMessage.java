@@ -22,6 +22,7 @@ import java.util.regex.Pattern;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.openhab.binding.risco.internal.RiscoBindingConstants;
+import org.openhab.binding.risco.internal.message.parser.CommandParser;
 import org.openhab.core.util.HexUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,11 +42,10 @@ public class RiscoMessage {
     private final byte[] decryptedMessage;
     private final String stringMessage;
     private final int commandId;
-    private final String command;
+    private final String fullCommand;
     private final String crcValue;
 
     private final String commandName;
-    private final boolean multiIndex;
     private final int indexFrom;
     private final int indexTo;
     private final String[] commandValue;
@@ -61,18 +61,17 @@ public class RiscoMessage {
 
         if (stringMessage.startsWith("N") || stringMessage.startsWith("B")) {
             this.commandId = -1;
-            this.command = stringMessage.substring(0, stringMessage.indexOf(ETB));
+            this.fullCommand = stringMessage.substring(0, stringMessage.indexOf(ETB));
             this.crcValue = stringMessage.substring(stringMessage.indexOf(ETB) + 1);
         } else {
             this.commandId = Integer.parseInt(stringMessage.substring(0, 2), 10);
-            this.command = stringMessage.substring(2, stringMessage.indexOf(ETB));
+            this.fullCommand = stringMessage.substring(2, stringMessage.indexOf(ETB));
             this.crcValue = stringMessage.substring(stringMessage.indexOf(ETB) + 1);
         }
 
         // Computed information
         Object[] objs = splitCommand();
         this.commandName = (String) objs[0];
-        this.multiIndex = (boolean) objs[1];
         this.indexFrom = (int) objs[2];
         this.indexTo = (int) objs[3];
         this.commandValue = (String[]) objs[4];
@@ -82,7 +81,7 @@ public class RiscoMessage {
         this.panelId = panelId;
         this.encoding = encoding;
         this.commandId = commandId;
-        this.command = command;
+        this.fullCommand = command;
 
         // Add Cmd_Id to command and Separator character between Cmd and CRC value
         String cmd = String.format("%02d", commandId) + command + ETB;
@@ -107,7 +106,6 @@ public class RiscoMessage {
 
         Object[] objs = splitCommand();
         this.commandName = (String) objs[0];
-        this.multiIndex = (boolean) objs[1];
         this.indexFrom = (int) objs[2];
         this.indexTo = (int) objs[3];
         this.commandValue = (String[]) objs[4];
@@ -125,8 +123,8 @@ public class RiscoMessage {
         sb.append("ENC: ").append(isEncrypted());
         sb.append(", MO: ").append(getMessageOrigin());
         sb.append(", CMD: ").append(commandName);
-        sb.append(", MSG: ").append(command);
-        sb.append(", VALUE: ").append(HexUtils.bytesToHex(command.getBytes(), " "));
+        sb.append(", MSG: ").append(fullCommand);
+        sb.append(", VALUE: ").append(HexUtils.bytesToHex(fullCommand.getBytes(), " "));
 
         // sb.append(", MSG: ").append(commandId).append("-").append(this.crcValue).append("-").append(stringMessage);
 
@@ -141,8 +139,8 @@ public class RiscoMessage {
         return commandId;
     }
 
-    public String getCommand() {
-        return command;
+    public String getFullCommand() {
+        return fullCommand;
     }
 
     public String getCrcValue() {
@@ -172,7 +170,7 @@ public class RiscoMessage {
     }
 
     public boolean isMultiIndex() {
-        return multiIndex;
+        return indexFrom != indexTo;
     }
 
     public int getIndexFrom() {
@@ -209,6 +207,12 @@ public class RiscoMessage {
         return ids.toArray(new String[0]);
     }
 
+    public KeyValuePair[] getProperties() {
+        CommandParser vp = getMessageType().parser;
+
+        return vp.parse(commandValue[0]);
+    }
+
     public boolean isValidCRC() {
         if (crcValue.length() != 4) {
             return false;
@@ -220,7 +224,7 @@ public class RiscoMessage {
             }
         }
 
-        String computedCrc = calcCommandCRC(command);
+        String computedCrc = calcCommandCRC(fullCommand);
         boolean crcOK = crcValue.equals(computedCrc);
 
         logger.trace("Command[{}] crcOK:{}, Computed CRC: {}, Message CRC: {}", commandId, crcOK, computedCrc,
@@ -235,32 +239,30 @@ public class RiscoMessage {
 
     private Object[] splitCommand() {
         String name = "";
-        boolean isMulti = false;
         int from = -1;
         int to = -1;
         String[] values;
 
-        int indexReadSign = command.indexOf('?');
-        int indexWriteSign = command.indexOf('=');
+        int indexReadSign = fullCommand.indexOf('?');
+        int indexWriteSign = fullCommand.indexOf('=');
 
         String commandAndIndex;
         String commandValue;
 
         if (indexReadSign > 0) {
-            commandAndIndex = command.substring(0, indexReadSign);
+            commandAndIndex = fullCommand.substring(0, indexReadSign);
             commandValue = "";
         } else if (indexWriteSign > 0) {
-            commandAndIndex = command.substring(0, indexWriteSign);
-            commandValue = command.substring(indexWriteSign + 1);
+            commandAndIndex = fullCommand.substring(0, indexWriteSign);
+            commandValue = fullCommand.substring(indexWriteSign + 1);
         } else {
-            commandAndIndex = command;
+            commandAndIndex = fullCommand;
             commandValue = "";
         }
 
         Matcher m0 = NAME.matcher(commandAndIndex);
         if (m0.matches()) {
             name = m0.group(1);
-            isMulti = false;
             from = -1;
             to = -1;
             values = new String[] {};
@@ -268,7 +270,6 @@ public class RiscoMessage {
             Matcher m1 = NAME_AND_INDEX.matcher(commandAndIndex);
             if (m1.matches()) {
                 name = m1.group(1);
-                isMulti = false;
                 from = Integer.valueOf(m1.group(2));
                 to = from;
                 values = new String[] { commandValue };
@@ -276,13 +277,11 @@ public class RiscoMessage {
                 Matcher m2 = NAME_AND_INDEX_RANGE.matcher(commandAndIndex);
                 if (m2.matches()) {
                     name = m2.group(1);
-                    isMulti = true;
                     from = Integer.valueOf(m2.group(2));
                     to = Integer.valueOf(m2.group(3));
                     values = commandValue.split("\t");
                 } else {
                     name = "";
-                    isMulti = false;
                     from = -1;
                     to = -1;
                     values = null;
@@ -292,10 +291,9 @@ public class RiscoMessage {
 
         Object[] arr = new Object[5];
         arr[0] = name;
-        arr[1] = isMulti;
-        arr[2] = from;
-        arr[3] = to;
-        arr[4] = values;
+        arr[1] = from;
+        arr[2] = to;
+        arr[3] = values;
 
         return arr;
     }
