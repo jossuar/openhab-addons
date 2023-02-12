@@ -99,11 +99,22 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
         RiscoCommunicator communicator = this.communicator;
         if (communicator != null) {
             communicator.addListener(this);
-            communicator.send("ZLBL*1:9?");
+            communicator.send("PNLCNF?");
+            communicator.send("ZONEQTY?");
+            communicator.send("ZLBL1?");
             communicator.send("ZLBL*1:8?");
             communicator.send("DTYPZ*1:8?");
             communicator.send("ZSTT19?");
             communicator.send("ZSTT*1:8?");
+
+            communicator.send("SSTT?");
+            communicator.send("ZPART&*1?");
+            communicator.send("ZPART1?");
+            communicator.send("ZPART*1:8?");
+            communicator.send("PNLVER?");
+            communicator.send("PNLSERD?");
+
+            communicator.send("ZLBL*1:9?");
 
             // communicator.send("ZSTT1?");
             // communicator.send("ZSTT2?");

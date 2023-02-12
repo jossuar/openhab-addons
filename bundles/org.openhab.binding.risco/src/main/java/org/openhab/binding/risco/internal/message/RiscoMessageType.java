@@ -10,6 +10,7 @@ import org.openhab.binding.risco.internal.RiscoBindingConstants;
 import org.openhab.binding.risco.internal.message.parser.CLOCKParser;
 import org.openhab.binding.risco.internal.message.parser.CommandParser;
 import org.openhab.binding.risco.internal.message.parser.DTYPZParser;
+import org.openhab.binding.risco.internal.message.parser.NULLParser;
 import org.openhab.binding.risco.internal.message.parser.STTParser;
 import org.openhab.binding.risco.internal.message.parser.STTProperty;
 
@@ -17,7 +18,7 @@ import org.openhab.binding.risco.internal.message.parser.STTProperty;
 public enum RiscoMessageType {
 
     // @formatter:off
-    UNKNOWN("", "", false, "unknown", "Unknown", new STTParser()),
+    UNKNOWN("", "", false, "unknown", "Unknown", new NULLParser()),
 
     CLOCK("CLOCK", "", false, "","", new CLOCKParser()),
 

@@ -73,8 +73,12 @@ public class RiscoMessageTest {
         PrintStream console = System.out;
         if (console != null) {
             console.println(msg);
-            console.println(Arrays.toString(msg.getThingIds()));
-            console.println(Arrays.toString(msg.getProperties()));
+            console.println("commandName: " + msg.getCommandName());
+            console.println("hasIndex: " + (msg.hasIndex() ? "true" : "false") + ", hasMultipleIndexes: "
+                    + (msg.hasMultipleIndexes() ? "true" : "false") + ", indexFrom: " + msg.getIndexFrom()
+                    + ", indexTo: " + msg.getIndexTo());
+            console.println("thingIds: " + Arrays.toString(msg.getThingIds()));
+            console.println("properties: " + Arrays.toString(msg.getProperties()));
             console.println();
         }
 
