@@ -72,9 +72,9 @@ public class RiscoMessage {
         // Computed information
         Object[] objs = splitCommand();
         this.commandName = (String) objs[0];
-        this.indexFrom = (int) objs[2];
-        this.indexTo = (int) objs[3];
-        this.commandValue = (String[]) objs[4];
+        this.indexFrom = (int) objs[1];
+        this.indexTo = (int) objs[2];
+        this.commandValue = (String[]) objs[3];
     }
 
     public RiscoMessage(int panelId, String encoding, Integer commandId, String command, Boolean encrypt) {
@@ -106,9 +106,9 @@ public class RiscoMessage {
 
         Object[] objs = splitCommand();
         this.commandName = (String) objs[0];
-        this.indexFrom = (int) objs[2];
-        this.indexTo = (int) objs[3];
-        this.commandValue = (String[]) objs[4];
+        this.indexFrom = (int) objs[1];
+        this.indexTo = (int) objs[2];
+        this.commandValue = (String[]) objs[3];
     }
 
     /**
@@ -169,7 +169,11 @@ public class RiscoMessage {
         return this.commandName;
     }
 
-    public boolean isMultiIndex() {
+    public boolean hasIndex() {
+        return indexFrom != -1;
+    }
+
+    public boolean hasMultipleIndexes() {
         return indexFrom != indexTo;
     }
 
@@ -210,7 +214,8 @@ public class RiscoMessage {
     public KeyValuePair[] getProperties() {
         CommandParser vp = getMessageType().parser;
 
-        return vp.parse(commandValue[0]);
+        String value = hasIndex() ? commandValue[0] : "";
+        return vp.parse(value);
     }
 
     public boolean isValidCRC() {
