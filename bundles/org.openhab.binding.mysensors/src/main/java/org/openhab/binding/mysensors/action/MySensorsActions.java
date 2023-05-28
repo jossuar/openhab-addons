@@ -68,5 +68,4 @@ public class MySensorsActions implements ThingActions {
     public static void reboot(ThingActions actions) {
         ((MySensorsActions) actions).reboot();
     }
-
 }
