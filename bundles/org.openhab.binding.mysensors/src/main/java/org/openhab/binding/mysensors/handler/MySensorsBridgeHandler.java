@@ -33,7 +33,11 @@ import org.openhab.binding.mysensors.internal.sensors.MySensorsChild;
 import org.openhab.binding.mysensors.internal.sensors.MySensorsNode;
 import org.openhab.core.OpenHAB;
 import org.openhab.core.io.transport.serial.SerialPortManager;
-import org.openhab.core.thing.*;
+import org.openhab.core.thing.Bridge;
+import org.openhab.core.thing.ChannelUID;
+import org.openhab.core.thing.Thing;
+import org.openhab.core.thing.ThingStatus;
+import org.openhab.core.thing.ThingTypeUID;
 import org.openhab.core.thing.binding.BaseBridgeHandler;
 import org.openhab.core.types.Command;
 import org.slf4j.Logger;
@@ -82,12 +86,13 @@ public class MySensorsBridgeHandler extends BaseBridgeHandler implements MySenso
 
         myBridgeConfiguration = getConfigAs(MySensorsBridgeConfiguration.class);
 
-        myGateway = new MySensorsGateway(loadCacheFile(), serialPortManager);
+        MySensorsGateway myGateway = new MySensorsGateway(loadCacheFile(), serialPortManager);
 
         if (myGateway.setup(openhabToMySensorsGatewayConfig(myBridgeConfiguration, getThing().getThingTypeUID()))) {
             myGateway.startup();
 
             myGateway.addEventListener(this);
+            this.myGateway = myGateway;
 
             logger.debug("Initialization of the MySensors bridge {} DONE!", getThing().getUID());
 
@@ -134,12 +139,14 @@ public class MySensorsBridgeHandler extends BaseBridgeHandler implements MySenso
     public void connectionStatusUpdate(@Nullable MySensorsAbstractConnection connection, boolean connected) {
         if (connected) {
             updateStatus(ThingStatus.ONLINE);
-            if (discoveryService != null)
+            if (discoveryService != null) {
                 discoveryService.activate();
+            }
         } else {
             updateStatus(ThingStatus.OFFLINE);
-            if (discoveryService != null)
+            if (discoveryService != null) {
                 discoveryService.deactivate();
+            }
         }
         logger.debug("Connection status {} updated to {}", getThing().getUID(), connected);
         updateCacheFile();
@@ -162,8 +169,9 @@ public class MySensorsBridgeHandler extends BaseBridgeHandler implements MySenso
     }
 
     private void updateCacheFile() {
-        if (myGateway == null)
+        if (myGateway == null) {
             return;
+        }
 
         List<Integer> givenIds = myGateway.getGivenIds();
 
