@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2021 Contributors to the openHAB project
+ * Copyright (c) 2010-2023 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -19,7 +19,15 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.openhab.binding.mysensors.converter.*;
+import org.openhab.binding.mysensors.converter.MySensorsDecimalTypeConverter;
+import org.openhab.binding.mysensors.converter.MySensorsOnOffTypeConverter;
+import org.openhab.binding.mysensors.converter.MySensorsOpenCloseTypeConverter;
+import org.openhab.binding.mysensors.converter.MySensorsPercentTypeConverter;
+import org.openhab.binding.mysensors.converter.MySensorsRGBTypeConverter;
+import org.openhab.binding.mysensors.converter.MySensorsRGBWTypeConverter;
+import org.openhab.binding.mysensors.converter.MySensorsStringTypeConverter;
+import org.openhab.binding.mysensors.converter.MySensorsTypeConverter;
+import org.openhab.binding.mysensors.converter.MySensorsUpDownTypeConverter;
 import org.openhab.binding.mysensors.internal.MySensorsUtility;
 import org.openhab.binding.mysensors.internal.protocol.message.MySensorsMessageSubType;
 import org.openhab.core.thing.ThingTypeUID;
