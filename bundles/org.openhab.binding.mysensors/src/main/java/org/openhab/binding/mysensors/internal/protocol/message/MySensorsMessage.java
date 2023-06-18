@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2023 Contributors to the openHAB project
+ * Copyright (c) 2010-2022 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -331,18 +331,35 @@ public class MySensorsMessage {
         mysensorsmessage.setChildId(Integer.parseInt(splitTopic[MySensorsMessagePart.CHILD.getId()]));
 
         int msgTypeId = Integer.parseInt(splitTopic[MySensorsMessagePart.TYPE.getId()]);
-        mysensorsmessage.setMsgType(MySensorsMessageType.getById(msgTypeId));
+
+        MySensorsMessageType type = MySensorsMessageType.getById(msgTypeId);
+        if (type == null) {
+            throw new IllegalArgumentException("MessageType is not valid");
+        }
+        mysensorsmessage.setMsgType(type);
 
         int ackId = Integer.parseInt(splitTopic[MySensorsMessagePart.ACK.getId()]);
         mysensorsmessage.setAck(MySensorsMessageAck.getById(ackId));
 
         int subTypeId = Integer.parseInt(splitTopic[MySensorsMessagePart.SUBTYPE.getId()]);
         if (mysensorsmessage.getMsgType() == MySensorsMessageType.INTERNAL) {
-            mysensorsmessage.setSubType(MySensorsMessageSubType.getInternalById(subTypeId));
+            MySensorsMessageSubType subType = MySensorsMessageSubType.getInternalById(subTypeId);
+            if (subType == null) {
+                throw new IllegalArgumentException("MessageSubType is not valid");
+            }
+            mysensorsmessage.setSubType(subType);
         } else if (mysensorsmessage.getMsgType() == MySensorsMessageType.PRESENTATION) {
-            mysensorsmessage.setSubType(MySensorsMessageSubType.getPresentationById(subTypeId));
+            MySensorsMessageSubType subType = MySensorsMessageSubType.getPresentationById(subTypeId);
+            if (subType == null) {
+                throw new IllegalArgumentException("MessageSubType is not valid");
+            }
+            mysensorsmessage.setSubType(subType);
         } else {
-            mysensorsmessage.setSubType(MySensorsMessageSubType.getSetReqById(subTypeId));
+            MySensorsMessageSubType subType = MySensorsMessageSubType.getSetReqById(subTypeId);
+            if (subType == null) {
+                throw new IllegalArgumentException("MessageSubType is not valid");
+            }
+            mysensorsmessage.setSubType(subType);
         }
         return mysensorsmessage;
     }

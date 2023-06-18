@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2023 Contributors to the openHAB project
+ * Copyright (c) 2010-2022 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -15,6 +15,8 @@ package org.openhab.binding.mysensors.internal.protocol.message;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
+
 /**
  * Every message contains a field with which the sender is able to indicate that it requests an
  * Acknowledgement for the message.
@@ -22,6 +24,7 @@ import java.util.Map;
  * @author Tim Oberföll - Initial contribution
  *
  */
+@NonNullByDefault
 public enum MySensorsMessageAck {
     TRUE(1),
     FALSE(0);
@@ -46,6 +49,8 @@ public enum MySensorsMessageAck {
     }
 
     public static MySensorsMessageAck getById(int id) {
-        return ID.get(id);
+        MySensorsMessageAck ack = ID.get(id);
+
+        return (ack == null) ? MySensorsMessageAck.FALSE : ack;
     }
 }

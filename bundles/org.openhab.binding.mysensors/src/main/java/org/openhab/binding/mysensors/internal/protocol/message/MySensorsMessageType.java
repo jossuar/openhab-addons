@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2023 Contributors to the openHAB project
+ * Copyright (c) 2010-2022 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -15,6 +15,9 @@ package org.openhab.binding.mysensors.internal.protocol.message;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
+
 /**
  * A MySensorsMessage is defined by its MessageType
  * Presentation: for a new sensors
@@ -26,6 +29,7 @@ import java.util.Map;
  * @author Tim Oberföll - Initial contribution
  *
  */
+@NonNullByDefault
 public enum MySensorsMessageType {
     PRESENTATION(0),
     SET(1),
@@ -52,7 +56,7 @@ public enum MySensorsMessageType {
         }
     }
 
-    public static MySensorsMessageType getById(int id) {
+    public static @Nullable MySensorsMessageType getById(int id) {
         return ID.get(id);
     }
 }
