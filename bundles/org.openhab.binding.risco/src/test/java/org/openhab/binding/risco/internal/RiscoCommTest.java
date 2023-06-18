@@ -19,10 +19,8 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.junit.jupiter.api.Test;
 import org.openhab.binding.risco.internal.RiscoCommunicator.RiscoPanelListener;
 import org.openhab.binding.risco.internal.message.RiscoMessagePair;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.Logger;
 
 /**
  * Test class for Risco communication.
@@ -31,30 +29,10 @@ import ch.qos.logback.classic.Logger;
  */
 @NonNullByDefault
 public class RiscoCommTest implements RiscoPanelListener {
-    private final Logger logger = (Logger) LoggerFactory.getLogger(RiscoCommTest.class);
+    private final Logger logger = LoggerFactory.getLogger(RiscoCommTest.class);
 
     @Test
     public void testCommunication() throws IOException {
-        Logger root = (Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
-        root.setLevel(Level.DEBUG);
-
-        /*
-         * LoggerContext logCtx = (LoggerContext) LoggerFactory.getILoggerFactory();
-         *
-         * PatternLayoutEncoder logEncoder = new PatternLayoutEncoder();
-         * logEncoder.setContext(logCtx);
-         * logEncoder.setPattern("%-12date{YYYY-MM-dd HH:mm:ss.SSS} %-5level – %msg%n");
-         * logEncoder.start();
-         *
-         * ConsoleAppender logConsoleAppender = new ConsoleAppender();
-         * logConsoleAppender.setContext(logCtx);
-         * logConsoleAppender.setName("console");
-         * logConsoleAppender.setEncoder(logEncoder);
-         * logConsoleAppender.start();
-         *
-         * root.addAppender(logConsoleAppender);
-         */
-
         logger.trace("Hello trace message");
         logger.debug("Hello debug message");
         logger.warn("Hello trace message");
@@ -80,16 +58,16 @@ public class RiscoCommTest implements RiscoPanelListener {
         comm.send("ZAREA&*1?");
 
         int mins = 0;
-        int max_mins = 100 * 6 * 60;
+        int maxMins = 100 * 6 * 60;
         while (true) {
             try {
                 Thread.sleep(3 * 1000);
                 mins++;
-                if (mins >= max_mins) {
+                if (mins >= maxMins) {
                     break;
                 }
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                logger.trace("InterruptedException" + "");
             }
         }
 

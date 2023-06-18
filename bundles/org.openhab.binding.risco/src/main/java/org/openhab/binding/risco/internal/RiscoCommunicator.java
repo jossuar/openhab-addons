@@ -1,3 +1,15 @@
+/**
+ * Copyright (c) 2010-2022 Contributors to the openHAB project
+ *
+ * See the NOTICE file(s) distributed with this work for additional
+ * information.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License 2.0 which is available at
+ * http://www.eclipse.org/legal/epl-2.0
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ */
 package org.openhab.binding.risco.internal;
 
 import java.io.BufferedInputStream;
@@ -274,9 +286,7 @@ public class RiscoCommunicator {
             // }
             // }
 
-        } else if (msg.getMessageOrigin() == MessageOrigin.BINDING) {
-            // Nothing to be done
-        } else {
+        } else if (msg.getMessageOrigin() != MessageOrigin.BINDING) {
             // Unknown message origin
             logger.debug("Unknown message origin. Abnormal situation. {}", msg);
         }
@@ -301,7 +311,7 @@ public class RiscoCommunicator {
     }
 
     private class RiscoReceiver implements Runnable {
-        private final int MAX_MESSAGE_SIZE = 4096;
+        private static final int MAX_MESSAGE_SIZE = 4096;
         private byte[] buffer = new byte[MAX_MESSAGE_SIZE];
         private int bufferIndex = 0;
         private boolean unStuff = false;
@@ -416,7 +426,7 @@ public class RiscoCommunicator {
                 // Just exit the loop
                 logger.debug("RiscoCommunicator.SenderThread: InterruptedException caught.");
             } catch (IOException e) {
-                logger.debug("RiscoCommunicator.SenderThread: IOException caught. {}", e);
+                logger.debug("RiscoCommunicator.SenderThread: IOException caught.", e);
             }
 
             logger.debug("RiscoSender. Thread stopped.");
@@ -437,7 +447,6 @@ public class RiscoCommunicator {
     private class RiscoWatchdog implements Runnable {
         @Override
         public void run() {
-
             if (ChronoUnit.SECONDS.between(lastSendTime, ZonedDateTime.now()) > 30
                     || ChronoUnit.SECONDS.between(lastReceiveTime, ZonedDateTime.now()) > 70) {
                 logger.debug("check sendBefore: {}, recvBefore: {}, result: {}",
@@ -450,7 +459,7 @@ public class RiscoCommunicator {
                     lastReceiveTime = ZonedDateTime.now();
                     reconnect();
                 } catch (IOException e) {
-                    logger.warn("Could not reconnect to the panel. {}", e);
+                    logger.warn("Could not reconnect to the panel.", e);
                 }
                 return;
             } else {

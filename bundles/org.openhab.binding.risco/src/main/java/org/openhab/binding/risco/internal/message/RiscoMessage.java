@@ -34,6 +34,8 @@ import org.slf4j.LoggerFactory;
  */
 @NonNullByDefault
 public class RiscoMessage {
+    private static final String ETB = Character.toString((char) 23);
+
     private final Logger logger = LoggerFactory.getLogger(RiscoMessage.class);
 
     private final int panelId;
@@ -49,8 +51,6 @@ public class RiscoMessage {
     private final int indexFrom;
     private final int indexTo;
     private final String[] commandValue;
-
-    private final String ETB = Character.toString((char) 23);
 
     public RiscoMessage(int panelId, String encoding, byte[] encryptedMessage) {
         this.panelId = panelId;
@@ -238,9 +238,9 @@ public class RiscoMessage {
         return crcOK;
     }
 
-    private static Pattern NAME = Pattern.compile("^([A-Z]+)$");
-    private static Pattern NAME_AND_INDEX = Pattern.compile("^([A-Z]+)(\\d+)$");
-    private static Pattern NAME_AND_INDEX_RANGE = Pattern.compile("^([A-Z]+)\\*(\\d+):(\\d+)$");
+    private static final Pattern NAME = Pattern.compile("^([A-Z]+)$");
+    private static final Pattern NAME_AND_INDEX = Pattern.compile("^([A-Z]+)(\\d+)$");
+    private static final Pattern NAME_AND_INDEX_RANGE = Pattern.compile("^([A-Z]+)\\*(\\d+):(\\d+)$");
 
     private Object[] splitCommand() {
         String name = "";
@@ -312,7 +312,7 @@ public class RiscoMessage {
         int sum = 65535;
 
         for (int i = 0; i < cmdBytes.length; i++) {
-            sum = (sum >> 8) ^ RiscoBindingConstants.CRCArray[((sum) ^ (cmdBytes[i] & 0xff)) & 0xff];
+            sum = (sum >> 8) ^ RiscoBindingConstants.CRC_ARRAY[((sum) ^ (cmdBytes[i] & 0xff)) & 0xff];
         }
 
         byte b1 = (byte) (sum >> 8);

@@ -264,9 +264,8 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
         }
 
         if (msg.getFullCommand().startsWith("ZSTT")) {
-            logger.debug("", msg);
+            logger.debug("{}", msg);
             // parse Zone Status message
-
         }
 
         Thing thing = null;// findThing(caddxThingType, partition, zone, keypad);

@@ -1,6 +1,17 @@
+/**
+ * Copyright (c) 2010-2022 Contributors to the openHAB project
+ *
+ * See the NOTICE file(s) distributed with this work for additional
+ * information.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License 2.0 which is available at
+ * http://www.eclipse.org/legal/epl-2.0
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ */
 package org.openhab.binding.risco.internal.message;
 
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,6 +25,9 @@ import org.openhab.binding.risco.internal.message.parser.NULLParser;
 import org.openhab.binding.risco.internal.message.parser.STTParser;
 import org.openhab.binding.risco.internal.message.parser.STTProperty;
 
+/**
+ * @author Georgios Moutsos - Initial contribution
+ */
 @NonNullByDefault
 public enum RiscoMessageType {
 
@@ -198,13 +212,16 @@ public enum RiscoMessageType {
             BY_MESSAGE_TYPE.put(mt.commandName, mt);
         }
 
-        Comparator<String> comparator = new Comparator<String>() {
-            @Override
-            public int compare(String o1, String o2) {
-                Integer L1 = o1.length();
-                return L1.compareTo(o2.length()) * -1;
-            }
-        };
+        /*
+         * Comparator<String> comparator = new Comparator<String>() {
+         *
+         * @Override
+         * public int compare(String o1, String o2) {
+         * Integer L1 = o1.length();
+         * return L1.compareTo(o2.length()) * -1;
+         * }
+         * };
+         */
     }
 
     public @Nullable static RiscoMessageType valueOfMessage(String commandName) {
