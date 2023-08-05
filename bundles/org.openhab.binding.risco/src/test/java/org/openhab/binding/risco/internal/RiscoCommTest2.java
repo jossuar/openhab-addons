@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2022 Contributors to the openHAB project
+ * Copyright (c) 2010-2023 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -19,10 +19,8 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.junit.jupiter.api.Test;
 import org.openhab.binding.risco.internal.RiscoCommunicator.RiscoPanelListener;
 import org.openhab.binding.risco.internal.message.RiscoMessagePair;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.Logger;
 
 /**
  * Test class for Risco communication.
@@ -30,14 +28,11 @@ import ch.qos.logback.classic.Logger;
  * @author Georgios Moutsos - Initial contribution
  */
 @NonNullByDefault
-public class RiscoCommTest implements RiscoPanelListener {
-    private final Logger logger = (Logger) LoggerFactory.getLogger(RiscoCommTest.class);
+public class RiscoCommTest2 implements RiscoPanelListener {
+    private final Logger logger = LoggerFactory.getLogger(RiscoCommTest2.class);
 
     @Test
     public void testCommunication() throws IOException {
-        Logger root = (Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
-        root.setLevel(Level.DEBUG);
-
         /*
          * LoggerContext logCtx = (LoggerContext) LoggerFactory.getILoggerFactory();
          *
@@ -80,16 +75,17 @@ public class RiscoCommTest implements RiscoPanelListener {
         comm.send("ZAREA&*1?");
 
         int mins = 0;
-        int max_mins = 100 * 6 * 60;
+        int maxMins = 100 * 6 * 60;
         while (true) {
             try {
                 Thread.sleep(3 * 1000);
                 mins++;
-                if (mins >= max_mins) {
+                if (mins >= maxMins) {
                     break;
                 }
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                // e.printStackTrace();
+                logger.debug("interrupted", e);
             }
         }
 

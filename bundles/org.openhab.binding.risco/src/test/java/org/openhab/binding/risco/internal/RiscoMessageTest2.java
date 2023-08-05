@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2022 Contributors to the openHAB project
+ * Copyright (c) 2010-2023 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -31,7 +31,7 @@ import org.openhab.binding.risco.internal.message.RiscoMessageType;
  * @author Georgios Moutsos - Initial contribution
  */
 @NonNullByDefault
-public class RiscoMessageTest {
+public class RiscoMessageTest2 {
 
     // @formatter:off
     public static final List<Object[]> data() {
@@ -41,7 +41,7 @@ public class RiscoMessageTest {
             { "CUSTLST_write", "CUSTLST", -1, -1, RiscoMessageType.UNKNOWN },
             { "DTYPZ_1-8_read", "DTYPZ", 1, 8, RiscoMessageType.COMMAND_DTYPZ },
             { "DTYPZ_1-8_write", "DTYPZ", 1, 8, RiscoMessageType.COMMAND_DTYPZ },
-            { "N13", "N", 13, 13, RiscoMessageType.UNKNOWN },
+            { "N13", "N13", -1, -1, RiscoMessageType.UNKNOWN },
             { "ZLBL_1-8_write", "ZLBL", 1, 8, RiscoMessageType.UNKNOWN },
             { "ZSTT_1-8_read", "ZSTT", 1, 8, RiscoMessageType.STATUS_ZONE },
             { "ZSTT_19_read", "ZSTT", 19, 19, RiscoMessageType.STATUS_ZONE },
