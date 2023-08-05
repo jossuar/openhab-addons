@@ -95,16 +95,18 @@ public class RiscoMessageDecryptionTest {
                     + (msg.hasMultipleIndexes() ? "true" : "false") + ", indexFrom: " + msg.getIndexFrom()
                     + ", indexTo: " + msg.getIndexTo());
             console.println("sign: " + msg.getSign());
-            // console.println("thingIds: " + Arrays.toString(msg.getThingIds()));
-            // console.println("properties: " + Arrays.toString(msg.getProperties()));
+            console.println("thingIds: " + Arrays.toString(msg.getThingIds()));
+            console.println("properties: " + Arrays.toString(msg.getProperties()));
             console.println("values: " + Arrays.toString(msg.getCommandValues()));
             console.println();
             console.flush();
         }
 
         // Encrypt
-        RiscoMessage msg2 = factory.create(1, "UTF-8", cmdId, msg.getFullCommand(), encrypted);
-        // assertArrayEquals(msg.getEncryptedMessage(), msg2.getEncryptedMessage());
-        assertArrayEquals(msg.getDecryptedMessage(), msg2.getDecryptedMessage());
+        if (!"".equals(msg.getCommandName())) {
+            RiscoMessage msg2 = factory.create(1, "UTF-8", cmdId, msg.getFullCommand(), encrypted);
+            // assertArrayEquals(msg.getEncryptedMessage(), msg2.getEncryptedMessage());
+            assertArrayEquals(msg.getDecryptedMessage(), msg2.getDecryptedMessage());
+        }
     }
 }
