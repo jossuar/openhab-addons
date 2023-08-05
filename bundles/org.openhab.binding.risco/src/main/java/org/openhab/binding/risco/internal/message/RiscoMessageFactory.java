@@ -1,3 +1,15 @@
+/**
+ * Copyright (c) 2010-2023 Contributors to the openHAB project
+ *
+ * See the NOTICE file(s) distributed with this work for additional
+ * information.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License 2.0 which is available at
+ * http://www.eclipse.org/legal/epl-2.0
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ */
 package org.openhab.binding.risco.internal.message;
 
 import java.io.ByteArrayOutputStream;
@@ -19,7 +31,7 @@ import org.slf4j.LoggerFactory;
  */
 @NonNullByDefault
 public class RiscoMessageFactory {
-    private final Logger logger = LoggerFactory.getLogger(RiscoMessage.class);
+    private final Logger logger = LoggerFactory.getLogger(RiscoMessageFactory.class);
     private final String ETB = Character.toString((char) 23);
 
     // Create a RiscoMessage from the received data
@@ -349,5 +361,4 @@ public class RiscoMessageFactory {
 
         return crcOK;
     }
-
 }

@@ -1,3 +1,15 @@
+/**
+ * Copyright (c) 2010-2023 Contributors to the openHAB project
+ *
+ * See the NOTICE file(s) distributed with this work for additional
+ * information.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License 2.0 which is available at
+ * http://www.eclipse.org/legal/epl-2.0
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ */
 package org.openhab.binding.risco.internal;
 
 import java.io.BufferedInputStream;
@@ -421,7 +433,7 @@ public class RiscoCommunicator {
                 // Just exit the loop
                 logger.debug("RiscoCommunicator.SenderThread: InterruptedException caught.");
             } catch (IOException e) {
-                logger.debug("RiscoCommunicator.SenderThread: IOException caught. {}", e);
+                logger.debug("RiscoCommunicator.SenderThread: IOException caught.", e);
             }
 
             logger.debug("RiscoSender. Thread stopped.");
@@ -455,7 +467,7 @@ public class RiscoCommunicator {
                     lastReceiveTime = ZonedDateTime.now();
                     reconnect();
                 } catch (IOException e) {
-                    logger.warn("Could not reconnect to the panel. {}", e);
+                    logger.warn("Could not reconnect to the panel.", e);
                 }
                 return;
             } else {
