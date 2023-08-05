@@ -12,18 +12,10 @@
  */
 package org.openhab.binding.risco.internal.message;
 
-import java.io.ByteArrayOutputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.openhab.binding.risco.internal.RiscoBindingConstants;
-import org.openhab.binding.risco.internal.message.parser.CommandParser;
-import org.openhab.core.util.HexUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,82 +25,31 @@ import org.slf4j.LoggerFactory;
  * @author Georgios Moutsos - Initial contribution
  */
 @NonNullByDefault
-public class RiscoMessage {
+public abstract class RiscoMessage {
     private final Logger logger = LoggerFactory.getLogger(RiscoMessage.class);
 
-    private final int panelId;
-    private final String encoding;
-    private final byte[] encryptedMessage;
-    private final byte[] decryptedMessage;
-    private final String stringMessage;
     private final int commandId;
-    private final String fullCommand;
-    private final String crcValue;
-
     private final String commandName;
+    private final String[] commandValues;
     private final int indexFrom;
     private final int indexTo;
-    private final String[] commandValue;
+    private final String sign;
 
-    private final String ETB = Character.toString((char) 23);
+    private final byte[] encryptedMessage;
+    private final byte[] decryptedMessage;
 
-    public RiscoMessage(int panelId, String encoding, byte[] encryptedMessage) {
-        this.panelId = panelId;
-        this.encoding = encoding;
-        this.encryptedMessage = encryptedMessage;
-        this.decryptedMessage = decrypt(encryptedMessage);
-        this.stringMessage = bytesToString(decryptedMessage);
+    public RiscoMessage(int commandId, String commandName, String sign, String[] commandValues, int indexFrom,
+            int indexTo, byte[] encryptedMessage, byte[] decryptedMessage) {
 
-        if (stringMessage.startsWith("N") || stringMessage.startsWith("B")) {
-            this.commandId = -1;
-            this.fullCommand = stringMessage.substring(0, stringMessage.indexOf(ETB));
-            this.crcValue = stringMessage.substring(stringMessage.indexOf(ETB) + 1);
-        } else {
-            this.commandId = Integer.parseInt(stringMessage.substring(0, 2), 10);
-            this.fullCommand = stringMessage.substring(2, stringMessage.indexOf(ETB));
-            this.crcValue = stringMessage.substring(stringMessage.indexOf(ETB) + 1);
-        }
-
-        // Computed information
-        Object[] objs = splitCommand();
-        this.commandName = (String) objs[0];
-        this.indexFrom = (int) objs[1];
-        this.indexTo = (int) objs[2];
-        this.commandValue = (String[]) objs[3];
-    }
-
-    public RiscoMessage(int panelId, String encoding, Integer commandId, String command, Boolean encrypt) {
-        this.panelId = panelId;
-        this.encoding = encoding;
         this.commandId = commandId;
-        this.fullCommand = command;
+        this.commandName = commandName;
+        this.indexFrom = indexFrom;
+        this.indexTo = indexTo;
+        this.commandValues = commandValues;
+        this.sign = sign;
 
-        // Add Cmd_Id to command and Separator character between Cmd and CRC value
-        String cmd = String.format("%02d", commandId) + command + ETB;
-        this.crcValue = this.calcCommandCRC(cmd);
-
-        // Encrypt command string
-        byte[] e = encrypt(cmd + crcValue, encrypt);
-
-        // Build full encrypted byte[] message
-        ByteArrayOutputStream encrypedOutputStream = new ByteArrayOutputStream();
-        encrypedOutputStream.write(2);
-        if (encrypt) {
-            encrypedOutputStream.write(17);
-        }
-        encrypedOutputStream.write(e, 0, e.length);
-        encrypedOutputStream.write(3);
-
-        // Computed information
-        this.encryptedMessage = encrypedOutputStream.toByteArray();
-        this.decryptedMessage = decrypt(encryptedMessage);
-        this.stringMessage = bytesToString(decryptedMessage);
-
-        Object[] objs = splitCommand();
-        this.commandName = (String) objs[0];
-        this.indexFrom = (int) objs[1];
-        this.indexTo = (int) objs[2];
-        this.commandValue = (String[]) objs[3];
+        this.encryptedMessage = encryptedMessage;
+        this.decryptedMessage = decryptedMessage;
     }
 
     /**
@@ -123,29 +64,18 @@ public class RiscoMessage {
         sb.append("ENC: ").append(isEncrypted());
         sb.append(", MO: ").append(getMessageOrigin());
         sb.append(", CMD: ").append(commandName);
-        sb.append(", MSG: ").append(fullCommand);
-        sb.append(", VALUE: ").append(HexUtils.bytesToHex(fullCommand.getBytes(), " "));
-        sb.append(", encryptedMessage: ").append(HexUtils.bytesToHex(encryptedMessage, " "));
-
-        // sb.append(", MSG: ").append(commandId).append("-").append(this.crcValue).append("-").append(stringMessage);
+        // sb.append(", encryptedMessage: ").append(HexUtils.bytesToHex(encryptedMessage, " "));
+        // sb.append(", MSG: ").append(commandId);
 
         return sb.toString();
     }
 
     public boolean isEncrypted() {
-        return encryptedMessage[1] == 17;
+        return encryptedMessage.length > 1 && encryptedMessage[1] == 17;
     }
 
     public Integer getCommandId() {
         return commandId;
-    }
-
-    public String getFullCommand() {
-        return fullCommand;
-    }
-
-    public String getCrcValue() {
-        return crcValue;
     }
 
     public MessageOrigin getMessageOrigin() {
@@ -170,8 +100,8 @@ public class RiscoMessage {
         return this.commandName;
     }
 
-    public String[] getCommandValue() {
-        return this.commandValue;
+    public String[] getCommandValues() {
+        return this.commandValues;
     }
 
     public boolean hasIndex() {
@@ -188,6 +118,10 @@ public class RiscoMessage {
 
     public int getIndexTo() {
         return indexTo;
+    }
+
+    public String getSign() {
+        return sign;
     }
 
     public RiscoMessageType getMessageType() {
@@ -216,223 +150,20 @@ public class RiscoMessage {
         return ids.toArray(new String[0]);
     }
 
-    public KeyValuePair[] getProperties() {
-        CommandParser vp = getMessageType().parser;
+    public String getFullCommand() {
+        StringBuilder sb = new StringBuilder();
+        // sb.append(String.format("%02d", commandId));
+        sb.append(getCommandName());
+        sb.append(hasMultipleIndexes() ? "*" : "");
+        sb.append(hasIndex() ? getIndexFrom() : "");
+        sb.append(hasMultipleIndexes() ? ":" : "");
+        sb.append(hasMultipleIndexes() ? getIndexTo() : "");
+        sb.append(getSign());
+        sb.append(String.join("\t", getCommandValues()));
+        // sb.append(Character.toString((char) 23));
 
-        String value = hasIndex() ? commandValue[0] : "";
-        return vp.parse(value);
+        return sb.toString();
     }
 
-    public boolean isValidCRC() {
-        if (crcValue.length() != 4) {
-            return false;
-        }
-
-        for (int i = 0; i < 4; i++) {
-            if (crcValue.charAt(i) > 127) {
-                return false;
-            }
-        }
-
-        String computedCrc = calcCommandCRC(fullCommand);
-        boolean crcOK = crcValue.equals(computedCrc);
-
-        logger.trace("Command[{}] crcOK:{}, Computed CRC: {}, Message CRC: {}", commandId, crcOK, computedCrc,
-                crcValue);
-
-        return crcOK;
-    }
-
-    private static Pattern NAME = Pattern.compile("^([A-Z&]+)$");
-    private static Pattern NAME_AND_INDEX = Pattern.compile("^([A-Z&]+)(\\d+)$");
-    private static Pattern NAME_AND_INDEX_RANGE = Pattern.compile("^([A-Z&]+)\\*(\\d+):(\\d+)$");
-
-    private Object[] splitCommand() {
-        String name = "";
-        int from = -1;
-        int to = -1;
-        String[] values;
-
-        int indexReadSign = fullCommand.indexOf('?');
-        int indexWriteSign = fullCommand.indexOf('=');
-
-        String commandAndIndex;
-        String commandValue;
-
-        if (indexReadSign > 0) {
-            commandAndIndex = fullCommand.substring(0, indexReadSign);
-            commandValue = "";
-        } else if (indexWriteSign > 0) {
-            commandAndIndex = fullCommand.substring(0, indexWriteSign);
-            commandValue = fullCommand.substring(indexWriteSign + 1);
-        } else {
-            commandAndIndex = fullCommand;
-            commandValue = "";
-        }
-
-        Matcher m0 = NAME.matcher(commandAndIndex);
-        if (m0.matches()) {
-            name = m0.group(1);
-            from = -1;
-            to = -1;
-            values = new String[] {};
-        } else {
-            Matcher m1 = NAME_AND_INDEX.matcher(commandAndIndex);
-            if (m1.matches()) {
-                name = m1.group(1);
-                from = Integer.valueOf(m1.group(2));
-                to = from;
-                values = new String[] { commandValue };
-            } else {
-                Matcher m2 = NAME_AND_INDEX_RANGE.matcher(commandAndIndex);
-                if (m2.matches()) {
-                    name = m2.group(1);
-                    from = Integer.valueOf(m2.group(2));
-                    to = Integer.valueOf(m2.group(3));
-                    values = commandValue.split("\t", -1);
-                } else {
-                    name = "";
-                    from = -1;
-                    to = -1;
-                    values = null;
-                }
-            }
-        }
-
-        Object[] arr = new Object[5];
-        arr[0] = name;
-        arr[1] = from;
-        arr[2] = to;
-        arr[3] = values;
-
-        return arr;
-    }
-
-    /**
-     * Calculate CRC for Command based on original character(not encrypted)
-     * and CRC array Value
-     */
-    private String calcCommandCRC(String cmdStr) {
-        byte[] cmdBytes = cmdStr.getBytes();
-        int sum = 65535;
-
-        for (int i = 0; i < cmdBytes.length; i++) {
-            sum = (sum >> 8) ^ RiscoBindingConstants.CRCArray[((sum) ^ (cmdBytes[i] & 0xff)) & 0xff];
-        }
-
-        byte b1 = (byte) (sum >> 8);
-        byte b2 = (byte) (sum & 0xff);
-        byte[] bts = new byte[] { b1, b2 };
-
-        return HexUtils.bytesToHex(bts);
-    }
-
-    /*
-     * Create the pseudo buffer used to encode/decode communication
-     */
-    private byte[] createPseudoBuffer(int panelId) {
-        int bufferLength = 255;
-        byte[] pseudoBuffer = new byte[bufferLength];
-        int pid = panelId;
-
-        int[] numArray = new int[] { 2, 4, 16, 32768 };
-        if (pid != 0) {
-            for (int index = 0; index < bufferLength; index++) {
-                int n1 = 0;
-                int n2 = 0;
-
-                for (n1 = 0; n1 < 4; n1++) {
-                    if ((pid & numArray[n1]) > 0) {
-                        n2 ^= 1;
-                    }
-                }
-                pid = pid << 1 | n2;
-                pseudoBuffer[index] = (byte) (pid & 0xFF);
-            }
-        } else {
-            Arrays.fill(pseudoBuffer, (byte) 0);
-        }
-
-        logger.trace("Pseudo Buffer Created for Panel Id({})", panelId);
-
-        return pseudoBuffer;
-    }
-
-    /**
-     * Encryption/Decryption mechanism
-     */
-    private byte[] encrypt(String fullCommand, Boolean encrypt) {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        int offset = 0;
-        int position = 0;
-
-        byte[] buffer = fullCommand.getBytes(); // fullCommand.getBytes(encoding);
-        byte[] encryptionBuffer = createPseudoBuffer(panelId);
-
-        for (int i = 0; i < buffer.length; i++) {
-            if (encrypt) {
-                buffer[i] ^= encryptionBuffer[position - offset];
-            }
-
-            switch (buffer[i]) {
-                case 2:
-                case 3:
-                case 16:
-                    outputStream.write(0x10);
-            }
-
-            outputStream.write(buffer[i]);
-            position++;
-        }
-
-        byte[] encryptedChars = outputStream.toByteArray();
-        return encryptedChars;
-    }
-
-    private byte[] decrypt(byte[] encrypted) {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-
-        // Remove DLE chars
-        for (int i = 0; i < encrypted.length; i++) {
-            if ((encrypted[i] == 0x10)
-                    && (encrypted[i + 1] == 0x02 || encrypted[i + 1] == 0x03 || encrypted[i + 1] == 0x10)) {
-                outputStream.write(encrypted[i + 1]);
-                i++;
-            } else {
-                outputStream.write(encrypted[i]);
-            }
-        }
-        byte[] encryptedWithoutDle = outputStream.toByteArray();
-        byte[] decryptionBuffer = createPseudoBuffer(panelId);
-
-        // Decrypt
-        int offset = 0;
-        int position = 0;
-
-        outputStream.reset();
-        for (int i = (isEncrypted() ? 2 : 1); i < encryptedWithoutDle.length - 1; i++) {
-            if (isEncrypted()) {
-                encryptedWithoutDle[i] ^= decryptionBuffer[position - offset];
-            }
-
-            outputStream.write(encryptedWithoutDle[i]);
-            logger.trace("Position: {}, i: {}, chars[i]: {}", position, i, encryptedWithoutDle[i]);
-
-            position++;
-        }
-        byte[] decrypted = outputStream.toByteArray();
-
-        logger.trace("Encrypted buffer: {}", HexUtils.bytesToHex(encrypted, " "));
-        logger.trace("Decrypted buffer: {}", HexUtils.bytesToHex(decrypted, "-"));
-
-        return decrypted;
-    }
-
-    private String bytesToString(byte[] bytes) {
-        try {
-            return new String(bytes, encoding);
-        } catch (UnsupportedEncodingException e) {
-            return "";
-        }
-    }
+    abstract public ThingProperty[] getProperties();
 }
