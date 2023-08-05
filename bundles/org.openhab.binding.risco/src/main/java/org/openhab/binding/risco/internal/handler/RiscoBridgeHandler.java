@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2022 Contributors to the openHAB project
+ * Copyright (c) 2010-2023 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -264,7 +264,7 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
         }
 
         if ("ZSTT".equals(msg.getCommandName())) {
-            logger.debug("", msg);
+            logger.debug("{}", msg);
             // parse Zone Status message
         }
 
@@ -275,6 +275,7 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
             // if (thingHandler != null) {
             // thingHandler.caddxEventReceived(event, thing);
             // }
+            int i = 0;
         } else {
             if (discoveryService != null && "ZSTT".equals(msg.getCommandName())) {
                 RiscoMessageType mt = RiscoMessageType.STATUS_ZONE;
