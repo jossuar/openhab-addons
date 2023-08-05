@@ -125,6 +125,7 @@ public class RiscoMessage {
         sb.append(", CMD: ").append(commandName);
         sb.append(", MSG: ").append(fullCommand);
         sb.append(", VALUE: ").append(HexUtils.bytesToHex(fullCommand.getBytes(), " "));
+        sb.append(", encryptedMessage: ").append(HexUtils.bytesToHex(encryptedMessage, " "));
 
         // sb.append(", MSG: ").append(commandId).append("-").append(this.crcValue).append("-").append(stringMessage);
 
@@ -167,6 +168,10 @@ public class RiscoMessage {
 
     public String getCommandName() {
         return this.commandName;
+    }
+
+    public String[] getCommandValue() {
+        return this.commandValue;
     }
 
     public boolean hasIndex() {
@@ -238,9 +243,9 @@ public class RiscoMessage {
         return crcOK;
     }
 
-    private static Pattern NAME = Pattern.compile("^([A-Z]+)$");
-    private static Pattern NAME_AND_INDEX = Pattern.compile("^([A-Z]+)(\\d+)$");
-    private static Pattern NAME_AND_INDEX_RANGE = Pattern.compile("^([A-Z]+)\\*(\\d+):(\\d+)$");
+    private static Pattern NAME = Pattern.compile("^([A-Z&]+)$");
+    private static Pattern NAME_AND_INDEX = Pattern.compile("^([A-Z&]+)(\\d+)$");
+    private static Pattern NAME_AND_INDEX_RANGE = Pattern.compile("^([A-Z&]+)\\*(\\d+):(\\d+)$");
 
     private Object[] splitCommand() {
         String name = "";
@@ -284,7 +289,7 @@ public class RiscoMessage {
                     name = m2.group(1);
                     from = Integer.valueOf(m2.group(2));
                     to = Integer.valueOf(m2.group(3));
-                    values = commandValue.split("\t");
+                    values = commandValue.split("\t", -1);
                 } else {
                     name = "";
                     from = -1;
