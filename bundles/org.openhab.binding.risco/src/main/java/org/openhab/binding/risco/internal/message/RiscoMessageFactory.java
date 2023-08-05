@@ -195,7 +195,7 @@ public class RiscoMessageFactory {
                 name = "";
                 from = -1;
                 to = -1;
-                values = null;
+                values = new String[] {};
             }
         }
         // }
