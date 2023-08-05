@@ -26,6 +26,7 @@ public class RiscoMessageZoneStatus extends RiscoMessage {
 
     @Override
     public ThingProperty[] getProperties() {
-        throw new UnsupportedOperationException("Not implemented yet");
+        return new ThingProperty[] {};
+        // throw new UnsupportedOperationException("Not implemented yet");
     }
 }
