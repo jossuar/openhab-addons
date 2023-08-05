@@ -263,10 +263,9 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
             return;
         }
 
-        if (msg.getFullCommand().startsWith("ZSTT")) {
+        if ("ZSTT".equals(msg.getCommandName())) {
             logger.debug("", msg);
             // parse Zone Status message
-
         }
 
         Thing thing = null;// findThing(caddxThingType, partition, zone, keypad);
@@ -277,9 +276,9 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
             // thingHandler.caddxEventReceived(event, thing);
             // }
         } else {
-            if (discoveryService != null && msg.getFullCommand().startsWith("ZSTT")) {
+            if (discoveryService != null && "ZSTT".equals(msg.getCommandName())) {
                 RiscoMessageType mt = RiscoMessageType.STATUS_ZONE;
-                int index = Integer.valueOf(msg.getFullCommand().substring(4, msg.getFullCommand().indexOf("=")));
+                int index = msg.getIndexFrom();
                 String thingId = String.format(mt.thingIdFormat, index);
                 String thingLabel = String.format(mt.thingLabelFormat, index);
                 ThingUID thingUID = new ThingUID(RiscoBindingConstants.ZONE_THING_TYPE, getThing().getUID(), thingId);

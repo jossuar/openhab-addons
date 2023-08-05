@@ -22,6 +22,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.openhab.binding.risco.internal.message.RiscoMessage;
+import org.openhab.binding.risco.internal.message.RiscoMessageFactory;
 import org.openhab.binding.risco.internal.message.RiscoMessageType;
 
 /**
@@ -58,7 +59,8 @@ public class RiscoMessageTest {
         byte[] bytes = MessageReaderUtil.readRiscoMessage(messageName);
 
         // Decrypt
-        RiscoMessage msg = new RiscoMessage(1, "UTF-8", bytes);
+        RiscoMessageFactory factory = new RiscoMessageFactory();
+        RiscoMessage msg = factory.create(1, "UTF-8", bytes);
 
         // Get parts
         Integer cmdId = msg.getCommandId();
@@ -82,7 +84,7 @@ public class RiscoMessageTest {
             console.println();
         }
 
-        RiscoMessage msg2 = new RiscoMessage(1, "UTF-8", cmdId, commandStr, encrypted);
+        RiscoMessage msg2 = factory.create(1, "UTF-8", cmdId, msg.getFullCommand(), encrypted);
         assertArrayEquals(msg.getEncryptedMessage(), msg2.getEncryptedMessage());
         assertArrayEquals(msg.getDecryptedMessage(), msg2.getDecryptedMessage());
     }

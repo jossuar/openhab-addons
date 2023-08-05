@@ -25,6 +25,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.binding.risco.internal.message.MessageOrigin;
 import org.openhab.binding.risco.internal.message.RiscoMessage;
+import org.openhab.binding.risco.internal.message.RiscoMessageFactory;
 import org.openhab.binding.risco.internal.message.RiscoMessagePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -196,7 +197,8 @@ public class RiscoCommunicator {
     }
 
     public synchronized void send(String command) {
-        RiscoMessage msg = new RiscoMessage(panelId, encoding, sendCommandId, command, true);
+        RiscoMessageFactory factory = new RiscoMessageFactory();
+        RiscoMessage msg = factory.create(panelId, encoding, sendCommandId, command, true);
         RiscoMessagePair pair = new RiscoMessagePair(msg);
 
         // adjust command id For next send (1-45)
@@ -210,7 +212,8 @@ public class RiscoCommunicator {
     }
 
     public void sendFirst(int commandId, String command) {
-        RiscoMessage msg = new RiscoMessage(panelId, encoding, commandId, command, true);
+        RiscoMessageFactory factory = new RiscoMessageFactory();
+        RiscoMessage msg = factory.create(panelId, encoding, commandId, command, true);
 
         sendQueue.add(msg);
     }
@@ -352,8 +355,10 @@ public class RiscoCommunicator {
                 } while (true);
 
                 byte[] message = Arrays.copyOfRange(buffer, 0, bufferIndex);
-                RiscoMessage rm = new RiscoMessage(1, "UTF-8", message);
-                handleIncomingMessage(rm);
+
+                RiscoMessageFactory factory = new RiscoMessageFactory();
+                RiscoMessage msg = factory.create(1, "UTF-8", message);
+                handleIncomingMessage(msg);
 
                 logger.trace("RiscoCommunicator.read() Got message");
             } catch (EOFException e) {

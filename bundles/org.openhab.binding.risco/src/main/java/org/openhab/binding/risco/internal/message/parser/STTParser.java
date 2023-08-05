@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.openhab.binding.risco.internal.message.KeyValuePair;
+import org.openhab.binding.risco.internal.message.ThingProperty;
 
 @NonNullByDefault
 public class STTParser implements CommandParser {
@@ -16,19 +16,20 @@ public class STTParser implements CommandParser {
     }
 
     @Override
-    public KeyValuePair[] parse(String s) {
-        List<KeyValuePair> data = new ArrayList<KeyValuePair>();
+    public ThingProperty[] parse(String s) {
+        List<ThingProperty> data = new ArrayList<ThingProperty>();
 
-        for (STTProperty prop : properties) {
-            String value;
-            if (s.contains(prop.flag)) {
-                value = "true";
-            } else {
-                value = "false";
-            }
-            data.add(new KeyValuePair(prop.property, value));
-        }
-
-        return data.toArray(new KeyValuePair[0]);
+        /*
+         * for (STTProperty prop : properties) {
+         * String value;
+         * if (s.contains(prop.flag)) {
+         * value = "true";
+         * } else {
+         * value = "false";
+         * }
+         * data.add(new ThingProperty(prop.property, value));
+         * }
+         */
+        return data.toArray(new ThingProperty[0]);
     }
 }
