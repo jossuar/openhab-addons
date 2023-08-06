@@ -16,9 +16,10 @@ import java.io.IOException;
 import java.util.concurrent.Executors;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.openhab.binding.risco.internal.RiscoCommunicator.RiscoPanelListener;
-import org.openhab.binding.risco.internal.message.RiscoMessagePair;
+import org.openhab.binding.risco.internal.message.RiscoMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,9 +29,10 @@ import org.slf4j.LoggerFactory;
  * @author Georgios Moutsos - Initial contribution
  */
 @NonNullByDefault
-public class RiscoCommTest2 implements RiscoPanelListener {
-    private final Logger logger = LoggerFactory.getLogger(RiscoCommTest2.class);
+public class RiscoCommTest implements RiscoPanelListener {
+    private final Logger logger = LoggerFactory.getLogger(RiscoCommTest.class);
 
+    @Disabled
     @Test
     public void testCommunication() throws IOException {
         /*
@@ -93,7 +95,7 @@ public class RiscoCommTest2 implements RiscoPanelListener {
     }
 
     @Override
-    public void handleRiscoMessage(RiscoMessagePair pair) {
+    public void handleRiscoMessage(RiscoMessage msg) {
         // logger.warn("ooooooooooooooooooooooooooooooooooooooooooooooooooo Updating the channels");
     }
 }
