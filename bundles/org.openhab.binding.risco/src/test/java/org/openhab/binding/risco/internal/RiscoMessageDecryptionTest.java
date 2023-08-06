@@ -48,6 +48,7 @@ public class RiscoMessageDecryptionTest {
     }
     // @formatter:on
 
+    // @Disabled
     @ParameterizedTest
     @MethodSource("data")
     public void testMessageHandling(String messageFile) {
@@ -64,7 +65,6 @@ public class RiscoMessageDecryptionTest {
         try (InputStream is = MessageReaderUtil.class.getResourceAsStream(messageFile);
                 InputStreamReader isr = new InputStreamReader(is);
                 BufferedReader br = new BufferedReader(isr)) {
-
             messages = br.lines().map((hexString) -> {
                 return HexUtils.hexToBytes(hexString);
             }).collect(Collectors.toList());
@@ -76,37 +76,26 @@ public class RiscoMessageDecryptionTest {
         return messages;
     }
 
-    private void checkDecryptEncrypt(byte[] bytes) {
-        // Decrypt
+    private synchronized void checkDecryptEncrypt(byte[] bytes) {
+        // Create 1st message from byte array
         RiscoMessageFactory factory = new RiscoMessageFactory();
         RiscoMessage msg = factory.create(1, "UTF-8", bytes);
 
-        // Get parts
-        Integer cmdId = msg.getCommandId();
-        Boolean encrypted = msg.isEncrypted();
-
+        // Print message information
         PrintStream console = System.out;
         if (console != null) {
             console.println(counter++);
-            console.println(msg);
-            console.println("commandId: " + msg.getCommandId());
-            console.println("commandName: " + msg.getCommandName());
-            console.println("hasIndex: " + (msg.hasIndex() ? "true" : "false") + ", hasMultipleIndexes: "
-                    + (msg.hasMultipleIndexes() ? "true" : "false") + ", indexFrom: " + msg.getIndexFrom()
-                    + ", indexTo: " + msg.getIndexTo());
-            console.println("sign: " + msg.getSign());
-            console.println("thingIds: " + Arrays.toString(msg.getThingIds()));
-            console.println("properties: " + Arrays.toString(msg.getProperties()));
-            console.println("values: " + Arrays.toString(msg.getCommandValues()));
+            String ss = msg.toString();
+            console.println(ss);
             console.println();
             console.flush();
         }
 
-        // Encrypt
-        if (!"".equals(msg.getCommandName())) {
-            RiscoMessage msg2 = factory.create(1, "UTF-8", cmdId, msg.getFullCommand(), encrypted);
-            // assertArrayEquals(msg.getEncryptedMessage(), msg2.getEncryptedMessage());
-            assertArrayEquals(msg.getDecryptedMessage(), msg2.getDecryptedMessage());
-        }
+        // Create 2nd message from 1st message parts
+        RiscoMessage msg2 = factory.create(1, "UTF-8", msg.getCommandId(), msg.getFullCommand(), msg.isEncrypted());
+
+        // Check
+        assertArrayEquals(msg.getEncryptedMessage(), msg2.getEncryptedMessage());
+        assertArrayEquals(msg.getDecryptedMessage(), msg2.getDecryptedMessage());
     }
 }
