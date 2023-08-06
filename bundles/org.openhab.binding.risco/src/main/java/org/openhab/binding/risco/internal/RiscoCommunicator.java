@@ -24,21 +24,16 @@ import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
 import java.util.Set;
-import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.binding.risco.internal.message.MessageOrigin;
 import org.openhab.binding.risco.internal.message.RiscoMessage;
 import org.openhab.binding.risco.internal.message.RiscoMessageFactory;
-import org.openhab.binding.risco.internal.message.RiscoMessagePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,7 +67,7 @@ public class RiscoCommunicator {
     private Thread riscoReceiver;
 
     // in-flight
-    private final BlockingDeque<RiscoMessagePair> inFlightQueue = new LinkedBlockingDeque<RiscoMessagePair>();
+    // private final BlockingDeque<RiscoMessagePair> inFlightQueue = new LinkedBlockingDeque<RiscoMessagePair>();
 
     // listener
     private final Set<RiscoPanelListener> listenerQueue = new HashSet<>();
@@ -85,7 +80,7 @@ public class RiscoCommunicator {
     private ScheduledExecutorService scheduler;
 
     public interface RiscoPanelListener {
-        public void handleRiscoMessage(RiscoMessagePair pair);
+        public void handleRiscoMessage(RiscoMessage msg);
     }
 
     public void addListener(RiscoPanelListener listener) {
@@ -211,7 +206,7 @@ public class RiscoCommunicator {
     public synchronized void send(String command) {
         RiscoMessageFactory factory = new RiscoMessageFactory();
         RiscoMessage msg = factory.create(panelId, encoding, sendCommandId, command, true);
-        RiscoMessagePair pair = new RiscoMessagePair(msg);
+        // RiscoMessagePair pair = new RiscoMessagePair(msg);
 
         // adjust command id For next send (1-45)
         sendCommandId++;
@@ -219,7 +214,7 @@ public class RiscoCommunicator {
             sendCommandId = 1;
         }
 
-        inFlightQueue.add(pair);
+        // inFlightQueue.add(pair);
         sendQueue.add(msg);
     }
 
@@ -233,32 +228,13 @@ public class RiscoCommunicator {
     private void handleIncomingMessage(RiscoMessage msg) {
         logger.debug("<---- {}", msg);
 
+        lastReceiveTime = ZonedDateTime.now();
+
         if (msg.getMessageOrigin() == MessageOrigin.PANEL) {
             sendFirst(msg.getCommandId(), "ACK");
-
-            RiscoMessagePair pair = new RiscoMessagePair(msg);
-            inFlightQueue.add(pair);
         } else if (msg.getMessageOrigin() == MessageOrigin.BINDING) {
-            RiscoMessagePair m = findInInFlightQueue(msg.getCommandId());
-            if (m != null) {
-                m.setResponse(msg);
-            }
-            lastSendTime = ZonedDateTime.now();
-
-            try {
-                while (true) {
-                    m = inFlightQueue.peek();
-                    if (m == null || !m.hasResponse()) {
-                        break;
-                    }
-
-                    m = inFlightQueue.poll();
-                    for (RiscoPanelListener listener : listenerQueue) {
-                        listener.handleRiscoMessage(m);
-                    }
-                }
-            } catch (NoSuchElementException e) {
-                // thrown when queue is empty
+            for (RiscoPanelListener listener : listenerQueue) {
+                listener.handleRiscoMessage(msg);
             }
         } else {
             // Unknown message origin
@@ -269,26 +245,12 @@ public class RiscoCommunicator {
     private void handleOutgoingMessage(RiscoMessage msg) {
         logger.debug("----> {}", msg);
 
+        lastSendTime = ZonedDateTime.now();
+
         if (msg.getMessageOrigin() == MessageOrigin.PANEL) {
-            RiscoMessagePair m = findInInFlightQueue(msg.getCommandId());
-            if (m != null) {
-                m.setResponse(msg);
+            for (RiscoPanelListener listener : listenerQueue) {
+                listener.handleRiscoMessage(msg);
             }
-
-            lastReceiveTime = ZonedDateTime.now();
-
-            // while (true) {
-            // m = inFlightQueue.poll();
-            // if (m != null && !m.hasResponse()) {
-            // break;
-            // }
-            //
-            // for (RiscoPanelListener listener : listenerQueue) {
-            // logger.trace("Informing listener: {}", listener);
-            // listener.handleRiscoMessage(m);
-            // }
-            // }
-
         } else if (msg.getMessageOrigin() == MessageOrigin.BINDING) {
             // Nothing to be done
         } else {
@@ -297,26 +259,12 @@ public class RiscoCommunicator {
         }
     }
 
-    private @Nullable RiscoMessagePair findInInFlightQueue(int commandId) {
-        RiscoMessagePair msg = null;
-        Iterator<RiscoMessagePair> itr = inFlightQueue.iterator();
-
-        while (itr.hasNext()) {
-            msg = itr.next();
-            if (msg.getRequest().getCommandId() == commandId) {
-                break;
-            }
-        }
-
-        return msg;
-    }
-
     public Boolean isConnected() {
         return connected;
     }
 
     private class RiscoReceiver implements Runnable {
-        private final int MAX_MESSAGE_SIZE = 4096;
+        private static final int MAX_MESSAGE_SIZE = 4096;
         private byte[] buffer = new byte[MAX_MESSAGE_SIZE];
         private int bufferIndex = 0;
         private boolean unStuff = false;
@@ -454,7 +402,6 @@ public class RiscoCommunicator {
     private class RiscoWatchdog implements Runnable {
         @Override
         public void run() {
-
             if (ChronoUnit.SECONDS.between(lastSendTime, ZonedDateTime.now()) > 30
                     || ChronoUnit.SECONDS.between(lastReceiveTime, ZonedDateTime.now()) > 70) {
                 logger.debug("check sendBefore: {}, recvBefore: {}, result: {}",

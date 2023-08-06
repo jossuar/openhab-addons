@@ -45,7 +45,7 @@
 			<parameter name="connectionDelay" type="integer" required="true">
 				<limitToOptions>false</limitToOptions>
 				<label>Connection delay</label>
-				<description>Older panels require a delay after the initial connect.Usually 10000 msec. Default value is 0</description>
+				<description>Older panels require a delay after the initial connect. Usually 10000 msec. Default value is 0</description>
 				<default>0</default>
 				<options>
 					<option value="0">0</option>

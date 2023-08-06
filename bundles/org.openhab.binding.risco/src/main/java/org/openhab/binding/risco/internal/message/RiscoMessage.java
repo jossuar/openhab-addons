@@ -12,10 +12,10 @@
  */
 package org.openhab.binding.risco.internal.message;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.openhab.core.util.HexUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,19 +28,18 @@ import org.slf4j.LoggerFactory;
 public abstract class RiscoMessage {
     private final Logger logger = LoggerFactory.getLogger(RiscoMessage.class);
 
-    private final int commandId;
-    private final String commandName;
-    private final String[] commandValues;
-    private final int indexFrom;
-    private final int indexTo;
-    private final String sign;
+    protected final int commandId;
+    protected final String commandName;
+    protected final String[] commandValues;
+    protected final int indexFrom;
+    protected final int indexTo;
+    protected final String sign;
 
     private final byte[] encryptedMessage;
     private final byte[] decryptedMessage;
 
     public RiscoMessage(int commandId, String commandName, String sign, String[] commandValues, int indexFrom,
             int indexTo, byte[] encryptedMessage, byte[] decryptedMessage) {
-
         this.commandId = commandId;
         this.commandName = commandName;
         this.indexFrom = indexFrom;
@@ -50,6 +49,9 @@ public abstract class RiscoMessage {
 
         this.encryptedMessage = encryptedMessage;
         this.decryptedMessage = decryptedMessage;
+
+        logger.trace("Encrypted: {}", encryptedMessage);
+        logger.trace("Decrypted: {}", decryptedMessage);
     }
 
     /**
@@ -61,11 +63,14 @@ public abstract class RiscoMessage {
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        sb.append("ENC: ").append(isEncrypted());
-        sb.append(", MO: ").append(getMessageOrigin());
-        sb.append(", CMD: ").append(commandName);
-        // sb.append(", encryptedMessage: ").append(HexUtils.bytesToHex(encryptedMessage, " "));
-        // sb.append(", MSG: ").append(commandId);
+        sb.append("ID: ").append(commandId);
+        // sb.append(", CMD: ").append(commandName);
+        // sb.append(", ENC: ").append(isEncrypted());
+        // sb.append(", MO: ").append(getMessageOrigin());
+        // sb.append(", VAL: ").append(Arrays.toString(commandValues));
+        sb.append(", FUL: ").append(getFullCommand());
+        // sb.append(", DEC: ").append(HexUtils.bytesToHex(decryptedMessage, " "));
+        sb.append(", ENC: ").append(HexUtils.bytesToHex(encryptedMessage, " "));
 
         return sb.toString();
     }
@@ -124,31 +129,33 @@ public abstract class RiscoMessage {
         return sign;
     }
 
-    public RiscoMessageType getMessageType() {
-        RiscoMessageType mt = RiscoMessageType.valueOfMessage(commandName);
-        if (mt == null) {
-            mt = RiscoMessageType.UNKNOWN;
-        }
-        return mt;
-    }
-
-    public String getThingType() {
-        return getMessageType().thingType;
-    }
-
-    public String[] getThingIds() {
-        RiscoMessageType mt = getMessageType();
-        List<String> ids = new ArrayList<String>();
-
-        if (mt.hasIndex) {
-            for (int i = getIndexFrom(); i <= getIndexTo(); i++) {
-                ids.add(String.format(mt.thingIdFormat, i));
-            }
-        } else {
-            ids.add(mt.thingIdFormat);
-        }
-        return ids.toArray(new String[0]);
-    }
+    /*
+     * public RiscoMessageType getMessageType() {
+     * RiscoMessageType mt = RiscoMessageType.valueOfMessage(commandName);
+     * if (mt == null) {
+     * mt = RiscoMessageType.UNKNOWN;
+     * }
+     * return mt;
+     * }
+     *
+     * public String getThingType() {
+     * return getMessageType().thingType;
+     * }
+     *
+     * public String[] getThingIds() {
+     * RiscoMessageType mt = getMessageType();
+     * List<String> ids = new ArrayList<String>();
+     *
+     * if (mt.hasIndex) {
+     * for (int i = getIndexFrom(); i <= getIndexTo(); i++) {
+     * ids.add(String.format(mt.thingIdFormat, i));
+     * }
+     * } else {
+     * ids.add(mt.thingIdFormat);
+     * }
+     * return ids.toArray(new String[0]);
+     * }
+     */
 
     public String getFullCommand() {
         StringBuilder sb = new StringBuilder();
@@ -165,5 +172,5 @@ public abstract class RiscoMessage {
         return sb.toString();
     }
 
-    abstract public ThingProperty[] getProperties();
+    public abstract List<MessageProperty> getProperties();
 }

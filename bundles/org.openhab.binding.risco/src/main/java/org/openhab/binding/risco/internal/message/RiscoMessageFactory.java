@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 @NonNullByDefault
 public class RiscoMessageFactory {
     private final Logger logger = LoggerFactory.getLogger(RiscoMessageFactory.class);
-    private final String ETB = Character.toString((char) 23);
+    private static final String ETB = Character.toString((char) 23);
 
     // Create a RiscoMessage from the received data
     public RiscoMessage create(int panelId, String encoding, byte[] encryptedMessage) {
@@ -92,7 +92,14 @@ public class RiscoMessageFactory {
         // Computed information
         byte[] encryptedMessage = encrypedOutputStream.toByteArray();
         byte[] decryptedMessage = decrypt(panelId, encryptedMessage);
-        String wholeMessage = bytesToString(decryptedMessage, encoding);
+        String stringMessage = bytesToString(decryptedMessage, encoding);
+        String wholeMessage;
+
+        if (stringMessage.startsWith("N") || stringMessage.startsWith("B")) {
+            wholeMessage = stringMessage.substring(0, stringMessage.indexOf(ETB));
+        } else {
+            wholeMessage = stringMessage.substring(2, stringMessage.indexOf(ETB));
+        }
 
         Object[] objs = splitCommand(wholeMessage);
         String commandName = (String) objs[0];
@@ -109,6 +116,9 @@ public class RiscoMessageFactory {
     private RiscoMessage createMessage(int commandId, String commandName, String modifier, String[] commandValues,
             int indexFrom, int indexTo, byte[] encryptedMessage, byte[] decryptedMessage) {
         switch (commandName) {
+            case "PNLCNF":
+                return new RiscoMessagePanelConfiguration(commandId, commandName, modifier, commandValues, indexFrom,
+                        indexTo, encryptedMessage, decryptedMessage);
             case "ZSTT":
                 return new RiscoMessageZoneStatus(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
                         encryptedMessage, decryptedMessage);
@@ -120,8 +130,8 @@ public class RiscoMessageFactory {
     }
 
     // private static Pattern NAME = Pattern.compile("^(N\\d+|[A-Z&]+)$");
-    private static Pattern NAME_AND_INDEX = Pattern.compile("^(N\\d+|[A-Z0-9&]+?)([0-9]*)$");
-    private static Pattern NAME_AND_INDEX_RANGE = Pattern.compile("^([A-Z0-9&]+)\\*(\\d+):(\\d+)$");
+    private static final Pattern NAME_AND_INDEX = Pattern.compile("^(N\\d+|[A-Z0-9&]+?)([0-9]*)$");
+    private static final Pattern NAME_AND_INDEX_RANGE = Pattern.compile("^([A-Z0-9&]+)\\*(\\d+):(\\d+)$");
 
     private Object[] splitCommand(String wholeMessage) {
         String name = "";
@@ -219,7 +229,7 @@ public class RiscoMessageFactory {
         int sum = 65535;
 
         for (int i = 0; i < cmdBytes.length; i++) {
-            sum = (sum >> 8) ^ RiscoBindingConstants.CRCArray[((sum) ^ (cmdBytes[i] & 0xff)) & 0xff];
+            sum = (sum >> 8) ^ RiscoBindingConstants.CRC_ARRAY[((sum) ^ (cmdBytes[i] & 0xff)) & 0xff];
         }
 
         byte b1 = (byte) (sum >> 8);
@@ -318,7 +328,7 @@ public class RiscoMessageFactory {
             }
 
             outputStream.write(encryptedWithoutDle[i]);
-            logger.trace("Position: {}, i: {}, chars[i]: {}", position, i, encryptedWithoutDle[i]);
+            // logger.trace("Position: {}, i: {}, chars[i]: {}", position, i, encryptedWithoutDle[i]);
 
             position++;
         }
