@@ -16,21 +16,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.openhab.binding.risco.internal.RiscoBindingConstants;
 
 /**
  * @author Georgios Moutsos - Initial contribution
  */
 @NonNullByDefault
-public class RiscoMessageUnknown extends RiscoMessage {
+public class RiscoMessagePanelConfiguration extends RiscoMessage {
 
-    public RiscoMessageUnknown(int commandId, String commandName, String modifier, String[] commandValues,
+    private List<MessageProperty> messageProperties = new ArrayList<MessageProperty>();
+
+    public RiscoMessagePanelConfiguration(int commandId, String commandName, String modifier, String[] commandValues,
             int indexFrom, int indexTo, byte[] encryptedMessage, byte[] decryptedMessage) {
         super(commandId, commandName, modifier, commandValues, indexFrom, indexTo, encryptedMessage, decryptedMessage);
     }
 
     @Override
     public List<MessageProperty> getProperties() {
-        // Return an empty property array
-        return new ArrayList<MessageProperty>();
+        if (messageProperties.isEmpty() && commandValues.length > 0) {
+            List<MessageProperty> props = new ArrayList<MessageProperty>();
+
+            props.add(new MessageProperty(RiscoBindingConstants.SYSTEM_THING_TYPE, "system", "name", commandValues[0]));
+            messageProperties = props;
+        }
+
+        return messageProperties;
     }
 }

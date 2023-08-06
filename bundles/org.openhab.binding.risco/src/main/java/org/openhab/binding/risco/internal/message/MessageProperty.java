@@ -13,24 +13,30 @@
 package org.openhab.binding.risco.internal.message;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.openhab.core.thing.ThingUID;
+import org.openhab.core.thing.ThingTypeUID;
 
 /**
  * @author Georgios Moutsos - Initial contribution
  */
 @NonNullByDefault
-public class ThingProperty {
-    private final ThingUID thingUID;
+public class MessageProperty {
+    private final ThingTypeUID thingTypeUID;
+    private final String thingUID;
     private final String name;
     private final String value;
 
-    public ThingProperty(ThingUID thingUID, String name, String value) {
+    public MessageProperty(ThingTypeUID thingTypeUID, String thingUID, String name, String value) {
+        this.thingTypeUID = thingTypeUID;
         this.thingUID = thingUID;
         this.name = name;
         this.value = value;
     }
 
-    public ThingUID getThingUID() {
+    public ThingTypeUID getThingTypeUID() {
+        return thingTypeUID;
+    }
+
+    public String getThingUID() {
         return thingUID;
     }
 

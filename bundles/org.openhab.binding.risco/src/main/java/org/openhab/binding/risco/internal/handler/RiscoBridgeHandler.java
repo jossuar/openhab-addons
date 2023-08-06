@@ -16,18 +16,19 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.openhab.binding.risco.internal.RiscoBindingConstants;
 import org.openhab.binding.risco.internal.RiscoCommunicator;
 import org.openhab.binding.risco.internal.RiscoCommunicator.RiscoPanelListener;
 import org.openhab.binding.risco.internal.config.RiscoBridgeConfiguration;
 import org.openhab.binding.risco.internal.discovery.RiscoDiscoveryService;
+import org.openhab.binding.risco.internal.message.MessageProperty;
 import org.openhab.binding.risco.internal.message.RiscoMessage;
-import org.openhab.binding.risco.internal.message.RiscoMessagePair;
-import org.openhab.binding.risco.internal.message.RiscoMessageType;
 import org.openhab.core.thing.Bridge;
 import org.openhab.core.thing.Channel;
 import org.openhab.core.thing.ChannelUID;
@@ -100,113 +101,14 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
         if (communicator != null) {
             communicator.addListener(this);
             communicator.send("PNLCNF?");
-            communicator.send("ZONEQTY?");
-            communicator.send("ZLBL1?");
-            communicator.send("ZLBL*1:8?");
-            communicator.send("DTYPZ*1:8?");
-            communicator.send("ZSTT19?");
-            communicator.send("ZSTT*1:8?");
-
-            communicator.send("SSTT?");
-            communicator.send("ZPART&*1?");
-            communicator.send("ZPART1?");
-            communicator.send("ZPART*1:8?");
             communicator.send("PNLVER?");
             communicator.send("PNLSERD?");
-
-            communicator.send("ZLBL*1:9?");
-
-            // communicator.send("ZSTT1?");
-            // communicator.send("ZSTT2?");
-            // communicator.send("ZSTT3?");
-            // communicator.send("ZSTT4?");
-            // communicator.send("ZSTT5?");
-            // communicator.send("ZSTT6?");
-            // communicator.send("ZSTT7?");
-            // communicator.send("ZSTT8?");
-            // communicator.send("ZSTT9?");
-            // communicator.send("ZSTT10?");
-            // communicator.send("ZSTT11?");
-            // communicator.send("ZSTT12?");
-            // communicator.send("ZSTT13?");
-            // communicator.send("ZSTT14?");
-            // communicator.send("ZSTT15?");
-            // communicator.send("ZSTT16?");
-            // communicator.send("ZSTT17?");
-            // communicator.send("ZSTT18?");
-            // communicator.send("ZSTT19?");
-            // communicator.send("ZSTT20?");
-            // communicator.send("ZSTT21?");
-            // communicator.send("ZSTT22?");
-            // communicator.send("ZSTT23?");
-            // communicator.send("ZSTT24?");
-            // communicator.send("ZSTT25?");
-            // communicator.send("ZSTT26?");
-            // communicator.send("ZSTT27?");
-            // communicator.send("ZSTT28?");
-            // communicator.send("ZSTT29?");
-            // communicator.send("ZSTT30?");
-            //
-            // communicator.send("DTYPZ1?");
-            // communicator.send("DTYPZ2?");
-            // communicator.send("DTYPZ3?");
-            // communicator.send("DTYPZ4?");
-            // communicator.send("DTYPZ5?");
-            // communicator.send("DTYPZ6?");
-            // communicator.send("DTYPZ7?");
-            // communicator.send("DTYPZ8?");
-            // communicator.send("DTYPZ9?");
-            // communicator.send("DTYPZ10?");
-            // communicator.send("DTYPZ11?");
-            // communicator.send("DTYPZ12?");
-            // communicator.send("DTYPZ13?");
-            // communicator.send("DTYPZ14?");
-            // communicator.send("DTYPZ15?");
-            // communicator.send("DTYPZ16?");
-            // communicator.send("DTYPZ17?");
-            // communicator.send("DTYPZ18?");
-            // communicator.send("DTYPZ19?");
-            // communicator.send("DTYPZ20?");
-            // communicator.send("DTYPZ21?");
-            // communicator.send("DTYPZ22?");
-            // communicator.send("DTYPZ23?");
-            // communicator.send("DTYPZ24?");
-            // communicator.send("DTYPZ25?");
-            // communicator.send("DTYPZ26?");
-            // communicator.send("DTYPZ27?");
-            // communicator.send("DTYPZ28?");
-            // communicator.send("DTYPZ29?");
-            // communicator.send("DTYPZ30?");
-            // communicator.send("ZLBL*1:8?");
-            // communicator.send("ZONEQTY?");
-            // communicator.send("PNLCNF");
-            // communicator.send("SYSLBL?");
-            // communicator.send("SSTT?");
-            // communicator.send("ZTYPE*1?");
-            // communicator.send("ZPART&*1?");
-            // communicator.send("ZAREA&*1?");
-            // communicator.send("PNLVER?");
-            // communicator.send("PNLSERD?");
-            // communicator.send("MAINBAT?");
-            // communicator.send("WIFIPASS?");
-            // communicator.send("GETSNF1?");
-            // communicator.send("KRSTT1?");
-            //
-            // communicator.send("PSSTT1?");
-            // communicator.send("SNSTT1?");
-            // communicator.send("ZESTT1?");
-            // communicator.send("OESTT1?");
-            // communicator.send("OSTT1?");
-
-            // communicator.send("ZAREA(@INX@)");
 
             updateStatus(ThingStatus.ONLINE);
         }
 
         // list all channels
-        if (logger.isTraceEnabled())
-
-        {
+        if (logger.isTraceEnabled()) {
             logger.trace("list all {} channels:", getThing().getChannels().size());
             for (Channel c : getThing().getChannels()) {
                 logger.trace("Channel Type {} UID {}", c.getChannelTypeUID(), c.getUID());
@@ -249,19 +151,7 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
     }
 
     @Override
-    public void handleRiscoMessage(RiscoMessagePair pair) {
-        RiscoMessage msg;
-
-        msg = pair.getResponse();
-        // if (pair.getMessageOrigin() == MessageOrigin.BINDING) {
-        // msg = pair.getRequest();
-        // } else {
-        // msg = pair.getResponse();
-        // }
-
-        if (msg == null) {
-            return;
-        }
+    public void handleRiscoMessage(RiscoMessage msg) {
 
         if ("ZSTT".equals(msg.getCommandName())) {
             logger.debug("{}", msg);
@@ -275,17 +165,44 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
             // if (thingHandler != null) {
             // thingHandler.caddxEventReceived(event, thing);
             // }
-            int i = 0;
         } else {
-            if (discoveryService != null && "ZSTT".equals(msg.getCommandName())) {
-                RiscoMessageType mt = RiscoMessageType.STATUS_ZONE;
-                int index = msg.getIndexFrom();
-                String thingId = String.format(mt.thingIdFormat, index);
-                String thingLabel = String.format(mt.thingLabelFormat, index);
-                ThingUID thingUID = new ThingUID(RiscoBindingConstants.ZONE_THING_TYPE, getThing().getUID(), thingId);
-                discoveryService.addThing(getThing(), thingUID, thingLabel, "zoneNumber", index);
+            if (discoveryService != null) {
+                msg.getProperties().stream().filter(distinctByKey(MessageProperty::getThingUID)).map(mp -> {
+                    Integer idx;
+                    String intValue = mp.getThingUID().replaceAll("[^0-9]", "");
+                    idx = ("".equals(intValue)) ? null : Integer.parseInt(intValue);
+                    discoveryService.addThing(getThing(),
+                            new ThingUID(mp.getThingTypeUID(), getThing().getUID(), mp.getThingUID()), mp.getThingUID(),
+                            "zoneNumber", idx);
+                    return 1;
+                });
+
+                for (MessageProperty mp : msg.getProperties()) {
+                    ThingUID thingUID = new ThingUID(mp.getThingTypeUID(), getThing().getUID(), mp.getThingUID());
+
+                    Integer idx;
+                    String intValue = mp.getThingUID().replaceAll("[^0-9]", "");
+                    idx = ("".equals(intValue)) ? null : Integer.parseInt(intValue);
+
+                    discoveryService.addThing(getThing(), thingUID, mp.getThingUID(), "zoneNumber", idx);
+                }
+
+                for (MessageProperty mp : msg.getProperties()) {
+                    ThingUID thingUID = new ThingUID(mp.getThingTypeUID(), getThing().getUID(), mp.getThingUID());
+
+                    Integer idx;
+                    String intValue = mp.getThingUID().replaceAll("[^0-9]", "");
+                    idx = ("".equals(intValue)) ? null : Integer.parseInt(intValue);
+
+                    discoveryService.addThing(getThing(), thingUID, mp.getThingUID(), "zoneNumber", idx);
+                }
             }
         }
+    }
+
+    public static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
+        Set<Object> seen = ConcurrentHashMap.newKeySet();
+        return t -> seen.add(keyExtractor.apply(t));
     }
 
     /**
