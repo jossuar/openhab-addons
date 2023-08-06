@@ -12,6 +12,9 @@
  */
 package org.openhab.binding.risco.internal.message;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.jdt.annotation.NonNullByDefault;
 
 /**
@@ -26,8 +29,8 @@ public class RiscoMessageUnknown extends RiscoMessage {
     }
 
     @Override
-    public ThingProperty[] getProperties() {
+    public List<MessageProperty> getProperties() {
         // Return an empty property array
-        return new ThingProperty[0];
+        return new ArrayList<MessageProperty>();
     }
 }
