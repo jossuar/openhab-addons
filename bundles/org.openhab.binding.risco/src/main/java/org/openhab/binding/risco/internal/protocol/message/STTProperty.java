@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  */
-package org.openhab.binding.risco.internal.message;
+package org.openhab.binding.risco.internal.protocol.message;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 
