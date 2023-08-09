@@ -10,13 +10,15 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  */
-package org.openhab.binding.risco.internal.message;
+package org.openhab.binding.risco.internal.protocol.message;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.openhab.binding.risco.internal.RiscoBindingConstants;
+import org.openhab.binding.risco.internal.protocol.MessageProperty;
+import org.openhab.binding.risco.internal.protocol.RiscoMessage;
 
 /**
  * @author Georgios Moutsos - Initial contribution
