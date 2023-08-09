@@ -26,8 +26,8 @@ import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.openhab.binding.risco.internal.message.RiscoMessage;
-import org.openhab.binding.risco.internal.message.RiscoMessageFactory;
+import org.openhab.binding.risco.internal.protocol.RiscoMessage;
+import org.openhab.binding.risco.internal.protocol.RiscoMessageFactory;
 import org.openhab.core.util.HexUtils;
 
 /**

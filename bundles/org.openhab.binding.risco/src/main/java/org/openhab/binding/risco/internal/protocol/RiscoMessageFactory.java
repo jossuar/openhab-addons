@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  */
-package org.openhab.binding.risco.internal.message;
+package org.openhab.binding.risco.internal.protocol;
 
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
@@ -20,6 +20,9 @@ import java.util.regex.Pattern;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.openhab.binding.risco.internal.RiscoBindingConstants;
+import org.openhab.binding.risco.internal.protocol.message.RiscoMessagePanelConfiguration;
+import org.openhab.binding.risco.internal.protocol.message.RiscoMessageUnknown;
+import org.openhab.binding.risco.internal.protocol.message.RiscoMessageZoneStatus;
 import org.openhab.core.util.HexUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
