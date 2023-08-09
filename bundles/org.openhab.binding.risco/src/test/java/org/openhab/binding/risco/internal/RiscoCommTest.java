@@ -19,7 +19,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.openhab.binding.risco.internal.RiscoCommunicator.RiscoPanelListener;
-import org.openhab.binding.risco.internal.message.RiscoMessage;
+import org.openhab.binding.risco.internal.protocol.RiscoMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
