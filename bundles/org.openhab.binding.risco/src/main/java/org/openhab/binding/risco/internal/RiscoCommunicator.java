@@ -31,9 +31,9 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.openhab.binding.risco.internal.message.MessageOrigin;
-import org.openhab.binding.risco.internal.message.RiscoMessage;
-import org.openhab.binding.risco.internal.message.RiscoMessageFactory;
+import org.openhab.binding.risco.internal.protocol.MessageOrigin;
+import org.openhab.binding.risco.internal.protocol.RiscoMessage;
+import org.openhab.binding.risco.internal.protocol.RiscoMessageFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
