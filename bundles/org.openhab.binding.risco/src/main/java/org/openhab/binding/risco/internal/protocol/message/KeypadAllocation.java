@@ -24,12 +24,13 @@ import org.openhab.binding.risco.internal.protocol.RiscoMessage;
  * @author Georgios Moutsos - Initial contribution
  */
 @NonNullByDefault
-public class PanelConfiguration extends RiscoMessage {
-    public static final String COMMAND = "PNLCNF";
+public class KeypadAllocation extends RiscoMessage {
+    public static final String COMMAND1 = "KPALOC&";
+    public static final String COMMAND2 = "WKPALOC&";
 
     private List<MessageProperty> messageProperties = new ArrayList<MessageProperty>();
 
-    public PanelConfiguration(int commandId, String commandName, String modifier, String[] commandValues, int indexFrom,
+    public KeypadAllocation(int commandId, String commandName, String modifier, String[] commandValues, int indexFrom,
             int indexTo, byte[] encryptedMessage, byte[] decryptedMessage) {
         super(commandId, commandName, modifier, commandValues, indexFrom, indexTo, encryptedMessage, decryptedMessage);
     }
@@ -39,7 +40,25 @@ public class PanelConfiguration extends RiscoMessage {
         if (messageProperties.isEmpty() && commandValues.length > 0) {
             List<MessageProperty> props = new ArrayList<MessageProperty>();
 
-            props.add(new MessageProperty(RiscoBindingConstants.SYSTEM_THING_TYPE, "system", "name", commandValues[0]));
+            // KPALOC&=10000000
+            // result: 1-1 set
+            // WKPALOC&=00000000
+            // result: none set
+            int num2 = 1;
+            String value = commandValues[0];
+            for (int i = 0; i < value.length(); i++) {
+                String text = String
+                        .format("%4s", Integer.toBinaryString(Integer.parseInt(String.valueOf(value.charAt(i)), 16)))
+                        .replaceAll(" ", "0");
+                for (int j = text.length() - 1; j >= 0; j--) {
+                    if ("1".equals(String.valueOf(text.charAt(j)))) {
+                        props.add(new MessageProperty(RiscoBindingConstants.KEYPAD_THING_TYPE,
+                                String.format("keypad%d", num2), "name", String.format("Keypad %d", num2)));
+                    }
+                    num2++;
+                }
+            }
+
             messageProperties = props;
         }
 

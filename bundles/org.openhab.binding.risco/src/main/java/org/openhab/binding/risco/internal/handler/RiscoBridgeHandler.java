@@ -93,17 +93,12 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
             return;
         }
 
-        try {
-            Thread.sleep(12000);
-        } catch (InterruptedException e) {
-        }
-
         RiscoCommunicator communicator = this.communicator;
         if (communicator != null) {
             communicator.addListener(this);
-            communicator.send("PNLCNF?");
-            communicator.send("PNLVER?");
-            communicator.send("PNLSERD?");
+            // communicator.send("PNLCNF?");
+            // communicator.send("PNLVER?");
+            // communicator.send("PNLSERD?");
 
             updateStatus(ThingStatus.ONLINE);
         }
