@@ -59,5 +59,4 @@ public abstract class RiscoThingHandler extends BaseThingHandler {
 
         return this.bridgeHandler;
     }
-
 }

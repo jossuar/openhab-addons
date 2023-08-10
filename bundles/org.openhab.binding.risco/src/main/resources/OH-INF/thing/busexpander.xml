@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<thing:thing-descriptions bindingId="risco"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
+	xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
+
+	<thing-type id="busexpander">
+		<supported-bridge-type-refs>
+			<bridge-type-ref id="bridge"/>
+		</supported-bridge-type-refs>
+
+		<label>Risco Bus Expander</label>
+		<description>Represents a bus expander within a Risco Alarm System</description>
+
+		<channels>
+			<channel id="tamper" typeId="readonly_switch">
+				<label>Tamper</label>
+				<description>Tamper</description>
+			</channel>
+			<channel id="communication_trouble" typeId="readonly_switch">
+				<label>Communication Trouble</label>
+				<description>Communication Trouble</description>
+			</channel>
+			<channel id="exists" typeId="readonly_switch">
+				<label>Exists</label>
+				<description>Exists or Not Exists</description>
+			</channel>
+		</channels>
+
+		<representation-property>busexpanderNumber</representation-property>
+
+		<config-description>
+			<parameter name="busexpanderNumber" type="integer" required="true" min="1" max="32">
+				<label>Bus Expander Number</label>
+				<description>The Bus Expander Number</description>
+				<default>1</default>
+			</parameter>
+		</config-description>
+	</thing-type>
+
+</thing:thing-descriptions>

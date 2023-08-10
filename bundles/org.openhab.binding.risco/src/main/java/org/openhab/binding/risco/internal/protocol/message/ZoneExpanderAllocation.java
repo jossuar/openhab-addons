@@ -49,8 +49,9 @@ public class ZoneExpanderAllocation extends RiscoMessage {
                         .replaceAll(" ", "0");
                 for (int j = text.length() - 1; j >= 0; j--) {
                     if ("1".equals(String.valueOf(text.charAt(j)))) {
-                        props.add(new MessageProperty(RiscoBindingConstants.ZONE_THING_TYPE,
-                                String.format("zone%d", num2), "name", String.format("Zone %d", num2)));
+                        props.add(new MessageProperty(RiscoBindingConstants.ZONE_EXPANDER_THING_TYPE,
+                                String.format("zoneexpander%d", num2), "name",
+                                String.format("Zone Expander %d", num2)));
                     }
                     num2++;
                 }

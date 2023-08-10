@@ -9,79 +9,79 @@
 			<bridge-type-ref id="bridge"/>
 		</supported-bridge-type-refs>
 
-		<label>Risco Alarm Partition</label>
+		<label>Risco Partition</label>
 		<description>Represents a partition within a Risco Alarm System</description>
 
 		<channels>
-			<channel id="alarm" typeId="partition_switch">
+			<channel id="alarm" typeId="readonly_switch">
 				<label>Alarm</label>
 				<description>Alarm or Stand By</description>
 			</channel>
-			<channel id="duress" typeId="partition_switch">
+			<channel id="duress" typeId="readonly_switch">
 				<label>Duress</label>
 				<description>Duress or Free</description>
 			</channel>
-			<channel id="false_code" typeId="partition_switch">
+			<channel id="false_code" typeId="readonly_switch">
 				<label>False Code</label>
 				<description>False Code or Code Ok</description>
 			</channel>
-			<channel id="fire" typeId="partition_switch">
+			<channel id="fire" typeId="readonly_switch">
 				<label>Fire</label>
 				<description>Fire or No Fire</description>
 			</channel>
-			<channel id="panic" typeId="partition_switch">
+			<channel id="panic" typeId="readonly_switch">
 				<label>Panic</label>
 				<description>Panic or No Panic</description>
 			</channel>
-			<channel id="medic" typeId="partition_switch">
+			<channel id="medic" typeId="readonly_switch">
 				<label>Medic</label>
 				<description>Medic or No Medic</description>
 			</channel>
-			<channel id="arm" typeId="partition_switch">
+			<channel id="arm" typeId="readonly_switch">
 				<label>Arm</label>
 				<description>Armed or Disarmed</description>
 			</channel>
-			<channel id="home_stay" typeId="partition_switch">
+			<channel id="home_stay" typeId="readonly_switch">
 				<label>Home Stay</label>
 				<description>Home Stay or Home Disarmed</description>
 			</channel>
-			<channel id="ready" typeId="partition_switch">
+			<channel id="ready" typeId="readonly_switch">
 				<label>Ready</label>
 				<description>Ready or Not Ready</description>
 			</channel>
-			<channel id="open" typeId="partition_switch">
+			<channel id="open" typeId="readonly_switch">
 				<label>Open</label>
 				<description>Zone Open or Zones Closed</description>
 			</channel>
-			<channel id="exist" typeId="partition_switch">
+			<channel id="exist" typeId="readonly_switch">
 				<label>Exist</label>
 				<description>Exist or Not Exist</description>
 			</channel>
-			<channel id="reset_required" typeId="partition_switch">
+			<channel id="reset_required" typeId="readonly_switch">
 				<label>Reset Required</label>
 				<description>Memory Event or Memory Ack</description>
 			</channel>
-			<channel id="no_activity" typeId="partition_switch">
+			<channel id="no_activity" typeId="readonly_switch">
 				<label>No Activity</label>
 				<description>Activity Alert or Activity Ok</description>
 			</channel>
-			<channel id="group_a_arm" typeId="partition_switch">
+			<channel id="group_a_arm" typeId="readonly_switch">
 				<label>Group A Arm</label>
 				<description>Group A Armed or Group A Disarmed</description>
 			</channel>
-			<channel id="group_b_arm" typeId="partition_switch">
+			<channel id="group_b_arm" typeId="readonly_switch">
 				<label>Group B Arm</label>
 				<description>Group B Armed or Group B Disarmed</description>
 			</channel>
-			<channel id="group_c_arm" typeId="partition_switch">
+			<channel id="group_c_arm" typeId="readonly_switch">
 				<label>Group C Arm</label>
 				<description>Group C Armed or Group C Disarmed</description>
 			</channel>
-			<channel id="group_d_arm" typeId="partition_switch">
+			<channel id="group_d_arm" typeId="readonly_switch">
 				<label>Group D Arm</label>
 				<description>Group D Armed or Group D Disarmed</description>
 			</channel>
-			<channel id="trouble" typeId="partition_switch">
+			<channel id="trouble" typeId="readonly_switch">
 				<label>Trouble</label>
 				<description>Trouble or Ok</description>
 			</channel>
@@ -92,7 +92,7 @@
 		<config-description>
 			<parameter name="partitionNumber" type="integer" required="true" min="1" max="32">
 				<label>Partition Number</label>
-				<description>The Partition Number.</description>
+				<description>The Partition Number</description>
 				<default>1</default>
 			</parameter>
 		</config-description>
