@@ -99,6 +99,15 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
             // communicator.send("PNLCNF?");
             // communicator.send("PNLVER?");
             // communicator.send("PNLSERD?");
+            // communicator.send("DTYPDM?");
+            // communicator.send("DTYPMAT?");
+            // communicator.send("DTYPVM?");
+            // communicator.send("DTYPCOB?");
+            // communicator.send("DTYPGSM?");
+            // communicator.send("DTYPBE1?");
+            // communicator.send("DTYPZE1?");
+            // communicator.send("DTYPZE2?");
+            // communicator.send("DTYPZE3?");
 
             updateStatus(ThingStatus.ONLINE);
         }
