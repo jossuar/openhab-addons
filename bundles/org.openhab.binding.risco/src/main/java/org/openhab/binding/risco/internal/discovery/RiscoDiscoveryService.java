@@ -47,7 +47,15 @@ public class RiscoDiscoveryService extends AbstractDiscoveryService implements D
 
     @Override
     protected void startScan() {
-        // Discovery is performed implicitly via the CadxBridgeHandler
+        RiscoBridgeHandler handler = bridgeHandler;
+        if (handler != null) {
+            handler.sendCommand("ZALOC&");
+            handler.sendCommand("PARTALOC&");
+            handler.sendCommand("UOALOC&");
+            handler.sendCommand("KPALOC&");
+            handler.sendCommand("KFALOC&");
+            logger.debug("startScan called");
+        }
     }
 
     public void addThing(Bridge bridge, ThingUID thingUID, String thingLabel, @Nullable String indexProperty,

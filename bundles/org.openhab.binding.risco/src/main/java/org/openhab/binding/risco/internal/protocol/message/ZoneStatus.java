@@ -24,7 +24,7 @@ import org.openhab.binding.risco.internal.protocol.RiscoMessage;
  * @author Georgios Moutsos - Initial contribution
  */
 @NonNullByDefault
-public class RiscoMessageZoneStatus extends RiscoMessage {
+public class ZoneStatus extends RiscoMessage {
 
     // @formatter:off
     private final STTProperty[] properties = {
@@ -45,7 +45,7 @@ public class RiscoMessageZoneStatus extends RiscoMessage {
 
     private List<MessageProperty> messageProperties = new ArrayList<MessageProperty>();
 
-    public RiscoMessageZoneStatus(int commandId, String commandName, String modifier, String[] commandValues,
+    public ZoneStatus(int commandId, String commandName, String modifier, String[] commandValues,
             int indexFrom, int indexTo, byte[] encryptedMessage, byte[] decryptedMessage) {
         super(commandId, commandName, modifier, commandValues, indexFrom, indexTo, encryptedMessage, decryptedMessage);
     }
