@@ -17,6 +17,16 @@
 		<description>Sends a Command</description>
 	</channel-type>
 
+
+	<!-- switch -->
+	<channel-type id="readonly_switch">
+		<item-type>Switch</item-type>
+		<label>Readonly Switch</label>
+		<description>Readonly Switch</description>
+		<state readOnly="true"></state>
+	</channel-type>
+
+
 	<!-- panel -->
 	<channel-type id="panel_text">
 		<item-type>String</item-type>
@@ -25,34 +35,12 @@
 		<state pattern="%s" readOnly="true"></state>
 	</channel-type>
 
-	<channel-type id="panel_flag">
-		<item-type>Switch</item-type>
-		<label>Panel Flag</label>
-		<description>Panel flag</description>
-		<state readOnly="true"></state>
-	</channel-type>
-
-	<!-- partition -->
-	<channel-type id="partition_switch">
-		<item-type>Switch</item-type>
-		<label>Partition Condition</label>
-		<description>Partition Condition</description>
-		<state readOnly="true"></state>
-	</channel-type>
-
 	<!-- zone -->
 	<channel-type id="zone_text">
 		<item-type>String</item-type>
 		<label>Zone Text</label>
 		<description>Zone text</description>
 		<state pattern="%s" readOnly="true"></state>
-	</channel-type>
-
-	<channel-type id="zone_switch">
-		<item-type>Switch</item-type>
-		<label>Zone Type</label>
-		<description>Zone Type</description>
-		<state readOnly="true"></state>
 	</channel-type>
 
 	<channel-type id="zone_contact">
@@ -67,4 +55,6 @@
 		<label>Bypass Mode</label>
 		<description>Bypass Mode (OFF=Armed, ON=Bypassed)</description>
 	</channel-type>
+
+
 </thing:thing-descriptions>

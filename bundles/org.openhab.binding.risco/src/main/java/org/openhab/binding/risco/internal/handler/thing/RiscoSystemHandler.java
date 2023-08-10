@@ -51,11 +51,9 @@ public class RiscoSystemHandler extends RiscoThingHandler {
     }
 
     public void updateChannel(ChannelUID channelUID, String data) {
-
     }
 
     @Override
     public void handleCommand(ChannelUID channelUID, Command command) {
-
     }
 }
