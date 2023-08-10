@@ -64,8 +64,6 @@ public class RiscoHandlerFactory extends BaseThingHandlerFactory {
             return new RiscoZoneHandler(thing);
         } else if (RiscoBindingConstants.OUTPUT_THING_TYPE.equals(thingTypeUID)) {
             logger.debug("createHandler(): ThingHandler not implemented for {}", thingTypeUID);
-        } else if (RiscoBindingConstants.UTILITY_OUTPUT_THING_TYPE.equals(thingTypeUID)) {
-            logger.debug("createHandler(): ThingHandler not implemented for {}", thingTypeUID);
         } else if (RiscoBindingConstants.KEYPAD_THING_TYPE.equals(thingTypeUID)) {
             logger.debug("createHandler(): ThingHandler not implemented for {}", thingTypeUID);
         } else if (RiscoBindingConstants.KEYFOB_THING_TYPE.equals(thingTypeUID)) {

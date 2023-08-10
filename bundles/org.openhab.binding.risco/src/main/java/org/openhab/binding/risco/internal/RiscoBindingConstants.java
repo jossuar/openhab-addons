@@ -39,15 +39,14 @@ public class RiscoBindingConstants {
     public static final String PARTITION = "partition";
     public static final String ZONE = "zone";
     public static final String OUTPUT = "output";
-    public static final String UTILITY_OUTPUT = "utility_output";
     public static final String KEYPAD = "keypad";
     public static final String KEYFOB = "keyfob";
-    public static final String BUS_EXPANDER = "bus_expander";
-    public static final String ZONE_EXPANDER = "zone_expander";
-    public static final String OUTPUT_EXPANDER = "output_expander";
-    public static final String WIRELESS_MODULE = "wireless_module";
-    public static final String VOICE_MODULE = "voice_module";
-    public static final String CELLULAR_ON_BUS = "cellular_on_bus";
+    public static final String BUS_EXPANDER = "busexpander";
+    public static final String ZONE_EXPANDER = "zoneexpander";
+    public static final String OUTPUT_EXPANDER = "outputexpander";
+    public static final String WIRELESS_MODULE = "wirelessmodule";
+    public static final String VOICE_MODULE = "voicemodule";
+    public static final String CELLULAR_ON_BUS = "cellularonbus";
     public static final String SIREN = "siren";
 
     // List of all Bridge Thing Type UIDs
@@ -58,7 +57,6 @@ public class RiscoBindingConstants {
     public static final ThingTypeUID PARTITION_THING_TYPE = new ThingTypeUID(BINDING_ID, PARTITION);
     public static final ThingTypeUID ZONE_THING_TYPE = new ThingTypeUID(BINDING_ID, ZONE);
     public static final ThingTypeUID OUTPUT_THING_TYPE = new ThingTypeUID(BINDING_ID, OUTPUT);
-    public static final ThingTypeUID UTILITY_OUTPUT_THING_TYPE = new ThingTypeUID(BINDING_ID, UTILITY_OUTPUT);
     public static final ThingTypeUID KEYPAD_THING_TYPE = new ThingTypeUID(BINDING_ID, KEYPAD);
     public static final ThingTypeUID KEYFOB_THING_TYPE = new ThingTypeUID(BINDING_ID, KEYFOB);
     public static final ThingTypeUID BUS_EXPANDER_THING_TYPE = new ThingTypeUID(BINDING_ID, BUS_EXPANDER);
@@ -71,12 +69,10 @@ public class RiscoBindingConstants {
 
     // Set of all supported Thing Type UIDs
     public static final Set<ThingTypeUID> SUPPORTED_THING_TYPES_UIDS = Collections
-            .unmodifiableSet(Stream
-                    .of(BRIDGE_THING_TYPE, SYSTEM_THING_TYPE, PARTITION_THING_TYPE, ZONE_THING_TYPE, OUTPUT_THING_TYPE,
-                            UTILITY_OUTPUT_THING_TYPE, KEYPAD_THING_TYPE, KEYFOB_THING_TYPE, BUS_EXPANDER_THING_TYPE,
-                            ZONE_EXPANDER_THING_TYPE, OUTPUT_EXPANDER_THING_TYPE, WIRELESS_MODULE_THING_TYPE,
-                            VOICE_MODULE_THING_TYPE, CELLULAR_ON_BUS_THING_TYPE, SIREN_THING_TYPE)
-                    .collect(Collectors.toSet()));
+            .unmodifiableSet(Stream.of(BRIDGE_THING_TYPE, SYSTEM_THING_TYPE, PARTITION_THING_TYPE, ZONE_THING_TYPE,
+                    OUTPUT_THING_TYPE, KEYPAD_THING_TYPE, KEYFOB_THING_TYPE, BUS_EXPANDER_THING_TYPE,
+                    ZONE_EXPANDER_THING_TYPE, OUTPUT_EXPANDER_THING_TYPE, WIRELESS_MODULE_THING_TYPE,
+                    VOICE_MODULE_THING_TYPE, CELLULAR_ON_BUS_THING_TYPE, SIREN_THING_TYPE).collect(Collectors.toSet()));
 
     public static final int[] CRC_ARRAY = { 0x0000, 0xc0c1, 0xc181, 0x0140, 0xc301, 0x03c0, 0x0280, 0xc241, 0xc601,
             0x06c0, 0x0780, 0xc741, 0x0500, 0xc5c1, 0xc481, 0x0440, 0xcc01, 0x0cc0, 0x0d80, 0xcd41, 0x0f00, 0xcfc1,
@@ -98,46 +94,4 @@ public class RiscoBindingConstants {
             0x9ac1, 0x9b81, 0x5b40, 0x9901, 0x59c0, 0x5880, 0x9841, 0x8801, 0x48c0, 0x4980, 0x8941, 0x4b00, 0x8bc1,
             0x8a81, 0x4a40, 0x4e00, 0x8ec1, 0x8f81, 0x4f40, 0x8d01, 0x4dc0, 0x4c80, 0x8c41, 0x4400, 0x84c1, 0x8581,
             0x4540, 0x8701, 0x47c0, 0x4680, 0x8641, 0x8201, 0x42c0, 0x4380, 0x8341, 0x4100, 0x81c1, 0x8081, 0x4040 };
-
-    /*
-     * // Bridge
-     * // Commands
-     * // Channels
-     * public static final String SEND_COMMAND = "send_command";
-     *
-     * // Panel
-     * // Commands
-     * public static final String PANEL_INTERFACE_CONFIGURATION_REQUEST = "panel_interface_configuration_request";
-     * public static final String PANEL_SYSTEM_STATUS_REQUEST = "panel_system_status_request";
-     * public static final String PANEL_LOG_EVENT_REQUEST = "panel_log_event_request";
-     * // Channels
-     * public static final String PANEL_FIRMWARE_VERSION = "panel_firmware_version";
-     * public static final String PANEL_LOG_MESSAGE_N_0 = "panel_log_message_n_0";
-     *
-     * // Partition
-     * // Commands
-     * public static final String PARTITION_STATUS_REQUEST = "partition_status_request";
-     * public static final String PARTITION_PRIMARY_COMMAND_WITH_PIN = "partition_primary_command_with_pin";
-     * public static final String PARTITION_SECONDARY_COMMAND = "partition_secondary_command";
-     * // Channels
-     * public static final String PARTITION_ARMED = "partition_armed";
-     * public static final String PARTITION_PRIMARY = "partition_primary";
-     * public static final String PARTITION_SECONDARY = "partition_secondary";
-     *
-     * // Zone
-     * // Commands
-     * public static final String ZONE_STATUS_REQUEST = "zone_status_request";
-     * public static final String ZONE_NAME_REQUEST = "zone_name_request";
-     * // Channels
-     * public static final String ZONE_NAME = "zone_name";
-     * public static final String ZONE_FAULTED = "zone_faulted";
-     * public static final String ZONE_BYPASSED = "zone_bypassed";
-     *
-     * // Keypad
-     * // Commands
-     * public static final String KEYPAD_TERMINAL_MODE_REQUEST = "keypad_terminal_mode_request";
-     * public static final String KEYPAD_SEND_KEYPAD_TEXT_MESSAGE = "keypad_send_keypad_text_message";
-     * // Channels
-     * public static final String KEYPAD_KEY_PRESSED = "keypad_key_pressed";
-     */
 }
