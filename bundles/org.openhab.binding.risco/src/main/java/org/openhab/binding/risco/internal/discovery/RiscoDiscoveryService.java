@@ -19,6 +19,11 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.binding.risco.internal.RiscoBindingConstants;
 import org.openhab.binding.risco.internal.handler.RiscoBridgeHandler;
+import org.openhab.binding.risco.internal.protocol.message.KeypadAllocation;
+import org.openhab.binding.risco.internal.protocol.message.OutputAllocation;
+import org.openhab.binding.risco.internal.protocol.message.PartitionAllocation;
+import org.openhab.binding.risco.internal.protocol.message.ZoneAllocation;
+import org.openhab.binding.risco.internal.protocol.message.ZoneExpanderAllocation;
 import org.openhab.core.config.discovery.AbstractDiscoveryService;
 import org.openhab.core.config.discovery.DiscoveryResult;
 import org.openhab.core.config.discovery.DiscoveryResultBuilder;
@@ -47,14 +52,36 @@ public class RiscoDiscoveryService extends AbstractDiscoveryService implements D
 
     @Override
     protected void startScan() {
-        RiscoBridgeHandler handler = bridgeHandler;
-        if (handler != null) {
-            handler.sendCommand("ZALOC&");
-            handler.sendCommand("PARTALOC&");
-            handler.sendCommand("UOALOC&");
-            handler.sendCommand("KPALOC&");
-            handler.sendCommand("KFALOC&");
-            logger.debug("startScan called");
+        logger.debug("startScan called");
+
+        RiscoBridgeHandler bridge = bridgeHandler;
+        if (bridge != null) {
+            // Zone Expanders
+            bridge.sendCommand(ZoneExpanderAllocation.COMMAND);
+            // Partitions
+            bridge.sendCommand(PartitionAllocation.COMMAND);
+            // Output Expanders
+            bridge.sendCommand("UOALOC&");
+            // Outputs
+            bridge.sendCommand(OutputAllocation.COMMAND);
+            // Keypads
+            bridge.sendCommand(KeypadAllocation.COMMAND1);
+            bridge.sendCommand(KeypadAllocation.COMMAND2);
+            // Keyfobs
+            bridge.sendCommand("KFALOC&");
+            // Power Supplies
+            bridge.sendCommand("PSALOC&");
+            // Proximity readers
+            bridge.sendCommand("KRALOC&");
+            // Receivers
+            bridge.sendCommand("WMEALOC&");
+            // Sounders
+            bridge.sendCommand("ODSALOC&");
+            bridge.sendCommand("WSALOC&");
+            // Zones
+            bridge.sendCommand(ZoneAllocation.COMMAND1);
+            bridge.sendCommand(ZoneAllocation.COMMAND2);
+            bridge.sendCommand(ZoneAllocation.COMMAND3);
         }
     }
 
