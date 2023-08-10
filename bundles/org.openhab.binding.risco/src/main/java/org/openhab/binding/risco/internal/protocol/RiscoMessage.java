@@ -129,33 +129,17 @@ public abstract class RiscoMessage {
         return sign;
     }
 
-    /*
-     * public RiscoMessageType getMessageType() {
-     * RiscoMessageType mt = RiscoMessageType.valueOfMessage(commandName);
-     * if (mt == null) {
-     * mt = RiscoMessageType.UNKNOWN;
-     * }
-     * return mt;
-     * }
-     *
-     * public String getThingType() {
-     * return getMessageType().thingType;
-     * }
-     *
-     * public String[] getThingIds() {
-     * RiscoMessageType mt = getMessageType();
-     * List<String> ids = new ArrayList<String>();
-     *
-     * if (mt.hasIndex) {
-     * for (int i = getIndexFrom(); i <= getIndexTo(); i++) {
-     * ids.add(String.format(mt.thingIdFormat, i));
-     * }
-     * } else {
-     * ids.add(mt.thingIdFormat);
-     * }
-     * return ids.toArray(new String[0]);
-     * }
-     */
+    public Boolean isReadMessage() {
+        return "?".equals(sign);
+    }
+
+    public Boolean isWriteMessage() {
+        return "=".equals(sign);
+    }
+
+    public Boolean isNormalMessage() {
+        return "".equals(sign);
+    }
 
     public String getFullCommand() {
         StringBuilder sb = new StringBuilder();

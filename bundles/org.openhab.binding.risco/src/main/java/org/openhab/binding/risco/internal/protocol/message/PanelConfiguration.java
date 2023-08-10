@@ -24,11 +24,11 @@ import org.openhab.binding.risco.internal.protocol.RiscoMessage;
  * @author Georgios Moutsos - Initial contribution
  */
 @NonNullByDefault
-public class RiscoMessagePanelConfiguration extends RiscoMessage {
+public class PanelConfiguration extends RiscoMessage {
 
     private List<MessageProperty> messageProperties = new ArrayList<MessageProperty>();
 
-    public RiscoMessagePanelConfiguration(int commandId, String commandName, String modifier, String[] commandValues,
+    public PanelConfiguration(int commandId, String commandName, String modifier, String[] commandValues,
             int indexFrom, int indexTo, byte[] encryptedMessage, byte[] decryptedMessage) {
         super(commandId, commandName, modifier, commandValues, indexFrom, indexTo, encryptedMessage, decryptedMessage);
     }

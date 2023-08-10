@@ -15,6 +15,8 @@ package org.openhab.binding.risco.internal.handler;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.binding.risco.internal.RiscoBindingConstants;
+import org.openhab.binding.risco.internal.handler.thing.RiscoSystemHandler;
+import org.openhab.binding.risco.internal.handler.thing.RiscoZoneHandler;
 import org.openhab.core.thing.Bridge;
 import org.openhab.core.thing.Thing;
 import org.openhab.core.thing.ThingTypeUID;

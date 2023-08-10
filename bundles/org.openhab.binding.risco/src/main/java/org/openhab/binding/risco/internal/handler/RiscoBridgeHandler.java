@@ -27,6 +27,7 @@ import org.openhab.binding.risco.internal.RiscoCommunicator;
 import org.openhab.binding.risco.internal.RiscoCommunicator.RiscoPanelListener;
 import org.openhab.binding.risco.internal.config.RiscoBridgeConfiguration;
 import org.openhab.binding.risco.internal.discovery.RiscoDiscoveryService;
+import org.openhab.binding.risco.internal.handler.thing.RiscoZoneHandler;
 import org.openhab.binding.risco.internal.protocol.MessageProperty;
 import org.openhab.binding.risco.internal.protocol.RiscoMessage;
 import org.openhab.core.thing.Bridge;

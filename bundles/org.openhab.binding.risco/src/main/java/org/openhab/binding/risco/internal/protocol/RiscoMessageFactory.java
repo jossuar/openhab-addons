@@ -20,9 +20,10 @@ import java.util.regex.Pattern;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.openhab.binding.risco.internal.RiscoBindingConstants;
-import org.openhab.binding.risco.internal.protocol.message.RiscoMessagePanelConfiguration;
-import org.openhab.binding.risco.internal.protocol.message.RiscoMessageUnknown;
-import org.openhab.binding.risco.internal.protocol.message.RiscoMessageZoneStatus;
+import org.openhab.binding.risco.internal.protocol.message.PanelConfiguration;
+import org.openhab.binding.risco.internal.protocol.message.Unknown;
+import org.openhab.binding.risco.internal.protocol.message.ZoneAllocation;
+import org.openhab.binding.risco.internal.protocol.message.ZoneStatus;
 import org.openhab.core.util.HexUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -120,14 +121,18 @@ public class RiscoMessageFactory {
             int indexFrom, int indexTo, byte[] encryptedMessage, byte[] decryptedMessage) {
         switch (commandName) {
             case "PNLCNF":
-                return new RiscoMessagePanelConfiguration(commandId, commandName, modifier, commandValues, indexFrom,
-                        indexTo, encryptedMessage, decryptedMessage);
+                return new PanelConfiguration(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
+                        encryptedMessage, decryptedMessage);
             case "ZSTT":
-                return new RiscoMessageZoneStatus(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
+                return new ZoneStatus(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
+                        encryptedMessage, decryptedMessage);
+
+            case "ZALOC&":
+                return new ZoneAllocation(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
                         encryptedMessage, decryptedMessage);
 
             default:
-                return new RiscoMessageUnknown(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
+                return new Unknown(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
                         encryptedMessage, decryptedMessage);
         }
     }
