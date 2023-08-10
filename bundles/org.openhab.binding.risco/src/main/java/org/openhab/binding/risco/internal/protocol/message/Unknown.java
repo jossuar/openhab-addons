@@ -25,8 +25,8 @@ import org.openhab.binding.risco.internal.protocol.RiscoMessage;
 @NonNullByDefault
 public class Unknown extends RiscoMessage {
 
-    public Unknown(int commandId, String commandName, String modifier, String[] commandValues,
-            int indexFrom, int indexTo, byte[] encryptedMessage, byte[] decryptedMessage) {
+    public Unknown(int commandId, String commandName, String modifier, String[] commandValues, int indexFrom,
+            int indexTo, byte[] encryptedMessage, byte[] decryptedMessage) {
         super(commandId, commandName, modifier, commandValues, indexFrom, indexTo, encryptedMessage, decryptedMessage);
     }
 

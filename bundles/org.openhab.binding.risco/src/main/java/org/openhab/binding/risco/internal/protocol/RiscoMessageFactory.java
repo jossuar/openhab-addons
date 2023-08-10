@@ -20,9 +20,14 @@ import java.util.regex.Pattern;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.openhab.binding.risco.internal.RiscoBindingConstants;
+import org.openhab.binding.risco.internal.protocol.message.KeypadAllocation;
+import org.openhab.binding.risco.internal.protocol.message.OutputAllocation;
 import org.openhab.binding.risco.internal.protocol.message.PanelConfiguration;
+import org.openhab.binding.risco.internal.protocol.message.PartitionAllocation;
 import org.openhab.binding.risco.internal.protocol.message.Unknown;
+import org.openhab.binding.risco.internal.protocol.message.WirelessModuleAllocation;
 import org.openhab.binding.risco.internal.protocol.message.ZoneAllocation;
+import org.openhab.binding.risco.internal.protocol.message.ZoneExpanderAllocation;
 import org.openhab.binding.risco.internal.protocol.message.ZoneStatus;
 import org.openhab.core.util.HexUtils;
 import org.slf4j.Logger;
@@ -120,15 +125,39 @@ public class RiscoMessageFactory {
     private RiscoMessage createMessage(int commandId, String commandName, String modifier, String[] commandValues,
             int indexFrom, int indexTo, byte[] encryptedMessage, byte[] decryptedMessage) {
         switch (commandName) {
-            case "PNLCNF":
+            case PanelConfiguration.COMMAND:
                 return new PanelConfiguration(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
                         encryptedMessage, decryptedMessage);
-            case "ZSTT":
+
+            case ZoneStatus.COMMAND:
                 return new ZoneStatus(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
                         encryptedMessage, decryptedMessage);
 
-            case "ZALOC&":
+            case ZoneExpanderAllocation.COMMAND:
+                return new ZoneExpanderAllocation(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
+                        encryptedMessage, decryptedMessage);
+
+            case ZoneAllocation.COMMAND1:
+            case ZoneAllocation.COMMAND2:
+            case ZoneAllocation.COMMAND3:
                 return new ZoneAllocation(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
+                        encryptedMessage, decryptedMessage);
+
+            case PartitionAllocation.COMMAND:
+                return new PartitionAllocation(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
+                        encryptedMessage, decryptedMessage);
+
+            case KeypadAllocation.COMMAND1:
+            case KeypadAllocation.COMMAND2:
+                return new KeypadAllocation(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
+                        encryptedMessage, decryptedMessage);
+
+            case OutputAllocation.COMMAND:
+                return new OutputAllocation(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
+                        encryptedMessage, decryptedMessage);
+
+            case WirelessModuleAllocation.COMMAND:
+                return new WirelessModuleAllocation(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
                         encryptedMessage, decryptedMessage);
 
             default:
@@ -168,19 +197,6 @@ public class RiscoMessageFactory {
             commandValue = "";
         }
 
-        // Matcher m0 = NAME.matcher(commandAndIndex);
-        /*
-         * if (m0.matches()) {
-         * name = m0.group(1);
-         * from = -1;
-         * to = -1;
-         * if (indexWriteSign > 0) {
-         * values = new String[] { commandValue };
-         * } else {
-         * values = new String[] {};
-         * }
-         * } else {
-         */
         Matcher m1 = NAME_AND_INDEX.matcher(commandAndIndex);
         if (m1.matches()) {
             name = m1.group(1);
@@ -216,7 +232,6 @@ public class RiscoMessageFactory {
                 values = new String[] {};
             }
         }
-        // }
 
         Object[] arr = new Object[5];
         arr[0] = name;
