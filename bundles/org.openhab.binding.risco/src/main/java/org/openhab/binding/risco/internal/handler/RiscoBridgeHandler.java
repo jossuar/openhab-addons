@@ -157,12 +157,6 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
 
     @Override
     public void handleRiscoMessage(RiscoMessage msg) {
-
-        if ("ZSTT".equals(msg.getCommandName())) {
-            logger.debug("{}", msg);
-            // parse Zone Status message
-        }
-
         Thing thing = null;// findThing(caddxThingType, partition, zone, keypad);
         RiscoDiscoveryService discoveryService = this.discoveryService;
         if (thing != null) {
@@ -172,15 +166,17 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
             // }
         } else {
             if (discoveryService != null) {
-                msg.getProperties().stream().filter(distinctByKey(MessageProperty::getThingUID)).map(mp -> {
-                    Integer idx;
-                    String intValue = mp.getThingUID().replaceAll("[^0-9]", "");
-                    idx = ("".equals(intValue)) ? null : Integer.parseInt(intValue);
-                    discoveryService.addThing(getThing(),
-                            new ThingUID(mp.getThingTypeUID(), getThing().getUID(), mp.getThingUID()), mp.getThingUID(),
-                            "zoneNumber", idx);
-                    return 1;
-                });
+                /*
+                 * msg.getProperties().stream().filter(distinctByKey(MessageProperty::getThingUID)).map(mp -> {
+                 * Integer idx;
+                 * String intValue = mp.getThingUID().replaceAll("[^0-9]", "");
+                 * idx = ("".equals(intValue)) ? null : Integer.parseInt(intValue);
+                 * discoveryService.addThing(getThing(),
+                 * new ThingUID(mp.getThingTypeUID(), getThing().getUID(), mp.getThingUID()), mp.getThingUID(),
+                 * "zoneNumber", idx);
+                 * return 1;
+                 * });
+                 */
 
                 for (MessageProperty mp : msg.getProperties()) {
                     ThingUID thingUID = new ThingUID(mp.getThingTypeUID(), getThing().getUID(), mp.getThingUID());
@@ -192,15 +188,18 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
                     discoveryService.addThing(getThing(), thingUID, mp.getThingUID(), "zoneNumber", idx);
                 }
 
-                for (MessageProperty mp : msg.getProperties()) {
-                    ThingUID thingUID = new ThingUID(mp.getThingTypeUID(), getThing().getUID(), mp.getThingUID());
+                /*
+                 * for (MessageProperty mp : msg.getProperties()) {
+                 * ThingUID thingUID = new ThingUID(mp.getThingTypeUID(), getThing().getUID(), mp.getThingUID());
+                 *
+                 * Integer idx;
+                 * String intValue = mp.getThingUID().replaceAll("[^0-9]", "");
+                 * idx = ("".equals(intValue)) ? null : Integer.parseInt(intValue);
+                 *
+                 * discoveryService.addThing(getThing(), thingUID, mp.getThingUID(), "zoneNumber", idx);
+                 * }
+                 */
 
-                    Integer idx;
-                    String intValue = mp.getThingUID().replaceAll("[^0-9]", "");
-                    idx = ("".equals(intValue)) ? null : Integer.parseInt(intValue);
-
-                    discoveryService.addThing(getThing(), thingUID, mp.getThingUID(), "zoneNumber", idx);
-                }
             }
         }
     }

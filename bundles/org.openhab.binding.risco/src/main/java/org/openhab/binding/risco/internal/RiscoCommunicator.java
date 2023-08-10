@@ -232,14 +232,19 @@ public class RiscoCommunicator {
 
         if (msg.getMessageOrigin() == MessageOrigin.PANEL) {
             sendFirst(msg.getCommandId(), "ACK");
-        } else if (msg.getMessageOrigin() == MessageOrigin.BINDING) {
-            for (RiscoPanelListener listener : listenerQueue) {
-                listener.handleRiscoMessage(msg);
-            }
-        } else {
-            // Unknown message origin
-            logger.debug("Unknown message origin. Abnormal situation. {}", msg);
         }
+
+        for (RiscoPanelListener listener : listenerQueue) {
+            listener.handleRiscoMessage(msg);
+        }
+
+        /*
+         * else if (msg.getMessageOrigin() == MessageOrigin.BINDING) {
+         * } else {
+         * // Unknown message origin
+         * logger.debug("Unknown message origin. Abnormal situation. {}", msg);
+         * }
+         */
     }
 
     private void handleOutgoingMessage(RiscoMessage msg) {
@@ -247,16 +252,19 @@ public class RiscoCommunicator {
 
         lastSendTime = ZonedDateTime.now();
 
-        if (msg.getMessageOrigin() == MessageOrigin.PANEL) {
-            for (RiscoPanelListener listener : listenerQueue) {
-                listener.handleRiscoMessage(msg);
-            }
-        } else if (msg.getMessageOrigin() == MessageOrigin.BINDING) {
-            // Nothing to be done
-        } else {
-            // Unknown message origin
-            logger.debug("Unknown message origin. Abnormal situation. {}", msg);
+        for (RiscoPanelListener listener : listenerQueue) {
+            listener.handleRiscoMessage(msg);
         }
+
+        /*
+         * if (msg.getMessageOrigin() == MessageOrigin.PANEL) {
+         * } else if (msg.getMessageOrigin() == MessageOrigin.BINDING) {
+         * // Nothing to be done
+         * } else {
+         * // Unknown message origin
+         * logger.debug("Unknown message origin. Abnormal situation. {}", msg);
+         * }
+         */
     }
 
     public Boolean isConnected() {
