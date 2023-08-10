@@ -12,48 +12,29 @@
  */
 package org.openhab.binding.risco.internal.handler;
 
-import java.util.List;
-
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.core.thing.Bridge;
-import org.openhab.core.thing.Channel;
-import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.thing.Thing;
-import org.openhab.core.thing.ThingStatus;
 import org.openhab.core.thing.binding.BaseThingHandler;
 import org.openhab.core.thing.binding.ThingHandler;
-import org.openhab.core.types.Command;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The {@link RiscoSystemHandler} is responsible for handling commands, which are
+ * The {@link RiscoThingHandler} is responsible for handling commands, which are
  * sent to one of the channels.
  *
  * @author Georgios Moutsos - Initial contribution
  */
 @NonNullByDefault
-public class RiscoSystemHandler extends BaseThingHandler {
-    private final Logger logger = LoggerFactory.getLogger(RiscoSystemHandler.class);
+public abstract class RiscoThingHandler extends BaseThingHandler {
+    private final Logger logger = LoggerFactory.getLogger(RiscoThingHandler.class);
 
     private @Nullable RiscoBridgeHandler bridgeHandler;
 
-    public RiscoSystemHandler(Thing thing) {
+    public RiscoThingHandler(Thing thing) {
         super(thing);
-    }
-
-    @Override
-    public void initialize() {
-        updateStatus(ThingStatus.OFFLINE);
-
-        RiscoBridgeHandler bridgeHandler = getBridgeHandler();
-        if (bridgeHandler == null) {
-            return;
-        }
-
-        //
-        bridgeHandler.sendCommand("PNLCNF?");
     }
 
     public @Nullable RiscoBridgeHandler getBridgeHandler() {
@@ -79,25 +60,4 @@ public class RiscoSystemHandler extends BaseThingHandler {
         return this.bridgeHandler;
     }
 
-    public void updateChannel(ChannelUID channelUID, String data) {
-    }
-
-    @Override
-    public void handleCommand(ChannelUID channelUID, Command command) {
-    }
-
-    public @Nullable Channel getChannel(ChannelUID channelUID) {
-        Channel channel = null;
-
-        List<Channel> channels = getThing().getChannels();
-
-        for (Channel ch : channels) {
-            if (channelUID.equals(ch.getUID())) {
-                channel = ch;
-                break;
-            }
-        }
-
-        return channel;
-    }
 }
