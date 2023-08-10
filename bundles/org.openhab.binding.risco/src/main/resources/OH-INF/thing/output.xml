@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<thing:thing-descriptions bindingId="risco"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
+	xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
+
+	<thing-type id="output">
+		<supported-bridge-type-refs>
+			<bridge-type-ref id="bridge"/>
+		</supported-bridge-type-refs>
+
+		<label>Risco Output</label>
+		<description>Represents an output within a Risco Alarm System</description>
+
+		<channels>
+			<channel id="output_is_active" typeId="readonly_switch">
+				<label>Alarm</label>
+				<description>Alarm or Stand By</description>
+			</channel>
+			<channel id="exist" typeId="readonly_switch">
+				<label>Exist</label>
+				<description>Exist or Not Exist</description>
+			</channel>
+		</channels>
+
+		<representation-property>outputNumber</representation-property>
+
+		<config-description>
+			<parameter name="outputNumber" type="integer" required="true" min="1" max="192">
+				<label>Output Number</label>
+				<description>The Output Number</description>
+				<default>1</default>
+			</parameter>
+		</config-description>
+	</thing-type>
+
+</thing:thing-descriptions>
