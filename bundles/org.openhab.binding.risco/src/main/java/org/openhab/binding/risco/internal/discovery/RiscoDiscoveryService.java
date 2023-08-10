@@ -21,6 +21,7 @@ import org.openhab.binding.risco.internal.RiscoBindingConstants;
 import org.openhab.binding.risco.internal.handler.RiscoBridgeHandler;
 import org.openhab.binding.risco.internal.protocol.message.KeypadAllocation;
 import org.openhab.binding.risco.internal.protocol.message.OutputAllocation;
+import org.openhab.binding.risco.internal.protocol.message.PanelConfiguration;
 import org.openhab.binding.risco.internal.protocol.message.PartitionAllocation;
 import org.openhab.binding.risco.internal.protocol.message.ZoneAllocation;
 import org.openhab.binding.risco.internal.protocol.message.ZoneExpanderAllocation;
@@ -56,6 +57,8 @@ public class RiscoDiscoveryService extends AbstractDiscoveryService implements D
 
         RiscoBridgeHandler bridge = bridgeHandler;
         if (bridge != null) {
+            // Panel
+            bridge.sendCommand(PanelConfiguration.COMMAND);
             // Zone Expanders
             bridge.sendCommand(ZoneExpanderAllocation.COMMAND);
             // Partitions
