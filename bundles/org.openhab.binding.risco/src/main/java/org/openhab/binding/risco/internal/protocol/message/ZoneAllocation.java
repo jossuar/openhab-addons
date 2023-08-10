@@ -25,6 +25,9 @@ import org.openhab.binding.risco.internal.protocol.RiscoMessage;
  */
 @NonNullByDefault
 public class ZoneAllocation extends RiscoMessage {
+    public static final String COMMAND1 = "ZALOC&";
+    public static final String COMMAND2 = "WZALOC&";
+    public static final String COMMAND3 = "BZALOC&";
 
     private List<MessageProperty> messageProperties = new ArrayList<MessageProperty>();
 

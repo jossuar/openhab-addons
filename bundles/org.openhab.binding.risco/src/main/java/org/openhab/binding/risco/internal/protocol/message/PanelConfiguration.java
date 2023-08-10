@@ -25,11 +25,12 @@ import org.openhab.binding.risco.internal.protocol.RiscoMessage;
  */
 @NonNullByDefault
 public class PanelConfiguration extends RiscoMessage {
+    public static final String COMMAND = "PNLCNF";
 
     private List<MessageProperty> messageProperties = new ArrayList<MessageProperty>();
 
-    public PanelConfiguration(int commandId, String commandName, String modifier, String[] commandValues,
-            int indexFrom, int indexTo, byte[] encryptedMessage, byte[] decryptedMessage) {
+    public PanelConfiguration(int commandId, String commandName, String modifier, String[] commandValues, int indexFrom,
+            int indexTo, byte[] encryptedMessage, byte[] decryptedMessage) {
         super(commandId, commandName, modifier, commandValues, indexFrom, indexTo, encryptedMessage, decryptedMessage);
     }
 
