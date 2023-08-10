@@ -24,13 +24,13 @@ import org.openhab.binding.risco.internal.protocol.RiscoMessage;
  * @author Georgios Moutsos - Initial contribution
  */
 @NonNullByDefault
-public class PanelConfiguration extends RiscoMessage {
-    public static final String COMMAND = "PNLCNF";
+public class ZoneExpanderAllocation extends RiscoMessage {
+    public static final String COMMAND = "ZEALOC&";
 
     private List<MessageProperty> messageProperties = new ArrayList<MessageProperty>();
 
-    public PanelConfiguration(int commandId, String commandName, String modifier, String[] commandValues, int indexFrom,
-            int indexTo, byte[] encryptedMessage, byte[] decryptedMessage) {
+    public ZoneExpanderAllocation(int commandId, String commandName, String modifier, String[] commandValues,
+            int indexFrom, int indexTo, byte[] encryptedMessage, byte[] decryptedMessage) {
         super(commandId, commandName, modifier, commandValues, indexFrom, indexTo, encryptedMessage, decryptedMessage);
     }
 
@@ -39,7 +39,23 @@ public class PanelConfiguration extends RiscoMessage {
         if (messageProperties.isEmpty() && commandValues.length > 0) {
             List<MessageProperty> props = new ArrayList<MessageProperty>();
 
-            props.add(new MessageProperty(RiscoBindingConstants.SYSTEM_THING_TYPE, "system", "name", commandValues[0]));
+            // ZEALOC&=3000000000000000
+            // result: 1-2 set
+            int num2 = 1;
+            String value = commandValues[0];
+            for (int i = 0; i < value.length(); i++) {
+                String text = String
+                        .format("%4s", Integer.toBinaryString(Integer.parseInt(String.valueOf(value.charAt(i)), 16)))
+                        .replaceAll(" ", "0");
+                for (int j = text.length() - 1; j >= 0; j--) {
+                    if ("1".equals(String.valueOf(text.charAt(j)))) {
+                        props.add(new MessageProperty(RiscoBindingConstants.ZONE_THING_TYPE,
+                                String.format("zone%d", num2), "name", String.format("Zone %d", num2)));
+                    }
+                    num2++;
+                }
+            }
+
             messageProperties = props;
         }
 

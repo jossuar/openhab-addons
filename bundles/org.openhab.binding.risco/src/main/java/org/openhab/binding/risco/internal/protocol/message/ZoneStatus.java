@@ -25,6 +25,7 @@ import org.openhab.binding.risco.internal.protocol.RiscoMessage;
  */
 @NonNullByDefault
 public class ZoneStatus extends RiscoMessage {
+    public static final String COMMAND = "ZSTT";
 
     // @formatter:off
     private final STTProperty[] properties = {
@@ -45,8 +46,8 @@ public class ZoneStatus extends RiscoMessage {
 
     private List<MessageProperty> messageProperties = new ArrayList<MessageProperty>();
 
-    public ZoneStatus(int commandId, String commandName, String modifier, String[] commandValues,
-            int indexFrom, int indexTo, byte[] encryptedMessage, byte[] decryptedMessage) {
+    public ZoneStatus(int commandId, String commandName, String modifier, String[] commandValues, int indexFrom,
+            int indexTo, byte[] encryptedMessage, byte[] decryptedMessage) {
         super(commandId, commandName, modifier, commandValues, indexFrom, indexTo, encryptedMessage, decryptedMessage);
     }
 
