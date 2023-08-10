@@ -22,8 +22,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.openhab.binding.risco.internal.protocol.RiscoMessage;
 import org.openhab.binding.risco.internal.protocol.RiscoMessageFactory;
-import org.openhab.binding.risco.internal.protocol.message.RiscoMessageUnknown;
-import org.openhab.binding.risco.internal.protocol.message.RiscoMessageZoneStatus;
+import org.openhab.binding.risco.internal.protocol.message.Unknown;
+import org.openhab.binding.risco.internal.protocol.message.ZoneStatus;
 
 /**
  * Test class for Risco Message.
@@ -37,17 +37,17 @@ public class RiscoMessageTest {
     public static final List<Object[]> data() {
         return Arrays.asList(new Object [][]{
             //{"",},
-            { "CLOCK_write", "CLOCK", -1, -1, RiscoMessageUnknown.class },
-            { "CUSTLST_write", "CUSTLST", -1, -1, RiscoMessageUnknown.class },
-            { "DTYPZ_1-8_read", "DTYPZ", 1, 8, RiscoMessageUnknown.class },
-            { "DTYPZ_1-8_write", "DTYPZ", 1, 8, RiscoMessageUnknown.class },
-            { "N13", "N13", -1, -1, RiscoMessageUnknown.class },
-            { "ZLBL_1-8_write", "ZLBL", 1, 8, RiscoMessageUnknown.class },
-            { "ZSTT_1-8_read", "ZSTT", 1, 8, RiscoMessageZoneStatus.class },
-            { "ZSTT_19_read", "ZSTT", 19, 19, RiscoMessageZoneStatus.class },
-            { "ZSTT_19_write_on", "ZSTT", 19, 19, RiscoMessageZoneStatus.class },
-            { "ZSTT_19_write_off", "ZSTT", 19, 19, RiscoMessageZoneStatus.class },
-            { "ZTYPE_17-24_write", "ZTYPE", 17, 24, RiscoMessageUnknown.class },
+            { "CLOCK_write", "CLOCK", -1, -1, Unknown.class },
+            { "CUSTLST_write", "CUSTLST", -1, -1, Unknown.class },
+            { "DTYPZ_1-8_read", "DTYPZ", 1, 8, Unknown.class },
+            { "DTYPZ_1-8_write", "DTYPZ", 1, 8, Unknown.class },
+            { "N13", "N13", -1, -1, Unknown.class },
+            { "ZLBL_1-8_write", "ZLBL", 1, 8, Unknown.class },
+            { "ZSTT_1-8_read", "ZSTT", 1, 8, ZoneStatus.class },
+            { "ZSTT_19_read", "ZSTT", 19, 19, ZoneStatus.class },
+            { "ZSTT_19_write_on", "ZSTT", 19, 19, ZoneStatus.class },
+            { "ZSTT_19_write_off", "ZSTT", 19, 19, ZoneStatus.class },
+            { "ZTYPE_17-24_write", "ZTYPE", 17, 24, Unknown.class },
         });
     }
     // @formatter:on
