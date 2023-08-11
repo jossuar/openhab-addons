@@ -16,9 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.openhab.binding.risco.internal.RiscoBindingConstants;
 import org.openhab.binding.risco.internal.protocol.MessageProperty;
 import org.openhab.binding.risco.internal.protocol.RiscoMessage;
+import org.openhab.binding.risco.internal.protocol.RiscoThingType;
 
 /**
  * @author Georgios Moutsos - Initial contribution
@@ -44,7 +44,7 @@ public class KeypadAllocation extends RiscoMessage {
             // result: 1-1 set
             // WKPALOC&=00000000
             // result: none set
-            int num2 = 1;
+            int index = 1;
             String value = commandValues[0];
             for (int i = 0; i < value.length(); i++) {
                 String text = String
@@ -52,10 +52,10 @@ public class KeypadAllocation extends RiscoMessage {
                         .replaceAll(" ", "0");
                 for (int j = text.length() - 1; j >= 0; j--) {
                     if ("1".equals(String.valueOf(text.charAt(j)))) {
-                        props.add(new MessageProperty(RiscoBindingConstants.KEYPAD_THING_TYPE,
-                                String.format("keypad%d", num2), "name", String.format("Keypad %d", num2)));
+                        props.add(new MessageProperty(RiscoThingType.KEYPAD, index, "name",
+                                String.format("Keypad %d", index)));
                     }
-                    num2++;
+                    index++;
                 }
             }
 
