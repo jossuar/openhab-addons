@@ -16,9 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.openhab.binding.risco.internal.RiscoBindingConstants;
 import org.openhab.binding.risco.internal.protocol.MessageProperty;
 import org.openhab.binding.risco.internal.protocol.RiscoMessage;
+import org.openhab.binding.risco.internal.protocol.RiscoThingType;
 
 /**
  * @author Georgios Moutsos - Initial contribution
@@ -39,7 +39,7 @@ public class PanelConfiguration extends RiscoMessage {
         if (messageProperties.isEmpty() && commandValues.length > 0) {
             List<MessageProperty> props = new ArrayList<MessageProperty>();
 
-            props.add(new MessageProperty(RiscoBindingConstants.SYSTEM_THING_TYPE, "system", "name", commandValues[0]));
+            props.add(new MessageProperty(RiscoThingType.SYSTEM, null, "name", commandValues[0]));
             messageProperties = props;
         }
 

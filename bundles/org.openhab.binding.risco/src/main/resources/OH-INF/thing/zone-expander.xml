@@ -4,7 +4,7 @@
 	xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
 	xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
 
-	<thing-type id="zoneexpander">
+	<thing-type id="zone-expander">
 		<supported-bridge-type-refs>
 			<bridge-type-ref id="bridge"/>
 		</supported-bridge-type-refs>
@@ -31,10 +31,10 @@
 			</channel>
 		</channels>
 
-		<representation-property>zoneexpanderNumber</representation-property>
+		<representation-property>zoneExpanderNumber</representation-property>
 
 		<config-description>
-			<parameter name="zoneexpanderNumber" type="integer" required="true" min="1" max="32">
+			<parameter name="zoneExpanderNumber" type="integer" required="true" min="1" max="32">
 				<label>Zone Expander Number</label>
 				<description>The Zone Expander Number</description>
 				<default>1</default>

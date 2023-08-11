@@ -16,9 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.openhab.binding.risco.internal.RiscoBindingConstants;
 import org.openhab.binding.risco.internal.protocol.MessageProperty;
 import org.openhab.binding.risco.internal.protocol.RiscoMessage;
+import org.openhab.binding.risco.internal.protocol.RiscoThingType;
 
 /**
  * @author Georgios Moutsos - Initial contribution
@@ -49,8 +49,8 @@ public class OutputAllocation extends RiscoMessage {
                         .replaceAll(" ", "0");
                 for (int j = text.length() - 1; j >= 0; j--) {
                     if ("1".equals(String.valueOf(text.charAt(j)))) {
-                        props.add(new MessageProperty(RiscoBindingConstants.OUTPUT_THING_TYPE,
-                                String.format("output%d", num2), "name", String.format("Output %d", num2)));
+                        props.add(new MessageProperty(RiscoThingType.OUTPUT, num2, "name",
+                                String.format("Output %d", num2)));
                     }
                     num2++;
                 }

@@ -16,13 +16,11 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Function;
-import java.util.function.Predicate;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.openhab.binding.risco.internal.RiscoBindingConstants;
 import org.openhab.binding.risco.internal.RiscoCommunicator;
 import org.openhab.binding.risco.internal.RiscoCommunicator.RiscoPanelListener;
 import org.openhab.binding.risco.internal.config.RiscoBridgeConfiguration;
@@ -30,12 +28,14 @@ import org.openhab.binding.risco.internal.discovery.RiscoDiscoveryService;
 import org.openhab.binding.risco.internal.handler.thing.RiscoZoneHandler;
 import org.openhab.binding.risco.internal.protocol.MessageProperty;
 import org.openhab.binding.risco.internal.protocol.RiscoMessage;
+import org.openhab.binding.risco.internal.protocol.RiscoThingType;
 import org.openhab.core.thing.Bridge;
 import org.openhab.core.thing.Channel;
 import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.thing.Thing;
 import org.openhab.core.thing.ThingStatus;
 import org.openhab.core.thing.ThingStatusDetail;
+import org.openhab.core.thing.ThingTypeUID;
 import org.openhab.core.thing.ThingUID;
 import org.openhab.core.thing.binding.BaseBridgeHandler;
 import org.openhab.core.thing.binding.ThingHandler;
@@ -108,6 +108,7 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
             // communicator.send("DTYPZE1?");
             // communicator.send("DTYPZE2?");
             // communicator.send("DTYPZE3?");
+            communicator.send("ZSTT*25:32?");
 
             updateStatus(ThingStatus.ONLINE);
         }
@@ -166,47 +167,69 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
             // }
         } else {
             if (discoveryService != null) {
-                /*
-                 * msg.getProperties().stream().filter(distinctByKey(MessageProperty::getThingUID)).map(mp -> {
-                 * Integer idx;
-                 * String intValue = mp.getThingUID().replaceAll("[^0-9]", "");
-                 * idx = ("".equals(intValue)) ? null : Integer.parseInt(intValue);
-                 * discoveryService.addThing(getThing(),
-                 * new ThingUID(mp.getThingTypeUID(), getThing().getUID(), mp.getThingUID()), mp.getThingUID(),
-                 * "zoneNumber", idx);
-                 * return 1;
-                 * });
-                 */
-
                 for (MessageProperty mp : msg.getProperties()) {
-                    ThingUID thingUID = new ThingUID(mp.getThingTypeUID(), getThing().getUID(), mp.getThingUID());
-
-                    Integer idx;
-                    String intValue = mp.getThingUID().replaceAll("[^0-9]", "");
-                    idx = ("".equals(intValue)) ? null : Integer.parseInt(intValue);
-
-                    discoveryService.addThing(getThing(), thingUID, mp.getThingUID(), "zoneNumber", idx);
+                    ThingUID thingUID = new ThingUID(RiscoBindingConstants.ZONE, getThing().getUID(),
+                            "zone" + mp.getIndex());
+                    discoveryService.addThing(getThing(), thingUID, "zone" + mp.getIndex(), "zoneNumber",
+                            mp.getIndex());
                 }
-
-                /*
-                 * for (MessageProperty mp : msg.getProperties()) {
-                 * ThingUID thingUID = new ThingUID(mp.getThingTypeUID(), getThing().getUID(), mp.getThingUID());
-                 *
-                 * Integer idx;
-                 * String intValue = mp.getThingUID().replaceAll("[^0-9]", "");
-                 * idx = ("".equals(intValue)) ? null : Integer.parseInt(intValue);
-                 *
-                 * discoveryService.addThing(getThing(), thingUID, mp.getThingUID(), "zoneNumber", idx);
-                 * }
-                 */
-
             }
         }
     }
 
-    public static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
-        Set<Object> seen = ConcurrentHashMap.newKeySet();
-        return t -> seen.add(keyExtractor.apply(t));
+    private ThingUID getThingUID(RiscoThingType type, @Nullable Integer index) {
+        ThingTypeUID ttUID;
+        String prefix;
+
+        switch (type) {
+            case SYSTEM:
+                ttUID = RiscoBindingConstants.SYSTEM_THING_TYPE;
+                prefix = RiscoBindingConstants.SYSTEM;
+                break;
+            case PARTITION:
+                ttUID = RiscoBindingConstants.SYSTEM_THING_TYPE;
+                break;
+            case ZONE:
+                ttUID = RiscoBindingConstants.SYSTEM_THING_TYPE;
+                break;
+            case KEYPAD:
+                ttUID = RiscoBindingConstants.SYSTEM_THING_TYPE;
+                break;
+            case OUTPUT:
+                ttUID = RiscoBindingConstants.SYSTEM_THING_TYPE;
+                break;
+            case KEYFOB:
+                ttUID = RiscoBindingConstants.SYSTEM_THING_TYPE;
+                break;
+            case BUS_EXPANDER:
+                ttUID = RiscoBindingConstants.SYSTEM_THING_TYPE;
+                break;
+            case ZONE_EXPANDER:
+                ttUID = RiscoBindingConstants.SYSTEM_THING_TYPE;
+                break;
+            case OUTPUT_EXPANDER:
+                ttUID = RiscoBindingConstants.SYSTEM_THING_TYPE;
+                break;
+            case WIRELESS_MODULE:
+                ttUID = RiscoBindingConstants.SYSTEM_THING_TYPE;
+                break;
+            case VOICE_MODULE:
+                ttUID = RiscoBindingConstants.SYSTEM_THING_TYPE;
+                break;
+            case CELLULAR_ON_BUS:
+                ttUID = RiscoBindingConstants.SYSTEM_THING_TYPE;
+                break;
+            case SIREN:
+                ttUID = RiscoBindingConstants.SYSTEM_THING_TYPE;
+                break;
+            default:
+                logger.debug("getThingUID: Missing enum case");
+                throw new IllegalArgumentException("getThingUID: type is unknown. [" + type + "]");
+        }
+
+        ThingUID thingUID = new ThingUID(ttUID, getThing().getUID(), "zone" + index);
+
+        return thingUID;
     }
 
     /**
