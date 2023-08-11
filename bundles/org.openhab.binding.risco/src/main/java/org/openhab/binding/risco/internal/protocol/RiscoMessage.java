@@ -156,5 +156,5 @@ public abstract class RiscoMessage {
         return sb.toString();
     }
 
-    public abstract List<MessageProperty> getProperties();
+    public abstract List<RiscoThing> getThings();
 }

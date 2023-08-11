@@ -25,9 +25,11 @@ import org.openhab.binding.risco.internal.RiscoCommunicator;
 import org.openhab.binding.risco.internal.RiscoCommunicator.RiscoPanelListener;
 import org.openhab.binding.risco.internal.config.RiscoBridgeConfiguration;
 import org.openhab.binding.risco.internal.discovery.RiscoDiscoveryService;
+import org.openhab.binding.risco.internal.handler.thing.RiscoSystemHandler;
 import org.openhab.binding.risco.internal.handler.thing.RiscoZoneHandler;
-import org.openhab.binding.risco.internal.protocol.MessageProperty;
+import org.openhab.binding.risco.internal.protocol.DiscoveryInfo;
 import org.openhab.binding.risco.internal.protocol.RiscoMessage;
+import org.openhab.binding.risco.internal.protocol.RiscoThing;
 import org.openhab.binding.risco.internal.protocol.RiscoThingType;
 import org.openhab.core.thing.Bridge;
 import org.openhab.core.thing.Channel;
@@ -54,8 +56,11 @@ import org.slf4j.LoggerFactory;
 public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelListener {
     private final Logger logger = LoggerFactory.getLogger(RiscoBridgeHandler.class);
 
+    // Things served by the bridge
+    private Map<String, Thing> thingGeneralMap = new ConcurrentHashMap<>();
     private Map<Integer, Thing> thingZoneMap = new ConcurrentHashMap<>();
 
+    // Communication
     private @Nullable RiscoCommunicator communicator = null;
     private @Nullable RiscoDiscoveryService discoveryService = null;
 
@@ -108,7 +113,7 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
             // communicator.send("DTYPZE1?");
             // communicator.send("DTYPZE2?");
             // communicator.send("DTYPZE3?");
-            communicator.send("ZSTT*25:32?");
+            // communicator.send("ZSTT*25:32?");
 
             updateStatus(ThingStatus.ONLINE);
         }
@@ -158,78 +163,159 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
 
     @Override
     public void handleRiscoMessage(RiscoMessage msg) {
-        Thing thing = null;// findThing(caddxThingType, partition, zone, keypad);
-        RiscoDiscoveryService discoveryService = this.discoveryService;
-        if (thing != null) {
-            // RiscoThingHandler thingHandler = (RiscoThingHandler) thing.getHandler();
-            // if (thingHandler != null) {
-            // thingHandler.caddxEventReceived(event, thing);
-            // }
-        } else {
-            if (discoveryService != null) {
-                for (MessageProperty mp : msg.getProperties()) {
-                    ThingUID thingUID = new ThingUID(RiscoBindingConstants.ZONE, getThing().getUID(),
-                            "zone" + mp.getIndex());
-                    discoveryService.addThing(getThing(), thingUID, "zone" + mp.getIndex(), "zoneNumber",
-                            mp.getIndex());
+        // Get the list of things
+        Thing thing = null;
+
+        for (RiscoThing rt : msg.getThings()) {
+            thing = findThing(rt.getRiscoThingType(), rt.getIndex());
+
+            if (thing != null) {
+                RiscoThingHandler thingHandler = (RiscoThingHandler) thing.getHandler();
+                if (thingHandler != null) {
+                    thingHandler.handleEvent(rt);
+                }
+            } else {
+                RiscoDiscoveryService discoveryService = this.discoveryService;
+                if (discoveryService != null) {
+                    DiscoveryInfo di = mapInfo(rt.getRiscoThingType(), rt.getIndex());
+
+                    discoveryService.addThing(getThing(), di.getThingUID(), di.getThingLabel(), di.getIndexProperty(),
+                            di.getIndex());
                 }
             }
         }
     }
 
-    private ThingUID getThingUID(RiscoThingType type, @Nullable Integer index) {
+    public @Nullable Thing findThing(RiscoThingType riscoThingType, @Nullable Integer index) {
+        switch (riscoThingType) {
+            case SYSTEM:
+                return thingGeneralMap.get(RiscoBindingConstants.SYSTEM);
+            case ZONE:
+                if (index != null) {
+                    return thingZoneMap.get(Integer.valueOf(index));
+                }
+            case BUS_EXPANDER:
+                break;
+            case CELLULAR_ON_BUS:
+                break;
+            case KEYFOB:
+                break;
+            case KEYPAD:
+                break;
+            case OUTPUT:
+                break;
+            case OUTPUT_EXPANDER:
+                break;
+            case PARTITION:
+                break;
+            case SIREN:
+                break;
+            case VOICE_MODULE:
+                break;
+            case WIRELESS_MODULE:
+                break;
+            case ZONE_EXPANDER:
+                break;
+            default:
+                break;
+        }
+        return null;
+    }
+
+    private DiscoveryInfo mapInfo(RiscoThingType type, @Nullable Integer index) {
         ThingTypeUID ttUID;
         String prefix;
+        String label;
+        String indexProperty;
 
         switch (type) {
             case SYSTEM:
                 ttUID = RiscoBindingConstants.SYSTEM_THING_TYPE;
                 prefix = RiscoBindingConstants.SYSTEM;
+                label = "System";
+                indexProperty = null;
                 break;
             case PARTITION:
-                ttUID = RiscoBindingConstants.SYSTEM_THING_TYPE;
+                ttUID = RiscoBindingConstants.PARTITION_THING_TYPE;
+                prefix = RiscoBindingConstants.PARTITION;
+                label = "Partition " + index;
+                indexProperty = "partitionNumber";
                 break;
             case ZONE:
-                ttUID = RiscoBindingConstants.SYSTEM_THING_TYPE;
+                ttUID = RiscoBindingConstants.ZONE_THING_TYPE;
+                prefix = RiscoBindingConstants.ZONE;
+                label = "Zone " + index;
+                indexProperty = "zoneNumber";
                 break;
             case KEYPAD:
-                ttUID = RiscoBindingConstants.SYSTEM_THING_TYPE;
+                ttUID = RiscoBindingConstants.KEYPAD_THING_TYPE;
+                prefix = RiscoBindingConstants.KEYPAD;
+                label = "Keypad " + index;
+                indexProperty = "keypadNumber";
                 break;
             case OUTPUT:
-                ttUID = RiscoBindingConstants.SYSTEM_THING_TYPE;
+                ttUID = RiscoBindingConstants.OUTPUT_THING_TYPE;
+                prefix = RiscoBindingConstants.OUTPUT;
+                label = "Output " + index;
+                indexProperty = "outputNumber";
                 break;
             case KEYFOB:
-                ttUID = RiscoBindingConstants.SYSTEM_THING_TYPE;
+                ttUID = RiscoBindingConstants.KEYFOB_THING_TYPE;
+                prefix = RiscoBindingConstants.KEYFOB;
+                label = "Keyfob " + index;
+                indexProperty = "keyfobNumber";
                 break;
             case BUS_EXPANDER:
-                ttUID = RiscoBindingConstants.SYSTEM_THING_TYPE;
+                ttUID = RiscoBindingConstants.BUS_EXPANDER_THING_TYPE;
+                prefix = RiscoBindingConstants.BUS_EXPANDER;
+                label = "Bus Expander " + index;
+                indexProperty = "busExpanderNumber";
                 break;
             case ZONE_EXPANDER:
-                ttUID = RiscoBindingConstants.SYSTEM_THING_TYPE;
+                ttUID = RiscoBindingConstants.ZONE_EXPANDER_THING_TYPE;
+                prefix = RiscoBindingConstants.ZONE_EXPANDER;
+                label = "Zone Expander " + index;
+                indexProperty = "zoneExpanderNumber";
                 break;
             case OUTPUT_EXPANDER:
-                ttUID = RiscoBindingConstants.SYSTEM_THING_TYPE;
+                ttUID = RiscoBindingConstants.OUTPUT_EXPANDER_THING_TYPE;
+                prefix = RiscoBindingConstants.OUTPUT_EXPANDER;
+                label = "Output Expander " + index;
+                indexProperty = "outputExpanderNumber";
                 break;
             case WIRELESS_MODULE:
-                ttUID = RiscoBindingConstants.SYSTEM_THING_TYPE;
+                ttUID = RiscoBindingConstants.WIRELESS_MODULE_THING_TYPE;
+                prefix = RiscoBindingConstants.WIRELESS_MODULE;
+                label = "Wireless Module " + index;
+                indexProperty = "wirelesModuleNumber";
                 break;
             case VOICE_MODULE:
-                ttUID = RiscoBindingConstants.SYSTEM_THING_TYPE;
+                ttUID = RiscoBindingConstants.VOICE_MODULE_THING_TYPE;
+                prefix = RiscoBindingConstants.VOICE_MODULE;
+                label = "Voice Module " + index;
+                indexProperty = "voiceModuleNumber";
                 break;
             case CELLULAR_ON_BUS:
-                ttUID = RiscoBindingConstants.SYSTEM_THING_TYPE;
+                ttUID = RiscoBindingConstants.CELLULAR_ON_BUS_THING_TYPE;
+                prefix = RiscoBindingConstants.CELLULAR_ON_BUS;
+                label = "Cellular on Bus " + index;
+                indexProperty = "cellularOnBusNumber";
                 break;
             case SIREN:
-                ttUID = RiscoBindingConstants.SYSTEM_THING_TYPE;
+                ttUID = RiscoBindingConstants.SIREN_THING_TYPE;
+                prefix = RiscoBindingConstants.SIREN;
+                label = "Siren " + index;
+                indexProperty = "sirenNumber";
                 break;
             default:
                 logger.debug("getThingUID: Missing enum case");
                 throw new IllegalArgumentException("getThingUID: type is unknown. [" + type + "]");
         }
 
-        ThingUID thingUID = new ThingUID(ttUID, getThing().getUID(), "zone" + index);
+        ThingUID thingUID = new ThingUID(ttUID, getThing().getUID(), prefix + index);
+        DiscoveryInfo discoveryInfo = new DiscoveryInfo(thingUID, label, indexProperty, index);
 
-        return thingUID;
+        return discoveryInfo;
     }
 
     /**
@@ -254,6 +340,8 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
         if (childHandler instanceof RiscoZoneHandler) {
             RiscoZoneHandler handler = (RiscoZoneHandler) childHandler;
             thingZoneMap.put(handler.getZoneNumber(), childThing);
+        } else if (childHandler instanceof RiscoSystemHandler) {
+            thingGeneralMap.put(RiscoBindingConstants.SYSTEM, childThing);
         }
 
         super.childHandlerInitialized(childHandler, childThing);

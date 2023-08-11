@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
  * @author Georgios Moutsos - Initial contribution
  */
 @NonNullByDefault
-public abstract class RiscoThingHandler extends BaseThingHandler {
+public abstract class RiscoThingHandler extends BaseThingHandler implements RiscoThingEvent {
     private final Logger logger = LoggerFactory.getLogger(RiscoThingHandler.class);
 
     private @Nullable RiscoBridgeHandler bridgeHandler;

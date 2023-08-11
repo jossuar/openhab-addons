@@ -16,8 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.openhab.binding.risco.internal.protocol.MessageProperty;
 import org.openhab.binding.risco.internal.protocol.RiscoMessage;
+import org.openhab.binding.risco.internal.protocol.RiscoProperty;
+import org.openhab.binding.risco.internal.protocol.RiscoThing;
 import org.openhab.binding.risco.internal.protocol.RiscoThingType;
 
 /**
@@ -44,7 +45,7 @@ public class ZoneStatus extends RiscoMessage {
             new STTProperty("exists", "E") };
     // @formatter:on
 
-    private List<MessageProperty> messageProperties = new ArrayList<MessageProperty>();
+    private List<RiscoThing> messageThings = new ArrayList<RiscoThing>();
 
     public ZoneStatus(int commandId, String commandName, String modifier, String[] commandValues, int indexFrom,
             int indexTo, byte[] encryptedMessage, byte[] decryptedMessage) {
@@ -52,28 +53,32 @@ public class ZoneStatus extends RiscoMessage {
     }
 
     @Override
-    public List<MessageProperty> getProperties() {
-        if (isWriteMessage() && messageProperties.isEmpty()) {
-            List<MessageProperty> props = new ArrayList<MessageProperty>();
+    public List<RiscoThing> getThings() {
+        if (isWriteMessage() && messageThings.isEmpty()) {
+            List<RiscoThing> things = new ArrayList<RiscoThing>();
 
             // loop from indexFrom to indexTo
             for (int index = indexFrom; index <= indexTo; index++) {
                 String value = commandValues[index - indexFrom];
 
                 if (value != null) {
+                    List<RiscoProperty> props = new ArrayList<RiscoProperty>();
+
                     for (STTProperty prop : properties) {
                         if (value.contains(prop.flag)) {
-                            props.add(new MessageProperty(RiscoThingType.ZONE, index, prop.property, "true"));
+                            props.add(new RiscoProperty(prop.property, "true"));
                         } else {
-                            props.add(new MessageProperty(RiscoThingType.ZONE, index, prop.property, "false"));
+                            props.add(new RiscoProperty(prop.property, "false"));
                         }
                     }
+
+                    things.add(new RiscoThing(RiscoThingType.ZONE, index, props));
                 }
             }
 
-            messageProperties = props;
+            messageThings = things;
         }
 
-        return messageProperties;
+        return messageThings;
     }
 }

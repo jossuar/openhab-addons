@@ -16,8 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.openhab.binding.risco.internal.protocol.MessageProperty;
 import org.openhab.binding.risco.internal.protocol.RiscoMessage;
+import org.openhab.binding.risco.internal.protocol.RiscoProperty;
+import org.openhab.binding.risco.internal.protocol.RiscoThing;
 import org.openhab.binding.risco.internal.protocol.RiscoThingType;
 
 /**
@@ -27,7 +28,7 @@ import org.openhab.binding.risco.internal.protocol.RiscoThingType;
 public class OutputAllocation extends RiscoMessage {
     public static final String COMMAND = "UOCALOC&";
 
-    private List<MessageProperty> messageProperties = new ArrayList<MessageProperty>();
+    private List<RiscoThing> messageThings = new ArrayList<RiscoThing>();
 
     public OutputAllocation(int commandId, String commandName, String modifier, String[] commandValues, int indexFrom,
             int indexTo, byte[] encryptedMessage, byte[] decryptedMessage) {
@@ -35,30 +36,32 @@ public class OutputAllocation extends RiscoMessage {
     }
 
     @Override
-    public List<MessageProperty> getProperties() {
-        if (messageProperties.isEmpty() && commandValues.length > 0) {
-            List<MessageProperty> props = new ArrayList<MessageProperty>();
+    public List<RiscoThing> getThings() {
+        if (messageThings.isEmpty() && commandValues.length > 0) {
+            List<RiscoThing> things = new ArrayList<RiscoThing>();
 
             // UOCALOC&=F000000000000000000000000000000000000000000000000
             // result: 1-4 set
-            int num2 = 1;
+            int index = 1;
             String value = commandValues[0];
             for (int i = 0; i < value.length(); i++) {
                 String text = String
                         .format("%4s", Integer.toBinaryString(Integer.parseInt(String.valueOf(value.charAt(i)), 16)))
                         .replaceAll(" ", "0");
                 for (int j = text.length() - 1; j >= 0; j--) {
+                    List<RiscoProperty> props = new ArrayList<RiscoProperty>();
+                    props.add(new RiscoProperty("name", "Output " + index));
+
                     if ("1".equals(String.valueOf(text.charAt(j)))) {
-                        props.add(new MessageProperty(RiscoThingType.OUTPUT, num2, "name",
-                                String.format("Output %d", num2)));
+                        things.add(new RiscoThing(RiscoThingType.OUTPUT, index, props));
                     }
-                    num2++;
+                    index++;
                 }
             }
 
-            messageProperties = props;
+            messageThings = things;
         }
 
-        return messageProperties;
+        return messageThings;
     }
 }

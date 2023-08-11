@@ -12,6 +12,8 @@
  */
 package org.openhab.binding.risco.internal.protocol;
 
+import java.util.List;
+
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -19,18 +21,16 @@ import org.eclipse.jdt.annotation.Nullable;
  * @author Georgios Moutsos - Initial contribution
  */
 @NonNullByDefault
-public class MessageProperty {
+public class RiscoThing {
     private final RiscoThingType type;
     @Nullable
     private final Integer index;
-    private final String name;
-    private final String value;
+    private List<RiscoProperty> properties;
 
-    public MessageProperty(RiscoThingType type, @Nullable Integer index, String name, String value) {
+    public RiscoThing(RiscoThingType type, @Nullable Integer index, List<RiscoProperty> properties) {
         this.type = type;
         this.index = index;
-        this.name = name;
-        this.value = value;
+        this.properties = properties;
     }
 
     public RiscoThingType getRiscoThingType() {
@@ -42,19 +42,15 @@ public class MessageProperty {
         return index;
     }
 
-    public String getKey() {
-        return name;
-    }
-
-    public String getValue() {
-        return value;
+    public List<RiscoProperty> getProperties() {
+        return properties;
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        sb.append("{").append(type.toString()).append(index).append(" - ").append(name).append(": ").append(value);
+        sb.append("{").append(type.toString()).append(index).append(" - ").append(properties);
         return sb.toString();
     }
 }
