@@ -16,8 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.openhab.binding.risco.internal.protocol.MessageProperty;
 import org.openhab.binding.risco.internal.protocol.RiscoMessage;
+import org.openhab.binding.risco.internal.protocol.RiscoProperty;
+import org.openhab.binding.risco.internal.protocol.RiscoThing;
 import org.openhab.binding.risco.internal.protocol.RiscoThingType;
 
 /**
@@ -29,7 +30,7 @@ public class ZoneAllocation extends RiscoMessage {
     public static final String COMMAND2 = "WZALOC&";
     public static final String COMMAND3 = "BZALOC&";
 
-    private List<MessageProperty> messageProperties = new ArrayList<MessageProperty>();
+    private List<RiscoThing> messageThings = new ArrayList<RiscoThing>();
 
     public ZoneAllocation(int commandId, String commandName, String modifier, String[] commandValues, int indexFrom,
             int indexTo, byte[] encryptedMessage, byte[] decryptedMessage) {
@@ -37,30 +38,32 @@ public class ZoneAllocation extends RiscoMessage {
     }
 
     @Override
-    public List<MessageProperty> getProperties() {
-        if (messageProperties.isEmpty() && commandValues.length > 0) {
-            List<MessageProperty> props = new ArrayList<MessageProperty>();
+    public List<RiscoThing> getThings() {
+        if (messageThings.isEmpty() && commandValues.length > 0) {
+            List<RiscoThing> things = new ArrayList<RiscoThing>();
 
             // ZALOC&=FFFFFFF1000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
             // result: 1-29 set
-            int num2 = 1;
+            int index = 1;
             String value = commandValues[0];
             for (int i = 0; i < value.length(); i++) {
                 String text = String
                         .format("%4s", Integer.toBinaryString(Integer.parseInt(String.valueOf(value.charAt(i)), 16)))
                         .replaceAll(" ", "0");
                 for (int j = text.length() - 1; j >= 0; j--) {
+                    List<RiscoProperty> props = new ArrayList<RiscoProperty>();
+                    props.add(new RiscoProperty("name", "Zone " + index));
+
                     if ("1".equals(String.valueOf(text.charAt(j)))) {
-                        props.add(
-                                new MessageProperty(RiscoThingType.ZONE, num2, "name", String.format("Zone %d", num2)));
+                        things.add(new RiscoThing(RiscoThingType.ZONE, index, props));
                     }
-                    num2++;
+                    index++;
                 }
             }
 
-            messageProperties = props;
+            messageThings = things;
         }
 
-        return messageProperties;
+        return messageThings;
     }
 }
