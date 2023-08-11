@@ -16,8 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.openhab.binding.risco.internal.protocol.MessageProperty;
 import org.openhab.binding.risco.internal.protocol.RiscoMessage;
+import org.openhab.binding.risco.internal.protocol.RiscoProperty;
+import org.openhab.binding.risco.internal.protocol.RiscoThing;
 import org.openhab.binding.risco.internal.protocol.RiscoThingType;
 
 /**
@@ -27,7 +28,7 @@ import org.openhab.binding.risco.internal.protocol.RiscoThingType;
 public class ZoneExpanderAllocation extends RiscoMessage {
     public static final String COMMAND = "ZEALOC&";
 
-    private List<MessageProperty> messageProperties = new ArrayList<MessageProperty>();
+    private List<RiscoThing> messageThings = new ArrayList<RiscoThing>();
 
     public ZoneExpanderAllocation(int commandId, String commandName, String modifier, String[] commandValues,
             int indexFrom, int indexTo, byte[] encryptedMessage, byte[] decryptedMessage) {
@@ -35,13 +36,13 @@ public class ZoneExpanderAllocation extends RiscoMessage {
     }
 
     @Override
-    public List<MessageProperty> getProperties() {
-        if (messageProperties.isEmpty() && commandValues.length > 0) {
-            List<MessageProperty> props = new ArrayList<MessageProperty>();
+    public List<RiscoThing> getThings() {
+        if (messageThings.isEmpty() && commandValues.length > 0) {
+            List<RiscoThing> things = new ArrayList<RiscoThing>();
 
             // ZEALOC&=3000000000000000
             // result: 1-2 set
-            int num2 = 1;
+            int index = 1;
             String value = commandValues[0];
             for (int i = 0; i < value.length(); i++) {
                 String text = String
@@ -49,16 +50,18 @@ public class ZoneExpanderAllocation extends RiscoMessage {
                         .replaceAll(" ", "0");
                 for (int j = text.length() - 1; j >= 0; j--) {
                     if ("1".equals(String.valueOf(text.charAt(j)))) {
-                        props.add(new MessageProperty(RiscoThingType.ZONE_EXPANDER, num2, "name",
-                                String.format("Zone Expander %d", num2)));
+                        List<RiscoProperty> props = new ArrayList<RiscoProperty>();
+                        props.add(new RiscoProperty("name", "Zone Expander " + index));
+
+                        things.add(new RiscoThing(RiscoThingType.ZONE_EXPANDER, index, props));
                     }
-                    num2++;
+                    index++;
                 }
             }
 
-            messageProperties = props;
+            messageThings = things;
         }
 
-        return messageProperties;
+        return messageThings;
     }
 }
