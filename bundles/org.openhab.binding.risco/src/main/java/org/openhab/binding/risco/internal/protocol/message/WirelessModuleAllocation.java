@@ -16,9 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.openhab.binding.risco.internal.RiscoBindingConstants;
 import org.openhab.binding.risco.internal.protocol.MessageProperty;
 import org.openhab.binding.risco.internal.protocol.RiscoMessage;
+import org.openhab.binding.risco.internal.protocol.RiscoThingType;
 
 /**
  * @author Georgios Moutsos - Initial contribution
@@ -49,8 +49,7 @@ public class WirelessModuleAllocation extends RiscoMessage {
                         .replaceAll(" ", "0");
                 for (int j = text.length() - 1; j >= 0; j--) {
                     if ("1".equals(String.valueOf(text.charAt(j)))) {
-                        props.add(new MessageProperty(RiscoBindingConstants.WIRELESS_MODULE_THING_TYPE,
-                                String.format("wirelessmodule%d", num2), "name",
+                        props.add(new MessageProperty(RiscoThingType.WIRELESS_MODULE, num2, "name",
                                 String.format("Wireless Module %d", num2)));
                     }
                     num2++;

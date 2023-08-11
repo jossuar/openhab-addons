@@ -16,9 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.openhab.binding.risco.internal.RiscoBindingConstants;
 import org.openhab.binding.risco.internal.protocol.MessageProperty;
 import org.openhab.binding.risco.internal.protocol.RiscoMessage;
+import org.openhab.binding.risco.internal.protocol.RiscoThingType;
 
 /**
  * @author Georgios Moutsos - Initial contribution
@@ -51,8 +51,8 @@ public class ZoneAllocation extends RiscoMessage {
                         .replaceAll(" ", "0");
                 for (int j = text.length() - 1; j >= 0; j--) {
                     if ("1".equals(String.valueOf(text.charAt(j)))) {
-                        props.add(new MessageProperty(RiscoBindingConstants.ZONE_THING_TYPE,
-                                String.format("zone%d", num2), "name", String.format("Zone %d", num2)));
+                        props.add(
+                                new MessageProperty(RiscoThingType.ZONE, num2, "name", String.format("Zone %d", num2)));
                     }
                     num2++;
                 }

@@ -16,9 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.openhab.binding.risco.internal.RiscoBindingConstants;
 import org.openhab.binding.risco.internal.protocol.MessageProperty;
 import org.openhab.binding.risco.internal.protocol.RiscoMessage;
+import org.openhab.binding.risco.internal.protocol.RiscoThingType;
 
 /**
  * @author Georgios Moutsos - Initial contribution
@@ -53,22 +53,19 @@ public class ZoneStatus extends RiscoMessage {
 
     @Override
     public List<MessageProperty> getProperties() {
-        if (messageProperties.isEmpty()) {
+        if (isWriteMessage() && messageProperties.isEmpty()) {
             List<MessageProperty> props = new ArrayList<MessageProperty>();
 
             // loop from indexFrom to indexTo
             for (int index = indexFrom; index <= indexTo; index++) {
                 String value = commandValues[index - indexFrom];
-                String id = String.format(RiscoBindingConstants.ZONE + "%d", index);
 
                 if (value != null) {
                     for (STTProperty prop : properties) {
                         if (value.contains(prop.flag)) {
-                            props.add(new MessageProperty(RiscoBindingConstants.ZONE_THING_TYPE, id, prop.property,
-                                    "true"));
+                            props.add(new MessageProperty(RiscoThingType.ZONE, index, prop.property, "true"));
                         } else {
-                            props.add(new MessageProperty(RiscoBindingConstants.ZONE_THING_TYPE, id, prop.property,
-                                    "false"));
+                            props.add(new MessageProperty(RiscoThingType.ZONE, index, prop.property, "false"));
                         }
                     }
                 }
