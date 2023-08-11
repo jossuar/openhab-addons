@@ -15,6 +15,7 @@ package org.openhab.binding.risco.internal.handler.thing;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.openhab.binding.risco.internal.handler.RiscoBridgeHandler;
 import org.openhab.binding.risco.internal.handler.RiscoThingHandler;
+import org.openhab.binding.risco.internal.protocol.RiscoThing;
 import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.thing.Thing;
 import org.openhab.core.thing.ThingStatus;
@@ -55,5 +56,10 @@ public class RiscoSystemHandler extends RiscoThingHandler {
 
     @Override
     public void handleCommand(ChannelUID channelUID, Command command) {
+    }
+
+    @Override
+    public void handleEvent(RiscoThing riscoThing) {
+        updateStatus(ThingStatus.ONLINE);
     }
 }
