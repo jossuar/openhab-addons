@@ -16,8 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.openhab.binding.risco.internal.protocol.MessageProperty;
 import org.openhab.binding.risco.internal.protocol.RiscoMessage;
+import org.openhab.binding.risco.internal.protocol.RiscoProperty;
+import org.openhab.binding.risco.internal.protocol.RiscoThing;
 import org.openhab.binding.risco.internal.protocol.RiscoThingType;
 
 /**
@@ -27,7 +28,7 @@ import org.openhab.binding.risco.internal.protocol.RiscoThingType;
 public class PanelConfiguration extends RiscoMessage {
     public static final String COMMAND = "PNLCNF";
 
-    private List<MessageProperty> messageProperties = new ArrayList<MessageProperty>();
+    private List<RiscoThing> messageThings = new ArrayList<RiscoThing>();
 
     public PanelConfiguration(int commandId, String commandName, String modifier, String[] commandValues, int indexFrom,
             int indexTo, byte[] encryptedMessage, byte[] decryptedMessage) {
@@ -35,14 +36,17 @@ public class PanelConfiguration extends RiscoMessage {
     }
 
     @Override
-    public List<MessageProperty> getProperties() {
-        if (messageProperties.isEmpty() && commandValues.length > 0) {
-            List<MessageProperty> props = new ArrayList<MessageProperty>();
+    public List<RiscoThing> getThings() {
+        if (messageThings.isEmpty() && commandValues.length > 0) {
+            List<RiscoThing> things = new ArrayList<RiscoThing>();
+            List<RiscoProperty> props = new ArrayList<RiscoProperty>();
+            props.add(new RiscoProperty("name", commandValues[0]));
 
-            props.add(new MessageProperty(RiscoThingType.SYSTEM, null, "name", commandValues[0]));
-            messageProperties = props;
+            things.add(new RiscoThing(RiscoThingType.SYSTEM, null, props));
+
+            messageThings = things;
         }
 
-        return messageProperties;
+        return messageThings;
     }
 }

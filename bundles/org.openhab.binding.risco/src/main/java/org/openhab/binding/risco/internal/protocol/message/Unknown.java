@@ -16,14 +16,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.openhab.binding.risco.internal.protocol.MessageProperty;
 import org.openhab.binding.risco.internal.protocol.RiscoMessage;
+import org.openhab.binding.risco.internal.protocol.RiscoThing;
 
 /**
  * @author Georgios Moutsos - Initial contribution
  */
 @NonNullByDefault
 public class Unknown extends RiscoMessage {
+    private List<RiscoThing> messageThings = new ArrayList<RiscoThing>();
 
     public Unknown(int commandId, String commandName, String modifier, String[] commandValues, int indexFrom,
             int indexTo, byte[] encryptedMessage, byte[] decryptedMessage) {
@@ -31,8 +32,7 @@ public class Unknown extends RiscoMessage {
     }
 
     @Override
-    public List<MessageProperty> getProperties() {
-        // Return an empty property array
-        return new ArrayList<MessageProperty>();
+    public List<RiscoThing> getThings() {
+        return messageThings;
     }
 }
