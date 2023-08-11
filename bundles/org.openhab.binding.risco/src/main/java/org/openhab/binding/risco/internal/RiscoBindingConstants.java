@@ -41,12 +41,12 @@ public class RiscoBindingConstants {
     public static final String OUTPUT = "output";
     public static final String KEYPAD = "keypad";
     public static final String KEYFOB = "keyfob";
-    public static final String BUS_EXPANDER = "busexpander";
-    public static final String ZONE_EXPANDER = "zoneexpander";
-    public static final String OUTPUT_EXPANDER = "outputexpander";
-    public static final String WIRELESS_MODULE = "wirelessmodule";
-    public static final String VOICE_MODULE = "voicemodule";
-    public static final String CELLULAR_ON_BUS = "cellularonbus";
+    public static final String BUS_EXPANDER = "bus-expander";
+    public static final String ZONE_EXPANDER = "zone-expander";
+    public static final String OUTPUT_EXPANDER = "output-expander";
+    public static final String WIRELESS_MODULE = "wireless-module";
+    public static final String VOICE_MODULE = "voice-module";
+    public static final String CELLULAR_ON_BUS = "cellular-on-bus";
     public static final String SIREN = "siren";
 
     // List of all Bridge Thing Type UIDs

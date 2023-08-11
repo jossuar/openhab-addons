@@ -13,31 +13,33 @@
 package org.openhab.binding.risco.internal.protocol;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.openhab.core.thing.ThingTypeUID;
+import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * @author Georgios Moutsos - Initial contribution
  */
 @NonNullByDefault
 public class MessageProperty {
-    private final ThingTypeUID thingTypeUID;
-    private final String thingUID;
+    private final RiscoThingType type;
+    @Nullable
+    private final Integer index;
     private final String name;
     private final String value;
 
-    public MessageProperty(ThingTypeUID thingTypeUID, String thingUID, String name, String value) {
-        this.thingTypeUID = thingTypeUID;
-        this.thingUID = thingUID;
+    public MessageProperty(RiscoThingType type, @Nullable Integer index, String name, String value) {
+        this.type = type;
+        this.index = index;
         this.name = name;
         this.value = value;
     }
 
-    public ThingTypeUID getThingTypeUID() {
-        return thingTypeUID;
+    public RiscoThingType getRiscoThingType() {
+        return type;
     }
 
-    public String getThingUID() {
-        return thingUID;
+    @Nullable
+    public Integer getIndex() {
+        return index;
     }
 
     public String getKey() {
@@ -52,7 +54,7 @@ public class MessageProperty {
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        sb.append("{").append(thingUID.toString()).append(" - ").append(name).append(": ").append(value);
+        sb.append("{").append(type.toString()).append(index).append(" - ").append(name).append(": ").append(value);
         return sb.toString();
     }
 }
