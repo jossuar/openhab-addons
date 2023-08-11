@@ -34,6 +34,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.openhab.binding.risco.internal.protocol.MessageOrigin;
 import org.openhab.binding.risco.internal.protocol.RiscoMessage;
 import org.openhab.binding.risco.internal.protocol.RiscoMessageFactory;
+import org.openhab.core.util.HexUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -323,6 +324,8 @@ public class RiscoCommunicator {
                 } while (true);
 
                 byte[] message = Arrays.copyOfRange(buffer, 0, bufferIndex);
+
+                logger.debug("<---- {}", HexUtils.bytesToHex(message));
 
                 RiscoMessageFactory factory = new RiscoMessageFactory();
                 RiscoMessage msg = factory.create(1, "UTF-8", message);

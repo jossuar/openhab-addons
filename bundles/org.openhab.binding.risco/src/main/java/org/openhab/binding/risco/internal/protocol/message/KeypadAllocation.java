@@ -16,8 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.openhab.binding.risco.internal.protocol.MessageProperty;
 import org.openhab.binding.risco.internal.protocol.RiscoMessage;
+import org.openhab.binding.risco.internal.protocol.RiscoProperty;
+import org.openhab.binding.risco.internal.protocol.RiscoThing;
 import org.openhab.binding.risco.internal.protocol.RiscoThingType;
 
 /**
@@ -28,7 +29,7 @@ public class KeypadAllocation extends RiscoMessage {
     public static final String COMMAND1 = "KPALOC&";
     public static final String COMMAND2 = "WKPALOC&";
 
-    private List<MessageProperty> messageProperties = new ArrayList<MessageProperty>();
+    private List<RiscoThing> messageThings = new ArrayList<RiscoThing>();
 
     public KeypadAllocation(int commandId, String commandName, String modifier, String[] commandValues, int indexFrom,
             int indexTo, byte[] encryptedMessage, byte[] decryptedMessage) {
@@ -36,9 +37,9 @@ public class KeypadAllocation extends RiscoMessage {
     }
 
     @Override
-    public List<MessageProperty> getProperties() {
-        if (messageProperties.isEmpty() && commandValues.length > 0) {
-            List<MessageProperty> props = new ArrayList<MessageProperty>();
+    public List<RiscoThing> getThings() {
+        if (messageThings.isEmpty() && commandValues.length > 0) {
+            List<RiscoThing> things = new ArrayList<RiscoThing>();
 
             // KPALOC&=10000000
             // result: 1-1 set
@@ -51,17 +52,19 @@ public class KeypadAllocation extends RiscoMessage {
                         .format("%4s", Integer.toBinaryString(Integer.parseInt(String.valueOf(value.charAt(i)), 16)))
                         .replaceAll(" ", "0");
                 for (int j = text.length() - 1; j >= 0; j--) {
+                    List<RiscoProperty> props = new ArrayList<RiscoProperty>();
+                    props.add(new RiscoProperty("name", "Keypad " + index));
+
                     if ("1".equals(String.valueOf(text.charAt(j)))) {
-                        props.add(new MessageProperty(RiscoThingType.KEYPAD, index, "name",
-                                String.format("Keypad %d", index)));
+                        things.add(new RiscoThing(RiscoThingType.KEYPAD, index, props));
                     }
                     index++;
                 }
             }
 
-            messageProperties = props;
+            messageThings = things;
         }
 
-        return messageProperties;
+        return messageThings;
     }
 }
