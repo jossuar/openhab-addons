@@ -24,6 +24,8 @@ import org.openhab.binding.risco.internal.protocol.message.KeypadAllocation;
 import org.openhab.binding.risco.internal.protocol.message.OutputAllocation;
 import org.openhab.binding.risco.internal.protocol.message.PanelConfiguration;
 import org.openhab.binding.risco.internal.protocol.message.PartitionAllocation;
+import org.openhab.binding.risco.internal.protocol.message.PartitionStatus;
+import org.openhab.binding.risco.internal.protocol.message.SystemStatus;
 import org.openhab.binding.risco.internal.protocol.message.Unknown;
 import org.openhab.binding.risco.internal.protocol.message.WirelessModuleAllocation;
 import org.openhab.binding.risco.internal.protocol.message.ZoneAllocation;
@@ -126,32 +128,6 @@ public class RiscoMessageFactory {
     private RiscoMessage createMessage(int commandId, String commandName, String modifier, String[] commandValues,
             int indexFrom, int indexTo, byte[] encryptedMessage, byte[] decryptedMessage) {
         switch (commandName) {
-            case PanelConfiguration.COMMAND:
-                return new PanelConfiguration(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
-                        encryptedMessage, decryptedMessage);
-
-            case ZoneLabel.COMMAND:
-                return new ZoneLabel(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
-                        encryptedMessage, decryptedMessage);
-
-            case ZoneStatus.COMMAND:
-                return new ZoneStatus(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
-                        encryptedMessage, decryptedMessage);
-
-            case ZoneExpanderAllocation.COMMAND:
-                return new ZoneExpanderAllocation(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
-                        encryptedMessage, decryptedMessage);
-
-            case ZoneAllocation.COMMAND1:
-            case ZoneAllocation.COMMAND2:
-            case ZoneAllocation.COMMAND3:
-                return new ZoneAllocation(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
-                        encryptedMessage, decryptedMessage);
-
-            case PartitionAllocation.COMMAND:
-                return new PartitionAllocation(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
-                        encryptedMessage, decryptedMessage);
-
             case KeypadAllocation.COMMAND1:
             case KeypadAllocation.COMMAND2:
                 return new KeypadAllocation(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
@@ -161,8 +137,42 @@ public class RiscoMessageFactory {
                 return new OutputAllocation(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
                         encryptedMessage, decryptedMessage);
 
+            case PanelConfiguration.COMMAND:
+                return new PanelConfiguration(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
+                        encryptedMessage, decryptedMessage);
+
+            case PartitionAllocation.COMMAND:
+                return new PartitionAllocation(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
+                        encryptedMessage, decryptedMessage);
+
+            case PartitionStatus.COMMAND:
+                return new PartitionStatus(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
+                        encryptedMessage, decryptedMessage);
+
+            case SystemStatus.COMMAND:
+                return new SystemStatus(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
+                        encryptedMessage, decryptedMessage);
+
             case WirelessModuleAllocation.COMMAND:
                 return new WirelessModuleAllocation(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
+                        encryptedMessage, decryptedMessage);
+
+            case ZoneAllocation.COMMAND1:
+            case ZoneAllocation.COMMAND2:
+            case ZoneAllocation.COMMAND3:
+                return new ZoneAllocation(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
+                        encryptedMessage, decryptedMessage);
+
+            case ZoneExpanderAllocation.COMMAND:
+                return new ZoneExpanderAllocation(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
+                        encryptedMessage, decryptedMessage);
+
+            case ZoneLabel.COMMAND:
+                return new ZoneLabel(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
+                        encryptedMessage, decryptedMessage);
+
+            case ZoneStatus.COMMAND:
+                return new ZoneStatus(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
                         encryptedMessage, decryptedMessage);
 
             default:
