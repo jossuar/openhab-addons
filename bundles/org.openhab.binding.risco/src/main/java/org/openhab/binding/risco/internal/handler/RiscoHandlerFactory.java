@@ -15,6 +15,8 @@ package org.openhab.binding.risco.internal.handler;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.binding.risco.internal.RiscoBindingConstants;
+import org.openhab.binding.risco.internal.handler.thing.RiscoOutputHandler;
+import org.openhab.binding.risco.internal.handler.thing.RiscoPartitionHandler;
 import org.openhab.binding.risco.internal.handler.thing.RiscoSystemHandler;
 import org.openhab.binding.risco.internal.handler.thing.RiscoZoneHandler;
 import org.openhab.core.thing.Bridge;
@@ -59,11 +61,11 @@ public class RiscoHandlerFactory extends BaseThingHandlerFactory {
         } else if (RiscoBindingConstants.SYSTEM_THING_TYPE.equals(thingTypeUID)) {
             return new RiscoSystemHandler(thing);
         } else if (RiscoBindingConstants.PARTITION_THING_TYPE.equals(thingTypeUID)) {
-            logger.debug("createHandler(): ThingHandler not implemented for {}", thingTypeUID);
+            return new RiscoPartitionHandler(thing);
         } else if (RiscoBindingConstants.ZONE_THING_TYPE.equals(thingTypeUID)) {
             return new RiscoZoneHandler(thing);
         } else if (RiscoBindingConstants.OUTPUT_THING_TYPE.equals(thingTypeUID)) {
-            logger.debug("createHandler(): ThingHandler not implemented for {}", thingTypeUID);
+            return new RiscoOutputHandler(thing);
         } else if (RiscoBindingConstants.KEYPAD_THING_TYPE.equals(thingTypeUID)) {
             logger.debug("createHandler(): ThingHandler not implemented for {}", thingTypeUID);
         } else if (RiscoBindingConstants.KEYFOB_THING_TYPE.equals(thingTypeUID)) {
