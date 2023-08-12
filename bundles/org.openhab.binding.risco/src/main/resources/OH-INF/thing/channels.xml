@@ -18,31 +18,21 @@
 	</channel-type>
 
 
-	<!-- switch -->
+	<!-- general channel types -->
 	<channel-type id="readonly_switch">
 		<item-type>Switch</item-type>
-		<label>Readonly Switch</label>
-		<description>Readonly Switch</description>
+		<label>Read-only Switch</label>
+		<description>Read-only Switch</description>
 		<state readOnly="true"></state>
 	</channel-type>
-
-
-	<!-- panel -->
-	<channel-type id="panel_text">
+	<channel-type id="readonly_text">
 		<item-type>String</item-type>
-		<label>Panel Text</label>
-		<description>Panel text</description>
+		<label>Read-only Text</label>
+		<description>Read-only text</description>
 		<state pattern="%s" readOnly="true"></state>
 	</channel-type>
 
 	<!-- zone -->
-	<channel-type id="zone_text">
-		<item-type>String</item-type>
-		<label>Zone Text</label>
-		<description>Zone text</description>
-		<state pattern="%s" readOnly="true"></state>
-	</channel-type>
-
 	<channel-type id="zone_contact">
 		<item-type>Contact</item-type>
 		<label>Zone Status</label>

@@ -13,7 +13,7 @@
 		<description>Represents the Risco Alarm System</description>
 
 		<channels>
-			<channel id="name" typeId="panel_text">
+			<channel id="name" typeId="readonly_text">
 				<label>Name</label>
 				<description>Name</description>
 			</channel>

@@ -28,6 +28,7 @@ import org.openhab.binding.risco.internal.protocol.message.Unknown;
 import org.openhab.binding.risco.internal.protocol.message.WirelessModuleAllocation;
 import org.openhab.binding.risco.internal.protocol.message.ZoneAllocation;
 import org.openhab.binding.risco.internal.protocol.message.ZoneExpanderAllocation;
+import org.openhab.binding.risco.internal.protocol.message.ZoneLabel;
 import org.openhab.binding.risco.internal.protocol.message.ZoneStatus;
 import org.openhab.core.util.HexUtils;
 import org.slf4j.Logger;
@@ -127,6 +128,10 @@ public class RiscoMessageFactory {
         switch (commandName) {
             case PanelConfiguration.COMMAND:
                 return new PanelConfiguration(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
+                        encryptedMessage, decryptedMessage);
+
+            case ZoneLabel.COMMAND:
+                return new ZoneLabel(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
                         encryptedMessage, decryptedMessage);
 
             case ZoneStatus.COMMAND:
@@ -330,7 +335,7 @@ public class RiscoMessageFactory {
         // Remove DLE chars
         for (int i = 0; i < encryptedMessage.length; i++) {
             if ((encryptedMessage[i] == 0x10) && (encryptedMessage[i + 1] == 0x02 || encryptedMessage[i + 1] == 0x03
-                    || encryptedMessage[i + 1] == 0x10)) {
+                    || encryptedMessage[i + 1] == 0x10) && (i != encryptedMessage.length - 2)) {
                 outputStream.write(encryptedMessage[i + 1]);
                 i++;
             } else {
@@ -376,16 +381,17 @@ public class RiscoMessageFactory {
     }
 
     public boolean isValidCRC(String crcValue, String wholeMessage) {
-        if (crcValue.length() != 4) {
-            return false;
-        }
-
-        for (int i = 0; i < 4; i++) {
-            if (crcValue.charAt(i) > 127) {
-                return false;
-            }
-        }
-
+        /*
+         * if (crcValue.length() != 4) {
+         * return false;
+         * }
+         *
+         * for (int i = 0; i < 4; i++) {
+         * if (crcValue.charAt(i) > 127) {
+         * return false;
+         * }
+         * }
+         */
         String computedCrc = calcCommandCRC(wholeMessage);
         boolean crcOK = crcValue.equals(computedCrc);
 
