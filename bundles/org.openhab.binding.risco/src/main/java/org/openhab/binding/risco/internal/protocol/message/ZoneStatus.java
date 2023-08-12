@@ -38,7 +38,7 @@ public class ZoneStatus extends RiscoMessage {
             new STTProperty("lost", "L"),
             new STTProperty("low_battery", "B"),
             new STTProperty("bypass", "Y"),
-            new STTProperty("communication_trouble", "C"),
+            new STTProperty("comm_trouble", "C"),
             new STTProperty("soak_test", "S"),
             new STTProperty("hours24", "H"),
             new STTProperty("not_used", "N"),
@@ -80,5 +80,9 @@ public class ZoneStatus extends RiscoMessage {
         }
 
         return messageThings;
+    }
+
+    public static String getReadCommand(int zoneNumber) {
+        return String.format(COMMAND + "%d?", zoneNumber);
     }
 }

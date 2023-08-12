@@ -63,7 +63,7 @@
 			</channel>
 
 			<!-- Name -->
-			<channel id="name" typeId="zone_text">
+			<channel id="name" typeId="readonly_text">
 				<label>Name</label>
 				<description>The Zone name</description>
 			</channel>
