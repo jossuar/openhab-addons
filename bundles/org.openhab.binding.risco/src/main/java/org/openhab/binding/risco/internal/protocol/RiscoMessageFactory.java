@@ -22,6 +22,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.openhab.binding.risco.internal.RiscoBindingConstants;
 import org.openhab.binding.risco.internal.protocol.message.KeypadAllocation;
 import org.openhab.binding.risco.internal.protocol.message.OutputAllocation;
+import org.openhab.binding.risco.internal.protocol.message.OutputStatus;
 import org.openhab.binding.risco.internal.protocol.message.PanelConfiguration;
 import org.openhab.binding.risco.internal.protocol.message.PartitionAllocation;
 import org.openhab.binding.risco.internal.protocol.message.PartitionStatus;
@@ -135,6 +136,10 @@ public class RiscoMessageFactory {
 
             case OutputAllocation.COMMAND:
                 return new OutputAllocation(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
+                        encryptedMessage, decryptedMessage);
+
+            case OutputStatus.COMMAND:
+                return new OutputStatus(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
                         encryptedMessage, decryptedMessage);
 
             case PanelConfiguration.COMMAND:
