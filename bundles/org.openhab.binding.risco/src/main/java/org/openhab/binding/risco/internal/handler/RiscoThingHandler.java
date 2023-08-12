@@ -42,11 +42,11 @@ public abstract class RiscoThingHandler extends BaseThingHandler implements Risc
             Bridge bridge = getBridge();
 
             if (bridge == null) {
-                logger.debug("getCaddxBridgeHandler(): Unable to get bridge!");
+                logger.debug("getBridgeHandler(): Unable to get bridge!");
                 return null;
             }
 
-            logger.trace("getCaddxBridgeHandler(): Bridge for '{}' - '{}'", getThing().getUID(), bridge.getUID());
+            logger.trace("getBridgeHandler(): Bridge for '{}' - '{}'", getThing().getUID(), bridge.getUID());
 
             ThingHandler handler = bridge.getHandler();
 
