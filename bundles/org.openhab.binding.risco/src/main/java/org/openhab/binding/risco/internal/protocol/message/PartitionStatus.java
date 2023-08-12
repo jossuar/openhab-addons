@@ -30,19 +30,22 @@ public class PartitionStatus extends RiscoMessage {
 
     // @formatter:off
     private final STTProperty[] properties = {
-            new STTProperty("open", "O"),
+            new STTProperty("duress", "D"),
+            new STTProperty("false_code", "C"),
+            new STTProperty("fire", "F"),
+            new STTProperty("panic", "P"),
+            new STTProperty("medic", "M"),
             new STTProperty("arm", "A"),
-            new STTProperty("alarm", "a"),
-            new STTProperty("tamper", "T"),
-            new STTProperty("trouble", "R"),
-            new STTProperty("lost", "L"),
-            new STTProperty("low_battery", "B"),
-            new STTProperty("bypass", "Y"),
-            new STTProperty("comm_trouble", "C"),
-            new STTProperty("soak_test", "S"),
-            new STTProperty("hours24", "H"),
-            new STTProperty("not_used", "N"),
-            new STTProperty("exists", "E") };
+            new STTProperty("home_stay", "H"),
+            new STTProperty("ready_to_arm", "R"),
+            new STTProperty("exists", "E"),
+            new STTProperty("reset_required", "S"),
+            new STTProperty("no_activity_alert", "N"),
+            new STTProperty("group_a_arm", "1"),
+            new STTProperty("group_b_arm", "2"),
+            new STTProperty("group_c_arm", "3"),
+            new STTProperty("group_d_arm", "4"),
+            new STTProperty("trouble", "T") };
     // @formatter:on
 
     private List<RiscoThing> messageThings = new ArrayList<RiscoThing>();
