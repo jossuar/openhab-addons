@@ -49,4 +49,8 @@ public class PanelConfiguration extends RiscoMessage {
 
         return messageThings;
     }
+
+    public static String getReadCommand() {
+        return String.format(COMMAND + "?");
+    }
 }
