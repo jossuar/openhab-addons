@@ -77,6 +77,8 @@ public class RiscoBindingConstants {
     // Special channels
     // System
     public static final String SYSTEM_CHANNEL_NAME = "name";
+    // Partition
+    public static final String PARTITION_CHANNEL_NAME = "name";
     // Zone
     public static final String ZONE_CHANNEL_OPEN = "open";
     public static final String ZONE_CHANNEL_BYPASS = "bypass";
@@ -102,4 +104,5 @@ public class RiscoBindingConstants {
             0x9ac1, 0x9b81, 0x5b40, 0x9901, 0x59c0, 0x5880, 0x9841, 0x8801, 0x48c0, 0x4980, 0x8941, 0x4b00, 0x8bc1,
             0x8a81, 0x4a40, 0x4e00, 0x8ec1, 0x8f81, 0x4f40, 0x8d01, 0x4dc0, 0x4c80, 0x8c41, 0x4400, 0x84c1, 0x8581,
             0x4540, 0x8701, 0x47c0, 0x4680, 0x8641, 0x8201, 0x42c0, 0x4380, 0x8341, 0x4100, 0x81c1, 0x8081, 0x4040 };
+
 }
