@@ -26,7 +26,7 @@
 		<representation-property>outputNumber</representation-property>
 
 		<config-description>
-			<parameter name="outputNumber" type="integer" required="true" min="1" max="192">
+			<parameter name="outputNumber" type="integer" required="true" min="1" max="196">
 				<label>Output Number</label>
 				<description>The Output Number</description>
 				<default>1</default>
