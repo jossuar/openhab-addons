@@ -25,32 +25,41 @@ import org.openhab.binding.risco.internal.protocol.RiscoThingType;
  * @author Georgios Moutsos - Initial contribution
  */
 @NonNullByDefault
-public class PartitionStatus extends RiscoMessage {
-    public static final String COMMAND = "PSTT";
+public class SystemStatus extends RiscoMessage {
+    public static final String COMMAND = "SSTT";
 
     // @formatter:off
     private final STTProperty[] properties = {
-            new STTProperty("duress", "D"),
-            new STTProperty("false_code", "C"),
-            new STTProperty("fire", "F"),
-            new STTProperty("panic", "P"),
-            new STTProperty("medic", "M"),
-            new STTProperty("arm", "A"),
-            new STTProperty("home_stay", "H"),
-            new STTProperty("ready_to_arm", "R"),
-            new STTProperty("exists", "E"),
-            new STTProperty("reset_required", "S"),
-            new STTProperty("no_activity_alert", "N"),
-            new STTProperty("group_a_arm", "1"),
-            new STTProperty("group_b_arm", "2"),
-            new STTProperty("group_c_arm", "3"),
-            new STTProperty("group_d_arm", "4"),
-            new STTProperty("trouble", "T") };
+            new STTProperty("low_battery_trouble", "B"),
+            new STTProperty("ac_trouble", "A"),
+            new STTProperty("phone_line_trouble", "P"),
+            new STTProperty("clock_trouble", "C"),
+            new STTProperty("default_switch", "D"),
+            new STTProperty("ms1_report_trouble", "1"),
+            new STTProperty("ms2_report_trouble", "2"),
+            new STTProperty("ms3_report_trouble", "3"),
+            new STTProperty("box_tamper", "X"),
+            new STTProperty("jamming_trouble", "J"),
+            new STTProperty("prog_mode", "I"),
+            new STTProperty("learn_mode", "L"),
+            new STTProperty("three_min_bypass", "M"),
+            new STTProperty("walk_test", "W"),
+            new STTProperty("aux_trouble", "U"),
+            new STTProperty("rs485_bus_trouble", "R"),
+            new STTProperty("ls_switch", "S"),
+            new STTProperty("bell_switch", "F"),
+            new STTProperty("bell_trouble", "E"),
+            new STTProperty("bell_tamper", "Y"),
+            new STTProperty("service_expired", "V"),
+            new STTProperty("payment_expired", "T"),
+            new STTProperty("service_mode", "Z"),
+            new STTProperty("dual_path", "Q"),
+            new STTProperty("bus_speed", "H") };
     // @formatter:on
 
     private List<RiscoThing> messageThings = new ArrayList<RiscoThing>();
 
-    public PartitionStatus(int commandId, String commandName, String modifier, String[] commandValues, int indexFrom,
+    public SystemStatus(int commandId, String commandName, String modifier, String[] commandValues, int indexFrom,
             int indexTo, byte[] encryptedMessage, byte[] decryptedMessage) {
         super(commandId, commandName, modifier, commandValues, indexFrom, indexTo, encryptedMessage, decryptedMessage);
     }
@@ -75,7 +84,7 @@ public class PartitionStatus extends RiscoMessage {
                         }
                     }
 
-                    things.add(new RiscoThing(RiscoThingType.PARTITION, index, props));
+                    things.add(new RiscoThing(RiscoThingType.SYSTEM, index, props));
                 }
             }
 
@@ -85,7 +94,7 @@ public class PartitionStatus extends RiscoMessage {
         return messageThings;
     }
 
-    public static String getReadCommand(int partitionNumber) {
-        return String.format(COMMAND + "%d?", partitionNumber);
+    public static String getReadCommand() {
+        return String.format(COMMAND + "?");
     }
 }

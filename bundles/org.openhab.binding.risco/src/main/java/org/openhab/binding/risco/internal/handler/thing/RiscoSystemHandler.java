@@ -22,6 +22,7 @@ import org.openhab.binding.risco.internal.handler.RiscoThingHandler;
 import org.openhab.binding.risco.internal.protocol.RiscoProperty;
 import org.openhab.binding.risco.internal.protocol.RiscoThing;
 import org.openhab.binding.risco.internal.protocol.message.PanelConfiguration;
+import org.openhab.binding.risco.internal.protocol.message.SystemStatus;
 import org.openhab.core.library.types.OnOffType;
 import org.openhab.core.library.types.StringType;
 import org.openhab.core.thing.ChannelUID;
@@ -55,7 +56,8 @@ public class RiscoSystemHandler extends RiscoThingHandler {
             return;
         }
 
-        bridgeHandler.sendCommand("PNLCNF?");
+        bridgeHandler.sendCommand(PanelConfiguration.getReadCommand());
+        bridgeHandler.sendCommand(SystemStatus.getReadCommand());
         logger.trace("RiscoSystemHandler initialized");
     }
 
@@ -67,6 +69,7 @@ public class RiscoSystemHandler extends RiscoThingHandler {
 
         if (command instanceof RefreshType) {
             messages.add(PanelConfiguration.getReadCommand());
+            messages.add(SystemStatus.getReadCommand());
         } else {
             logger.debug("Unknown command {}", command);
             return;
