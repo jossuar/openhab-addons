@@ -25,12 +25,12 @@ import org.openhab.binding.risco.internal.protocol.RiscoThingType;
  * @author Georgios Moutsos - Initial contribution
  */
 @NonNullByDefault
-public class PanelConfiguration extends RiscoMessage {
-    public static final String COMMAND = "PNLCNF";
+public class ZoneLabel extends RiscoMessage {
+    public static final String COMMAND = "ZLBL";
 
     private List<RiscoThing> messageThings = new ArrayList<RiscoThing>();
 
-    public PanelConfiguration(int commandId, String commandName, String modifier, String[] commandValues, int indexFrom,
+    public ZoneLabel(int commandId, String commandName, String modifier, String[] commandValues, int indexFrom,
             int indexTo, byte[] encryptedMessage, byte[] decryptedMessage) {
         super(commandId, commandName, modifier, commandValues, indexFrom, indexTo, encryptedMessage, decryptedMessage);
     }
@@ -39,10 +39,12 @@ public class PanelConfiguration extends RiscoMessage {
     public List<RiscoThing> getThings() {
         if (messageThings.isEmpty() && commandValues.length > 0) {
             List<RiscoThing> things = new ArrayList<RiscoThing>();
-            List<RiscoProperty> props = new ArrayList<RiscoProperty>();
-            props.add(new RiscoProperty("name", commandValues[0]));
 
-            things.add(new RiscoThing(RiscoThingType.SYSTEM, null, props));
+            for (int index = indexFrom; index <= indexTo; index++) {
+                List<RiscoProperty> props = new ArrayList<RiscoProperty>();
+                props.add(new RiscoProperty("name", commandValues[index - indexFrom]));
+                things.add(new RiscoThing(RiscoThingType.ZONE, index, props));
+            }
 
             messageThings = things;
         }
@@ -50,7 +52,7 @@ public class PanelConfiguration extends RiscoMessage {
         return messageThings;
     }
 
-    public static String getReadCommand() {
-        return String.format(COMMAND + "?");
+    public static String getReadCommand(int zoneNumber) {
+        return String.format(COMMAND + "%d?", zoneNumber);
     }
 }
