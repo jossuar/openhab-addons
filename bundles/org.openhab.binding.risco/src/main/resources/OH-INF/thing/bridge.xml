@@ -9,7 +9,7 @@
 		<description>This bridge represents the Risco TCP interface.</description>
 
 		<channels>
-			<channel id="send_command" typeId="command">
+			<channel id="send-command" typeId="command">
 				<label>Send Command</label>
 				<description>Sends an Alarm Panel Command</description>
 			</channel>
