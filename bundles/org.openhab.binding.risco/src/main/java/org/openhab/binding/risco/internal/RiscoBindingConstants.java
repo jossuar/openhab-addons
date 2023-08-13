@@ -84,6 +84,17 @@ public class RiscoBindingConstants {
     public static final String ZONE_CHANNEL_BYPASS = "bypass";
     public static final String ZONE_CHANNEL_NAME = "name";
 
+    // Channel types
+    @SuppressWarnings("null")
+    public static final Set<String> CHANNEL_TYPES_SWITCH = Collections
+            .unmodifiableSet(Stream.of("switch", "readonly_switch").collect(Collectors.toSet()));
+    @SuppressWarnings("null")
+    public static final Set<String> CHANNEL_TYPES_CONTACT = Collections
+            .unmodifiableSet(Stream.of("contact", "readonly_contact").collect(Collectors.toSet()));
+    @SuppressWarnings("null")
+    public static final Set<String> CHANNEL_TYPES_TEXT = Collections
+            .unmodifiableSet(Stream.of("text", "readonly_text").collect(Collectors.toSet()));
+
     public static final int[] CRC_ARRAY = { 0x0000, 0xc0c1, 0xc181, 0x0140, 0xc301, 0x03c0, 0x0280, 0xc241, 0xc601,
             0x06c0, 0x0780, 0xc741, 0x0500, 0xc5c1, 0xc481, 0x0440, 0xcc01, 0x0cc0, 0x0d80, 0xcd41, 0x0f00, 0xcfc1,
             0xce81, 0x0e40, 0x0a00, 0xcac1, 0xcb81, 0x0b40, 0xc901, 0x09c0, 0x0880, 0xc841, 0xd801, 0x18c0, 0x1980,
