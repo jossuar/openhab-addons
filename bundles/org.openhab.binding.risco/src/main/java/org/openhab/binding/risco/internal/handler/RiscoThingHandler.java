@@ -12,12 +12,23 @@
  */
 package org.openhab.binding.risco.internal.handler;
 
+import java.util.Optional;
+
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.openhab.binding.risco.internal.RiscoBindingConstants;
+import org.openhab.binding.risco.internal.protocol.RiscoProperty;
+import org.openhab.binding.risco.internal.protocol.RiscoThing;
+import org.openhab.core.library.types.OnOffType;
+import org.openhab.core.library.types.OpenClosedType;
+import org.openhab.core.library.types.StringType;
 import org.openhab.core.thing.Bridge;
+import org.openhab.core.thing.Channel;
 import org.openhab.core.thing.Thing;
+import org.openhab.core.thing.ThingStatus;
 import org.openhab.core.thing.binding.BaseThingHandler;
 import org.openhab.core.thing.binding.ThingHandler;
+import org.openhab.core.thing.type.ChannelTypeUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +48,7 @@ public abstract class RiscoThingHandler extends BaseThingHandler implements Risc
         super(thing);
     }
 
-    public @Nullable RiscoBridgeHandler getBridgeHandler() {
+    protected @Nullable RiscoBridgeHandler getBridgeHandler() {
         if (this.bridgeHandler == null) {
             Bridge bridge = getBridge();
 
@@ -59,4 +70,47 @@ public abstract class RiscoThingHandler extends BaseThingHandler implements Risc
 
         return this.bridgeHandler;
     }
+
+    protected void updateChannel(String channelID, String data) {
+        logger.trace("Updating zone channel: {}, {}", channelID, data);
+
+        Optional<Channel> channel = getThing().getChannels().stream().filter(c -> c.getUID().getId().equals(channelID))
+                .findAny();
+        if (channel.isPresent()) {
+            ChannelTypeUID channelTypeUID = channel.get().getChannelTypeUID();
+            if (channelTypeUID != null) {
+                String channelTypeID = channelTypeUID.getId();
+
+                if (RiscoBindingConstants.CHANNEL_TYPES_SWITCH.contains(channelTypeID)) {
+                    OnOffType onOffType = ("true".equals(data)) ? OnOffType.ON : OnOffType.OFF;
+                    updateState(channelID, onOffType);
+
+                    logger.trace("Switch [{}] updated", channelID);
+                } else if (RiscoBindingConstants.CHANNEL_TYPES_CONTACT.contains(channelTypeID)) {
+                    OpenClosedType openClosedType = ("true".equals(data)) ? OpenClosedType.OPEN : OpenClosedType.CLOSED;
+                    updateState(channelID, openClosedType);
+
+                    logger.trace("Contact [{}] updated", channelID);
+                } else if (RiscoBindingConstants.CHANNEL_TYPES_TEXT.contains(channelTypeID)) {
+                    updateState(channelID, new StringType(data));
+
+                    logger.trace("Text [{}] updated", channelID);
+                }
+            }
+        } else {
+            logger.trace("Channel {} is not present", channelID);
+        }
+    }
+
+    @Override
+    public void handleEvent(RiscoThing riscoThing) {
+        logger.trace("ZoneHandler received info: {} {}", riscoThing.getRiscoThingType(), riscoThing.getIndex());
+
+        for (RiscoProperty p : riscoThing.getProperties()) {
+            updateChannel(p.getName(), p.getValue());
+        }
+
+        updateStatus(ThingStatus.ONLINE);
+    }
+
 }
