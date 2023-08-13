@@ -16,11 +16,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.openhab.binding.risco.internal.config.RiscoPartitionConfiguration;
+import org.openhab.binding.risco.internal.config.RiscoKeyfobConfiguration;
 import org.openhab.binding.risco.internal.handler.RiscoBridgeHandler;
 import org.openhab.binding.risco.internal.handler.RiscoThingHandler;
-import org.openhab.binding.risco.internal.protocol.message.PartitionLabel;
-import org.openhab.binding.risco.internal.protocol.message.PartitionStatus;
+import org.openhab.binding.risco.internal.protocol.message.KeyfobStatus;
+import org.openhab.binding.risco.internal.protocol.message.SirenStatus;
 import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.thing.Thing;
 import org.openhab.core.thing.ThingStatus;
@@ -30,34 +30,34 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The {@link RiscoPartitionHandler} is responsible for handling commands, which are
+ * The {@link RiscoKeyfobHandler} is responsible for handling commands, which are
  * sent to one of the channels.
  *
  * @author Georgios Moutsos - Initial contribution
  */
 @NonNullByDefault
-public class RiscoPartitionHandler extends RiscoThingHandler {
-    private final Logger logger = LoggerFactory.getLogger(RiscoPartitionHandler.class);
+public class RiscoKeyfobHandler extends RiscoThingHandler {
+    private final Logger logger = LoggerFactory.getLogger(RiscoKeyfobHandler.class);
 
-    private int partitionNumber;
+    private int keyfobNumber;
 
-    public RiscoPartitionHandler(Thing thing) {
+    public RiscoKeyfobHandler(Thing thing) {
         super(thing);
     }
 
-    public int getPartitionNumber() {
-        return partitionNumber;
+    public int getKeyfobNumber() {
+        return keyfobNumber;
     }
 
-    public void setPartitionNumber(int zoneNumber) {
-        this.partitionNumber = zoneNumber;
+    public void setKeyfobNumber(int keyfobNumber) {
+        this.keyfobNumber = keyfobNumber;
     }
 
     @Override
     public void initialize() {
         // Load configuration
-        RiscoPartitionConfiguration config = getConfigAs(RiscoPartitionConfiguration.class);
-        setPartitionNumber(config.getPartitionNumber());
+        RiscoKeyfobConfiguration config = getConfigAs(RiscoKeyfobConfiguration.class);
+        setKeyfobNumber(config.getKeyfobNumber());
 
         // set the Thing offline for now
         updateStatus(ThingStatus.OFFLINE);
@@ -67,10 +67,9 @@ public class RiscoPartitionHandler extends RiscoThingHandler {
             return;
         }
 
-        // Send Zone Status update command
-        bridgeHandler.sendCommand(PartitionStatus.getReadCommand(partitionNumber));
-        bridgeHandler.sendCommand(PartitionLabel.getReadCommand(getPartitionNumber()));
-        logger.trace("RiscoPartitionHandler initialized [{}]", partitionNumber);
+        // Send Siren Status update command
+        bridgeHandler.sendCommand(SirenStatus.getReadCommand(keyfobNumber));
+        logger.trace("RiscoKeyfobHandler initialized [{}]", keyfobNumber);
     }
 
     @Override
@@ -80,8 +79,7 @@ public class RiscoPartitionHandler extends RiscoThingHandler {
         List<String> messages = new ArrayList<String>();
 
         if (command instanceof RefreshType) {
-            messages.add(PartitionStatus.getReadCommand(getPartitionNumber()));
-            messages.add(PartitionLabel.getReadCommand(getPartitionNumber()));
+            messages.add(KeyfobStatus.getReadCommand(getKeyfobNumber()));
         } else {
             logger.debug("Unknown command {}", command);
             return;
@@ -92,6 +90,7 @@ public class RiscoPartitionHandler extends RiscoThingHandler {
             return;
         }
 
+        // Send Zone Status update command
         for (String m : messages) {
             bridgeHandler.sendCommand(m);
         }

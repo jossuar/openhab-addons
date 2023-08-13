@@ -34,7 +34,7 @@
 		<representation-property>zoneExpanderNumber</representation-property>
 
 		<config-description>
-			<parameter name="zoneExpanderNumber" type="integer" required="true" min="1" max="32">
+			<parameter name="zoneExpanderNumber" type="integer" required="true" min="1" max="64">
 				<label>Zone Expander Number</label>
 				<description>The Zone Expander Number</description>
 				<default>1</default>

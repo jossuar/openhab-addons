@@ -25,55 +25,42 @@ import org.openhab.binding.risco.internal.protocol.RiscoThingType;
  * @author Georgios Moutsos - Initial contribution
  */
 @NonNullByDefault
-public class ZoneStatus extends RiscoMessage {
-    public static final String COMMAND = "ZSTT";
+public class VoiceModuleStatus extends RiscoMessage {
+    public static final String COMMAND = "VMSTT";
 
     // @formatter:off
     private final STTProperty[] properties = {
-            new STTProperty("open", "O"),
-            new STTProperty("arm", "A"),
-            new STTProperty("alarm", "a"),
             new STTProperty("tamper", "T"),
-            new STTProperty("trouble", "R"),
-            new STTProperty("lost", "L"),
-            new STTProperty("low-battery", "B"),
-            new STTProperty("bypass", "Y"),
             new STTProperty("communication-trouble", "C"),
-            new STTProperty("soak-test", "S"),
-            new STTProperty("hours24", "H"),
-            new STTProperty("not-used", "N"),
             new STTProperty("exists", "E") };
     // @formatter:on
 
     private List<RiscoThing> messageThings = new ArrayList<RiscoThing>();
 
-    public ZoneStatus(int commandId, String commandName, String modifier, String[] commandValues, int indexFrom,
+    public VoiceModuleStatus(int commandId, String commandName, String modifier, String[] commandValues, int indexFrom,
             int indexTo, byte[] encryptedMessage, byte[] decryptedMessage) {
         super(commandId, commandName, modifier, commandValues, indexFrom, indexTo, encryptedMessage, decryptedMessage);
     }
 
     @Override
     public List<RiscoThing> getThings() {
-        if (isWriteMessage() && messageThings.isEmpty()) {
+        if (isWriteMessage() && messageThings.isEmpty() && commandValues.length > 0) {
             List<RiscoThing> things = new ArrayList<RiscoThing>();
 
-            // loop from indexFrom to indexTo
-            for (int index = indexFrom; index <= indexTo; index++) {
-                String value = commandValues[index - indexFrom];
+            String value = commandValues[0];
 
-                if (value != null) {
-                    List<RiscoProperty> props = new ArrayList<RiscoProperty>();
+            if (value != null) {
+                List<RiscoProperty> props = new ArrayList<RiscoProperty>();
 
-                    for (STTProperty prop : properties) {
-                        if (value.contains(prop.flag)) {
-                            props.add(new RiscoProperty(prop.property, "true"));
-                        } else {
-                            props.add(new RiscoProperty(prop.property, "false"));
-                        }
+                for (STTProperty prop : properties) {
+                    if (value.contains(prop.flag)) {
+                        props.add(new RiscoProperty(prop.property, "true"));
+                    } else {
+                        props.add(new RiscoProperty(prop.property, "false"));
                     }
-
-                    things.add(new RiscoThing(RiscoThingType.ZONE, index, props));
                 }
+
+                things.add(new RiscoThing(RiscoThingType.VOICE_MODULE, null, props));
             }
 
             messageThings = things;
@@ -82,7 +69,7 @@ public class ZoneStatus extends RiscoMessage {
         return messageThings;
     }
 
-    public static String getReadCommand(int zoneNumber) {
-        return String.format(COMMAND + "%d?", zoneNumber);
+    public static String getReadCommand() {
+        return String.format(COMMAND + "?");
     }
 }
