@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<thing:thing-descriptions bindingId="risco"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
+	xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
+
+	<thing-type id="siren">
+		<supported-bridge-type-refs>
+			<bridge-type-ref id="bridge"/>
+		</supported-bridge-type-refs>
+
+		<label>Risco Siren</label>
+		<description>Represents a physical device such as a door, window, or motion sensor</description>
+
+		<channels>
+		
+            <channel id="radio-low-battery-trouble" typeId="readonly-contact">
+                <label>Radio Low Battery Trouble</label>
+                <description>Radio Low Battery Trouble</description>
+            </channel>
+            <channel id="speaker-low-battery-trouble" typeId="readonly-contact">
+                <label>Speaker Low Battery Trouble</label>
+                <description>Speaker Low Battery Trouble</description>
+            </channel>
+            <channel id="battery-load" typeId="readonly-contact">
+                <label>Battery Load</label>
+                <description>Battery Load</description>
+            </channel>
+            <channel id="communication-trouble" typeId="readonly-contact">
+                <label>Communication Trouble</label>
+                <description>Communication Trouble</description>
+            </channel>
+            <channel id="exists" typeId="readonly-contact">
+                <label>Exists</label>
+                <description>Exists</description>
+            </channel>
+            <channel id="proximity-tamper" typeId="readonly-contact">
+                <label>Proximity Tamper</label>
+                <description>Proximity Tamper</description>
+            </channel>
+            <channel id="aux-trouble" typeId="readonly-contact">
+                <label>Aux Trouble</label>
+                <description>Aux Trouble</description>
+            </channel>
+            <channel id="speaker-flt" typeId="readonly-contact">
+                <label>Speaker Flt</label>
+                <description>Speaker Flt</description>
+            </channel>
+            <channel id="charge-trouble" typeId="readonly-contact">
+                <label>Charge Trouble</label>
+                <description>Charge Trouble</description>
+            </channel>
+            <channel id="invalid" typeId="readonly-contact">
+                <label>Invalid</label>
+                <description>Invalid</description>
+            </channel>
+            <channel id="box-tamper" typeId="readonly-contact">
+                <label>Box Tamper</label>
+                <description>Box Tamper</description>
+            </channel>
+            <channel id="lost" typeId="readonly-contact">
+                <label>Lost</label>
+                <description>Lost</description>
+            </channel>
+            <channel id="low-battery" typeId="readonly-contact">
+                <label>Low Battery</label>
+                <description>Low Battery</description>
+            </channel>
+		
+		</channels>
+
+		<representation-property>sirenNumber</representation-property>
+
+		<config-description>
+			<parameter name="sirenNumber" type="integer" required="true" min="1" max="512">
+				<label>Siren Number</label>
+				<description>The Siren Number</description>
+			</parameter>
+		</config-description>
+
+	</thing-type>
+
+</thing:thing-descriptions>

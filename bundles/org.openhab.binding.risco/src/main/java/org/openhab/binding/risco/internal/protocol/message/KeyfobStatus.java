@@ -25,33 +25,18 @@ import org.openhab.binding.risco.internal.protocol.RiscoThingType;
  * @author Georgios Moutsos - Initial contribution
  */
 @NonNullByDefault
-public class PartitionStatus extends RiscoMessage {
-    public static final String COMMAND = "PSTT";
+public class KeyfobStatus extends RiscoMessage {
+    public static final String COMMAND = "KFSTT";
 
     // @formatter:off
     private final STTProperty[] properties = {
-            new STTProperty("alarm", "a"),
-            new STTProperty("duress", "D"),
-            new STTProperty("false-code", "C"),
-            new STTProperty("fire", "F"),
-            new STTProperty("panic", "P"),
-            new STTProperty("medic", "M"),
-            new STTProperty("arm", "A"),
-            new STTProperty("home-stay", "H"),
-            new STTProperty("ready-to-arm", "R"),
-            new STTProperty("exists", "E"),
-            new STTProperty("reset-required", "S"),
-            new STTProperty("no-activity-alert", "N"),
-            new STTProperty("group-a-arm", "1"),
-            new STTProperty("group-b-arm", "2"),
-            new STTProperty("group-c-arm", "3"),
-            new STTProperty("group-d-arm", "4"),
-            new STTProperty("trouble", "T") };
+            new STTProperty("low-battery-trouble", "B"),
+            new STTProperty("exists", "E") };
     // @formatter:on
 
     private List<RiscoThing> messageThings = new ArrayList<RiscoThing>();
 
-    public PartitionStatus(int commandId, String commandName, String modifier, String[] commandValues, int indexFrom,
+    public KeyfobStatus(int commandId, String commandName, String modifier, String[] commandValues, int indexFrom,
             int indexTo, byte[] encryptedMessage, byte[] decryptedMessage) {
         super(commandId, commandName, modifier, commandValues, indexFrom, indexTo, encryptedMessage, decryptedMessage);
     }
@@ -76,7 +61,7 @@ public class PartitionStatus extends RiscoMessage {
                         }
                     }
 
-                    things.add(new RiscoThing(RiscoThingType.PARTITION, index, props));
+                    things.add(new RiscoThing(RiscoThingType.KEYFOB, index, props));
                 }
             }
 
@@ -86,7 +71,7 @@ public class PartitionStatus extends RiscoMessage {
         return messageThings;
     }
 
-    public static String getReadCommand(int partitionNumber) {
-        return String.format(COMMAND + "%d?", partitionNumber);
+    public static String getReadCommand(int keyfobNumber) {
+        return String.format(COMMAND + "%d?", keyfobNumber);
     }
 }
