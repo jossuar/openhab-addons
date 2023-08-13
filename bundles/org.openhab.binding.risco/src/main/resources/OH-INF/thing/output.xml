@@ -13,11 +13,11 @@
 		<description>Represents an output within a Risco Alarm System</description>
 
 		<channels>
-			<channel id="output_is_active" typeId="readonly_switch">
+			<channel id="output-is-active" typeId="readonly-switch">
 				<label>Alarm</label>
 				<description>Alarm or Stand By</description>
 			</channel>
-			<channel id="exist" typeId="readonly_switch">
+			<channel id="exist" typeId="readonly-switch">
 				<label>Exist</label>
 				<description>Exist or Not Exist</description>
 			</channel>

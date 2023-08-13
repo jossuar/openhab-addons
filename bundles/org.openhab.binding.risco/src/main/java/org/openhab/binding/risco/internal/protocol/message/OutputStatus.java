@@ -30,7 +30,7 @@ public class OutputStatus extends RiscoMessage {
 
     // @formatter:off
     private final STTProperty[] properties = {
-            new STTProperty("output_is_active", "a"),
+            new STTProperty("output-is-active", "a"),
             new STTProperty("exists", "E") };
     // @formatter:on
 
