@@ -16,11 +16,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.openhab.binding.risco.internal.config.RiscoPartitionConfiguration;
+import org.openhab.binding.risco.internal.config.RiscoWirelessModuleConfiguration;
 import org.openhab.binding.risco.internal.handler.RiscoBridgeHandler;
 import org.openhab.binding.risco.internal.handler.RiscoThingHandler;
-import org.openhab.binding.risco.internal.protocol.message.PartitionLabel;
-import org.openhab.binding.risco.internal.protocol.message.PartitionStatus;
+import org.openhab.binding.risco.internal.protocol.message.WirelessModuleStatus;
 import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.thing.Thing;
 import org.openhab.core.thing.ThingStatus;
@@ -30,34 +29,34 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The {@link RiscoPartitionHandler} is responsible for handling commands, which are
+ * The {@link RiscoWirelessModuleHandler} is responsible for handling commands, which are
  * sent to one of the channels.
  *
  * @author Georgios Moutsos - Initial contribution
  */
 @NonNullByDefault
-public class RiscoPartitionHandler extends RiscoThingHandler {
-    private final Logger logger = LoggerFactory.getLogger(RiscoPartitionHandler.class);
+public class RiscoWirelessModuleHandler extends RiscoThingHandler {
+    private final Logger logger = LoggerFactory.getLogger(RiscoWirelessModuleHandler.class);
 
-    private int partitionNumber;
+    private int wirelessModuleNumber;
 
-    public RiscoPartitionHandler(Thing thing) {
+    public RiscoWirelessModuleHandler(Thing thing) {
         super(thing);
     }
 
-    public int getPartitionNumber() {
-        return partitionNumber;
+    public int getWirelessModuleNumber() {
+        return wirelessModuleNumber;
     }
 
-    public void setPartitionNumber(int zoneNumber) {
-        this.partitionNumber = zoneNumber;
+    public void setWirelessModuleNumber(int wirelessModuleNumber) {
+        this.wirelessModuleNumber = wirelessModuleNumber;
     }
 
     @Override
     public void initialize() {
         // Load configuration
-        RiscoPartitionConfiguration config = getConfigAs(RiscoPartitionConfiguration.class);
-        setPartitionNumber(config.getPartitionNumber());
+        RiscoWirelessModuleConfiguration config = getConfigAs(RiscoWirelessModuleConfiguration.class);
+        setWirelessModuleNumber(config.getWirelessModuleNumber());
 
         // set the Thing offline for now
         updateStatus(ThingStatus.OFFLINE);
@@ -68,9 +67,8 @@ public class RiscoPartitionHandler extends RiscoThingHandler {
         }
 
         // Send Zone Status update command
-        bridgeHandler.sendCommand(PartitionStatus.getReadCommand(partitionNumber));
-        bridgeHandler.sendCommand(PartitionLabel.getReadCommand(getPartitionNumber()));
-        logger.trace("RiscoPartitionHandler initialized [{}]", partitionNumber);
+        bridgeHandler.sendCommand(WirelessModuleStatus.getReadCommand(wirelessModuleNumber));
+        logger.trace("RiscoWirelessModuleHandler initialized [{}]", wirelessModuleNumber);
     }
 
     @Override
@@ -80,8 +78,7 @@ public class RiscoPartitionHandler extends RiscoThingHandler {
         List<String> messages = new ArrayList<String>();
 
         if (command instanceof RefreshType) {
-            messages.add(PartitionStatus.getReadCommand(getPartitionNumber()));
-            messages.add(PartitionLabel.getReadCommand(getPartitionNumber()));
+            messages.add(WirelessModuleStatus.getReadCommand(getWirelessModuleNumber()));
         } else {
             logger.debug("Unknown command {}", command);
             return;
@@ -92,6 +89,7 @@ public class RiscoPartitionHandler extends RiscoThingHandler {
             return;
         }
 
+        // Send Zone Status update command
         for (String m : messages) {
             bridgeHandler.sendCommand(m);
         }
