@@ -4,13 +4,13 @@
 	xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
 	xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
 
-	<thing-type id="wireless-module">
+	<thing-type id="voice-module">
 		<supported-bridge-type-refs>
 			<bridge-type-ref id="bridge"/>
 		</supported-bridge-type-refs>
 
-		<label>Risco Wireless Module</label>
-		<description>Represents a wireless module within a Risco Alarm System</description>
+		<label>Risco Voice Module</label>
+		<description>Represents the voice module within a Risco Alarm System</description>
 
 		<channels>
 			<channel id="tamper" typeId="readonly-switch">
@@ -21,29 +21,12 @@
 				<label>Communication Trouble</label>
 				<description>Communication Trouble</description>
 			</channel>
-			<channel id="jamming" typeId="readonly-switch">
-				<label>Jamming</label>
-				<description>Jamming</description>
-			</channel>
-			<channel id="lost-signal" typeId="readonly-switch">
-				<label>Lost Signal</label>
-				<description>Lost Signal</description>
-			</channel>
 			<channel id="exists" typeId="readonly-switch">
 				<label>Exists</label>
 				<description>Exists or Not Exists</description>
 			</channel>
 		</channels>
 
-		<representation-property>wirelessModuleNumber</representation-property>
-
-		<config-description>
-			<parameter name="wirelessModuleNumber" type="integer" required="true" min="1" max="16">
-				<label>Wireless Module Number</label>
-				<description>The Wireless Module Number</description>
-				<default>1</default>
-			</parameter>
-		</config-description>
 	</thing-type>
 
 </thing:thing-descriptions>
