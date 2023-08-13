@@ -57,14 +57,14 @@
 				<label>Hours 24</label>
 				<description>24 Hours zone or Normal zone</description>
 			</channel>
-            <channel id="not-used" typeId="readonly-switch">
-                <label>Not Used</label>
-                <description>Zone not used or Zone used</description>
-            </channel>
-            <channel id="exists" typeId="readonly-switch">
-                <label>Exists</label>
-                <description>Zone exists</description>
-            </channel>
+			<channel id="not-used" typeId="readonly-switch">
+				<label>Not Used</label>
+				<description>Zone not used or Zone used</description>
+			</channel>
+			<channel id="exists" typeId="readonly-switch">
+				<label>Exists</label>
+				<description>Zone exists</description>
+			</channel>
 
 			<!-- Name -->
 			<channel id="name" typeId="readonly-text">

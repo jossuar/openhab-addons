@@ -13,60 +13,60 @@
 		<description>Represents a physical device such as a door, window, or motion sensor</description>
 
 		<channels>
-		
-            <channel id="radio-low-battery-trouble" typeId="readonly-contact">
-                <label>Radio Low Battery Trouble</label>
-                <description>Radio Low Battery Trouble</description>
-            </channel>
-            <channel id="speaker-low-battery-trouble" typeId="readonly-contact">
-                <label>Speaker Low Battery Trouble</label>
-                <description>Speaker Low Battery Trouble</description>
-            </channel>
-            <channel id="battery-load" typeId="readonly-contact">
-                <label>Battery Load</label>
-                <description>Battery Load</description>
-            </channel>
-            <channel id="communication-trouble" typeId="readonly-contact">
-                <label>Communication Trouble</label>
-                <description>Communication Trouble</description>
-            </channel>
-            <channel id="exists" typeId="readonly-contact">
-                <label>Exists</label>
-                <description>Exists</description>
-            </channel>
-            <channel id="proximity-tamper" typeId="readonly-contact">
-                <label>Proximity Tamper</label>
-                <description>Proximity Tamper</description>
-            </channel>
-            <channel id="aux-trouble" typeId="readonly-contact">
-                <label>Aux Trouble</label>
-                <description>Aux Trouble</description>
-            </channel>
-            <channel id="speaker-flt" typeId="readonly-contact">
-                <label>Speaker Flt</label>
-                <description>Speaker Flt</description>
-            </channel>
-            <channel id="charge-trouble" typeId="readonly-contact">
-                <label>Charge Trouble</label>
-                <description>Charge Trouble</description>
-            </channel>
-            <channel id="invalid" typeId="readonly-contact">
-                <label>Invalid</label>
-                <description>Invalid</description>
-            </channel>
-            <channel id="box-tamper" typeId="readonly-contact">
-                <label>Box Tamper</label>
-                <description>Box Tamper</description>
-            </channel>
-            <channel id="lost" typeId="readonly-contact">
-                <label>Lost</label>
-                <description>Lost</description>
-            </channel>
-            <channel id="low-battery" typeId="readonly-contact">
-                <label>Low Battery</label>
-                <description>Low Battery</description>
-            </channel>
-		
+
+			<channel id="radio-low-battery-trouble" typeId="readonly-contact">
+				<label>Radio Low Battery Trouble</label>
+				<description>Radio Low Battery Trouble</description>
+			</channel>
+			<channel id="speaker-low-battery-trouble" typeId="readonly-contact">
+				<label>Speaker Low Battery Trouble</label>
+				<description>Speaker Low Battery Trouble</description>
+			</channel>
+			<channel id="battery-load" typeId="readonly-contact">
+				<label>Battery Load</label>
+				<description>Battery Load</description>
+			</channel>
+			<channel id="communication-trouble" typeId="readonly-contact">
+				<label>Communication Trouble</label>
+				<description>Communication Trouble</description>
+			</channel>
+			<channel id="exists" typeId="readonly-contact">
+				<label>Exists</label>
+				<description>Exists</description>
+			</channel>
+			<channel id="proximity-tamper" typeId="readonly-contact">
+				<label>Proximity Tamper</label>
+				<description>Proximity Tamper</description>
+			</channel>
+			<channel id="aux-trouble" typeId="readonly-contact">
+				<label>Aux Trouble</label>
+				<description>Aux Trouble</description>
+			</channel>
+			<channel id="speaker-flt" typeId="readonly-contact">
+				<label>Speaker Flt</label>
+				<description>Speaker Flt</description>
+			</channel>
+			<channel id="charge-trouble" typeId="readonly-contact">
+				<label>Charge Trouble</label>
+				<description>Charge Trouble</description>
+			</channel>
+			<channel id="invalid" typeId="readonly-contact">
+				<label>Invalid</label>
+				<description>Invalid</description>
+			</channel>
+			<channel id="box-tamper" typeId="readonly-contact">
+				<label>Box Tamper</label>
+				<description>Box Tamper</description>
+			</channel>
+			<channel id="lost" typeId="readonly-contact">
+				<label>Lost</label>
+				<description>Lost</description>
+			</channel>
+			<channel id="low-battery" typeId="readonly-contact">
+				<label>Low Battery</label>
+				<description>Low Battery</description>
+			</channel>
+
 		</channels>
 
 		<representation-property>sirenNumber</representation-property>
