@@ -19,10 +19,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.openhab.binding.risco.internal.config.RiscoOutputConfiguration;
 import org.openhab.binding.risco.internal.handler.RiscoBridgeHandler;
 import org.openhab.binding.risco.internal.handler.RiscoThingHandler;
-import org.openhab.binding.risco.internal.protocol.RiscoProperty;
-import org.openhab.binding.risco.internal.protocol.RiscoThing;
 import org.openhab.binding.risco.internal.protocol.message.OutputStatus;
-import org.openhab.core.library.types.OnOffType;
 import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.thing.Thing;
 import org.openhab.core.thing.ThingStatus;
@@ -61,17 +58,20 @@ public class RiscoOutputHandler extends RiscoThingHandler {
         RiscoOutputConfiguration config = getConfigAs(RiscoOutputConfiguration.class);
         setOutputNumber(config.getOutputNumber());
 
+        logger.debug("RiscoOutputHandler initialize [{}]", outputNumber);
+
         // set the Thing offline for now
         updateStatus(ThingStatus.OFFLINE);
 
         RiscoBridgeHandler bridgeHandler = getBridgeHandler();
         if (bridgeHandler == null) {
+            logger.debug("RiscoBridgeHandler is null");
             return;
         }
 
         // Send Zone Status update command
         bridgeHandler.sendCommand(OutputStatus.getReadCommand(outputNumber));
-        logger.trace("RiscoZoneHandler initialized [{}]", outputNumber);
+        logger.debug("Sent OSTT command");
     }
 
     @Override
@@ -96,25 +96,5 @@ public class RiscoOutputHandler extends RiscoThingHandler {
         for (String m : messages) {
             bridgeHandler.sendCommand(m);
         }
-    }
-
-    @Override
-    public void handleEvent(RiscoThing riscoThing) {
-        logger.trace("ZoneHandler received info: {} {}", riscoThing.getRiscoThingType(), riscoThing.getIndex());
-
-        for (RiscoProperty p : riscoThing.getProperties()) {
-            updateChannel(p.getName(), p.getValue());
-        }
-
-        updateStatus(ThingStatus.ONLINE);
-    }
-
-    public void updateChannel(String channelID, String data) {
-        logger.trace("Updating zone channel: {}, {}", channelID, data);
-
-        OnOffType onOffType = ("true".equals(data)) ? OnOffType.ON : OnOffType.OFF;
-        updateState(channelID, onOffType);
-
-        logger.trace("  updateChannel: {} = {}", channelID, onOffType);
     }
 }
