@@ -92,7 +92,6 @@ public class RiscoPartitionHandler extends RiscoThingHandler {
             return;
         }
 
-        // Send Zone Status update command
         for (String m : messages) {
             bridgeHandler.sendCommand(m);
         }
