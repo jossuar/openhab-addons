@@ -20,6 +20,7 @@ import java.util.regex.Pattern;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.openhab.binding.risco.internal.RiscoBindingConstants;
+import org.openhab.binding.risco.internal.protocol.message.KeyfobAllocation;
 import org.openhab.binding.risco.internal.protocol.message.KeyfobStatus;
 import org.openhab.binding.risco.internal.protocol.message.KeypadAllocation;
 import org.openhab.binding.risco.internal.protocol.message.KeypadStatus;
@@ -135,6 +136,10 @@ public class RiscoMessageFactory {
     private RiscoMessage createMessage(int commandId, String commandName, String modifier, String[] commandValues,
             int indexFrom, int indexTo, byte[] encryptedMessage, byte[] decryptedMessage) {
         switch (commandName) {
+            case KeyfobAllocation.COMMAND:
+                return new KeyfobAllocation(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
+                        encryptedMessage, decryptedMessage);
+
             case KeyfobStatus.COMMAND:
                 return new KeyfobStatus(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
                         encryptedMessage, decryptedMessage);
