@@ -38,7 +38,7 @@ public class ZoneStatus extends RiscoMessage {
             new STTProperty("lost", "L"),
             new STTProperty("low-battery", "B"),
             new STTProperty("bypass", "Y"),
-            new STTProperty("comm-trouble", "C"),
+            new STTProperty("communication-trouble", "C"),
             new STTProperty("soak-test", "S"),
             new STTProperty("hours24", "H"),
             new STTProperty("not-used", "N"),

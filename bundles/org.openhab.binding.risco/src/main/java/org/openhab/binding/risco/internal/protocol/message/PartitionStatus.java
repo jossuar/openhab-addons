@@ -30,6 +30,7 @@ public class PartitionStatus extends RiscoMessage {
 
     // @formatter:off
     private final STTProperty[] properties = {
+            new STTProperty("alarm", "a"),
             new STTProperty("duress", "D"),
             new STTProperty("false-code", "C"),
             new STTProperty("fire", "F"),

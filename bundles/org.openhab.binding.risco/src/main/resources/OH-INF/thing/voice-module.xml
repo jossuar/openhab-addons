@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<thing:thing-descriptions bindingId="risco"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
+	xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
+
+	<thing-type id="voice-module">
+		<supported-bridge-type-refs>
+			<bridge-type-ref id="bridge"/>
+		</supported-bridge-type-refs>
+
+		<label>Risco Voice Module</label>
+		<description>Represents the voice module within a Risco Alarm System</description>
+
+		<channels>
+			<channel id="tamper" typeId="readonly-switch">
+				<label>Tamper</label>
+				<description>Tamper</description>
+			</channel>
+			<channel id="communication-trouble" typeId="readonly-switch">
+				<label>Communication Trouble</label>
+				<description>Communication Trouble</description>
+			</channel>
+			<channel id="exists" typeId="readonly-switch">
+				<label>Exists</label>
+				<description>Exists or Not Exists</description>
+			</channel>
+		</channels>
+
+	</thing-type>
+
+</thing:thing-descriptions>

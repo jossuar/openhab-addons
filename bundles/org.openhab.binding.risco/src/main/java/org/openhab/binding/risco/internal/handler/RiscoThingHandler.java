@@ -72,7 +72,7 @@ public abstract class RiscoThingHandler extends BaseThingHandler implements Risc
     }
 
     protected void updateChannel(String channelID, String data) {
-        logger.trace("Updating zone channel: {}, {}", channelID, data);
+        logger.debug("Updating {} channel: {}, {}", getThing().getLabel(), channelID, data);
 
         Optional<Channel> channel = getThing().getChannels().stream().filter(c -> c.getUID().getId().equals(channelID))
                 .findAny();
@@ -104,7 +104,8 @@ public abstract class RiscoThingHandler extends BaseThingHandler implements Risc
 
     @Override
     public void handleEvent(RiscoThing riscoThing) {
-        logger.trace("ZoneHandler received info: {} {}", riscoThing.getRiscoThingType(), riscoThing.getIndex());
+        logger.debug("{} received info: {} {}", getThing().getLabel(), riscoThing.getRiscoThingType(),
+                riscoThing.getIndex());
 
         for (RiscoProperty p : riscoThing.getProperties()) {
             updateChannel(p.getName(), p.getValue());
