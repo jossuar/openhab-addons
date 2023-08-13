@@ -20,17 +20,23 @@ import java.util.regex.Pattern;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.openhab.binding.risco.internal.RiscoBindingConstants;
+import org.openhab.binding.risco.internal.protocol.message.KeyfobStatus;
 import org.openhab.binding.risco.internal.protocol.message.KeypadAllocation;
+import org.openhab.binding.risco.internal.protocol.message.KeypadStatus;
 import org.openhab.binding.risco.internal.protocol.message.OutputAllocation;
 import org.openhab.binding.risco.internal.protocol.message.OutputStatus;
 import org.openhab.binding.risco.internal.protocol.message.PanelConfiguration;
 import org.openhab.binding.risco.internal.protocol.message.PartitionAllocation;
 import org.openhab.binding.risco.internal.protocol.message.PartitionStatus;
+import org.openhab.binding.risco.internal.protocol.message.SirenStatus;
 import org.openhab.binding.risco.internal.protocol.message.SystemStatus;
 import org.openhab.binding.risco.internal.protocol.message.Unknown;
+import org.openhab.binding.risco.internal.protocol.message.VoiceModuleStatus;
 import org.openhab.binding.risco.internal.protocol.message.WirelessModuleAllocation;
+import org.openhab.binding.risco.internal.protocol.message.WirelessModuleStatus;
 import org.openhab.binding.risco.internal.protocol.message.ZoneAllocation;
 import org.openhab.binding.risco.internal.protocol.message.ZoneExpanderAllocation;
+import org.openhab.binding.risco.internal.protocol.message.ZoneExpanderStatus;
 import org.openhab.binding.risco.internal.protocol.message.ZoneLabel;
 import org.openhab.binding.risco.internal.protocol.message.ZoneStatus;
 import org.openhab.core.util.HexUtils;
@@ -129,9 +135,17 @@ public class RiscoMessageFactory {
     private RiscoMessage createMessage(int commandId, String commandName, String modifier, String[] commandValues,
             int indexFrom, int indexTo, byte[] encryptedMessage, byte[] decryptedMessage) {
         switch (commandName) {
+            case KeyfobStatus.COMMAND:
+                return new KeyfobStatus(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
+                        encryptedMessage, decryptedMessage);
+
             case KeypadAllocation.COMMAND1:
             case KeypadAllocation.COMMAND2:
                 return new KeypadAllocation(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
+                        encryptedMessage, decryptedMessage);
+
+            case KeypadStatus.COMMAND:
+                return new KeypadStatus(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
                         encryptedMessage, decryptedMessage);
 
             case OutputAllocation.COMMAND:
@@ -154,12 +168,24 @@ public class RiscoMessageFactory {
                 return new PartitionStatus(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
                         encryptedMessage, decryptedMessage);
 
+            case SirenStatus.COMMAND:
+                return new SirenStatus(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
+                        encryptedMessage, decryptedMessage);
+
             case SystemStatus.COMMAND:
                 return new SystemStatus(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
                         encryptedMessage, decryptedMessage);
 
+            case VoiceModuleStatus.COMMAND:
+                return new VoiceModuleStatus(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
+                        encryptedMessage, decryptedMessage);
+
             case WirelessModuleAllocation.COMMAND:
                 return new WirelessModuleAllocation(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
+                        encryptedMessage, decryptedMessage);
+
+            case WirelessModuleStatus.COMMAND:
+                return new WirelessModuleStatus(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
                         encryptedMessage, decryptedMessage);
 
             case ZoneAllocation.COMMAND1:
@@ -170,6 +196,10 @@ public class RiscoMessageFactory {
 
             case ZoneExpanderAllocation.COMMAND:
                 return new ZoneExpanderAllocation(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
+                        encryptedMessage, decryptedMessage);
+
+            case ZoneExpanderStatus.COMMAND:
+                return new ZoneExpanderStatus(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
                         encryptedMessage, decryptedMessage);
 
             case ZoneLabel.COMMAND:
