@@ -19,6 +19,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.binding.risco.internal.RiscoBindingConstants;
 import org.openhab.binding.risco.internal.handler.RiscoBridgeHandler;
+import org.openhab.binding.risco.internal.protocol.message.KeyfobAllocation;
 import org.openhab.binding.risco.internal.protocol.message.KeypadAllocation;
 import org.openhab.binding.risco.internal.protocol.message.OutputAllocation;
 import org.openhab.binding.risco.internal.protocol.message.PanelConfiguration;
@@ -71,7 +72,7 @@ public class RiscoDiscoveryService extends AbstractDiscoveryService implements D
             bridge.sendCommand(KeypadAllocation.COMMAND1);
             bridge.sendCommand(KeypadAllocation.COMMAND2);
             // Keyfobs
-            bridge.sendCommand("KFALOC&");
+            bridge.sendCommand(KeyfobAllocation.COMMAND);
             // Power Supplies
             bridge.sendCommand("PSALOC&");
             // Proximity readers
