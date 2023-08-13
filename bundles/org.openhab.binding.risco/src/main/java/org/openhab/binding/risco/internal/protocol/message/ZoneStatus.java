@@ -36,12 +36,12 @@ public class ZoneStatus extends RiscoMessage {
             new STTProperty("tamper", "T"),
             new STTProperty("trouble", "R"),
             new STTProperty("lost", "L"),
-            new STTProperty("low_battery", "B"),
+            new STTProperty("low-battery", "B"),
             new STTProperty("bypass", "Y"),
-            new STTProperty("comm_trouble", "C"),
-            new STTProperty("soak_test", "S"),
+            new STTProperty("comm-trouble", "C"),
+            new STTProperty("soak-test", "S"),
             new STTProperty("hours24", "H"),
-            new STTProperty("not_used", "N"),
+            new STTProperty("not-used", "N"),
             new STTProperty("exists", "E") };
     // @formatter:on
 

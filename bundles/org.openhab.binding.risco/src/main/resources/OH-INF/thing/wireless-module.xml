@@ -13,23 +13,23 @@
 		<description>Represents a wireless module within a Risco Alarm System</description>
 
 		<channels>
-			<channel id="tamper" typeId="readonly_switch">
+			<channel id="tamper" typeId="readonly-switch">
 				<label>Tamper</label>
 				<description>Tamper</description>
 			</channel>
-			<channel id="communication_trouble" typeId="readonly_switch">
+			<channel id="communication-trouble" typeId="readonly-switch">
 				<label>Communication Trouble</label>
 				<description>Communication Trouble</description>
 			</channel>
-			<channel id="jamming" typeId="readonly_switch">
+			<channel id="jamming" typeId="readonly-switch">
 				<label>Jamming</label>
 				<description>Jamming</description>
 			</channel>
-			<channel id="lost_signal" typeId="readonly_switch">
+			<channel id="lost-signal" typeId="readonly-switch">
 				<label>Lost Signal</label>
 				<description>Lost Signal</description>
 			</channel>
-			<channel id="exists" typeId="readonly_switch">
+			<channel id="exists" typeId="readonly-switch">
 				<label>Exists</label>
 				<description>Exists or Not Exists</description>
 			</channel>

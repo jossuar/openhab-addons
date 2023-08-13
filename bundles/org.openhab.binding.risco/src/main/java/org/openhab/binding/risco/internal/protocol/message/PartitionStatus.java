@@ -31,20 +31,20 @@ public class PartitionStatus extends RiscoMessage {
     // @formatter:off
     private final STTProperty[] properties = {
             new STTProperty("duress", "D"),
-            new STTProperty("false_code", "C"),
+            new STTProperty("false-code", "C"),
             new STTProperty("fire", "F"),
             new STTProperty("panic", "P"),
             new STTProperty("medic", "M"),
             new STTProperty("arm", "A"),
-            new STTProperty("home_stay", "H"),
-            new STTProperty("ready_to_arm", "R"),
+            new STTProperty("home-stay", "H"),
+            new STTProperty("ready-to-arm", "R"),
             new STTProperty("exists", "E"),
-            new STTProperty("reset_required", "S"),
-            new STTProperty("no_activity_alert", "N"),
-            new STTProperty("group_a_arm", "1"),
-            new STTProperty("group_b_arm", "2"),
-            new STTProperty("group_c_arm", "3"),
-            new STTProperty("group_d_arm", "4"),
+            new STTProperty("reset-required", "S"),
+            new STTProperty("no-activity-alert", "N"),
+            new STTProperty("group-a-arm", "1"),
+            new STTProperty("group-b-arm", "2"),
+            new STTProperty("group-c-arm", "3"),
+            new STTProperty("group-d-arm", "4"),
             new STTProperty("trouble", "T") };
     // @formatter:on
 
