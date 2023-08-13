@@ -13,104 +13,104 @@
 		<description>Represents the Risco Alarm System</description>
 
 		<channels>
-			<channel id="name" typeId="readonly_text">
+			<channel id="name" typeId="readonly-text">
 				<label>Name</label>
 				<description>Name</description>
 			</channel>
 
-			<channel id="low_battery_trouble" typeId="readonly_switch">
+			<channel id="low-battery-trouble" typeId="readonly-switch">
 				<label>Low Battery Trouble</label>
 				<description>Low Battery or Battery Ok</description>
 			</channel>
-			<channel id="ac_trouble" typeId="readonly_switch">
+			<channel id="ac-trouble" typeId="readonly-switch">
 				<label>AC Trouble</label>
 				<description>AC Unplugged or AC Plugged</description>
 			</channel>
-			<channel id="phone_line_trouble" typeId="readonly_switch">
+			<channel id="phone-line-trouble" typeId="readonly-switch">
 				<label>Phone Line Trouble</label>
 				<description>Phone Line Trouble or Phone Line Ok</description>
 			</channel>
-			<channel id="clock_trouble" typeId="readonly_switch">
+			<channel id="clock-trouble" typeId="readonly-switch">
 				<label>Clock Trouble</label>
 				<description>Clock Trouble or Clock Ok</description>
 			</channel>
-			<channel id="default_switch" typeId="readonly_switch">
+			<channel id="default-switch" typeId="readonly-switch">
 				<label>Default Switch</label>
 				<description>Default Switch On or Default Switch Off</description>
 			</channel>
-			<channel id="ms_1_report_trouble" typeId="readonly_switch">
+			<channel id="ms-1-report-trouble" typeId="readonly-switch">
 				<label>MS 1 Report Trouble</label>
 				<description>MS 1 Report Trouble or MS 1 Report Ok</description>
 			</channel>
-			<channel id="ms_2_report_trouble" typeId="readonly_switch">
+			<channel id="ms-2-report-trouble" typeId="readonly-switch">
 				<label>MS 2 Report Trouble</label>
 				<description>MS 2 Report Trouble or MS 2 Report Ok</description>
 			</channel>
-			<channel id="ms_3_report_trouble" typeId="readonly_switch">
+			<channel id="ms-3-report-trouble" typeId="readonly-switch">
 				<label>MS 3 Report Trouble</label>
 				<description>MS 3 Report Trouble or MS 3 Report Ok</description>
 			</channel>
-			<channel id="box_tamper" typeId="panel_contact">
+			<channel id="box-tamper" typeId="panel-contact">
 				<label>Box Tamper</label>
 				<description>Box Tamper Open or Box Tamper Closed</description>
 			</channel>
-			<channel id="jamming_trouble" typeId="readonly_switch">
+			<channel id="jamming-trouble" typeId="readonly-switch">
 				<label>Jamming Trouble</label>
 				<description>Jamming Trouble or Jamming Ok</description>
 			</channel>
-			<channel id="prog_mode" typeId="readonly_switch">
+			<channel id="prog-mode" typeId="readonly-switch">
 				<label>Prog Mode</label>
 				<description>Prog Mode On or Prog Mode Off</description>
 			</channel>
-			<channel id="learn_mode" typeId="readonly_switch">
+			<channel id="learn-mode" typeId="readonly-switch">
 				<label>Learn Mode</label>
 				<description>Learn Mode On or Learn Mode Off</description>
 			</channel>
-			<channel id="three_min_bypass" typeId="readonly_switch">
+			<channel id="three-min-bypass" typeId="readonly-switch">
 				<label>Three Min Bypass</label>
 				<description>Three Min Bypass On or Three Min Bypass Off</description>
 			</channel>
-			<channel id="walk_test" typeId="readonly_switch">
+			<channel id="walk-test" typeId="readonly-switch">
 				<label>Walk Test</label>
 				<description>Walk Test On or Walk Test Off</description>
 			</channel>
-			<channel id="aux_trouble" typeId="readonly_switch">
+			<channel id="aux-trouble" typeId="readonly-switch">
 				<label>AUX Trouble</label>
 				<description>Aux Trouble or Aux Ok</description>
 			</channel>
-			<channel id="rs485_bus_trouble" typeId="readonly_switch">
+			<channel id="rs485-bus-trouble" typeId="readonly-switch">
 				<label>RS485 Bus Trouble</label>
 				<description>RS485 Bus Trouble or RS485 Bus Ok</description>
 			</channel>
-			<channel id="ls_switch" typeId="readonly_switch">
+			<channel id="ls-switch" typeId="readonly-switch">
 				<label>Ls Switch</label>
 				<description>Ls Switch On or Ls Switch Off</description>
 			</channel>
-			<channel id="bell_switch" typeId="readonly_switch">
+			<channel id="bell-switch" typeId="readonly-switch">
 				<label>Bell Switch</label>
 				<description>Bell Switch On or Bell Switch Off</description>
 			</channel>
-			<channel id="bell_trouble" typeId="readonly_switch">
+			<channel id="bell-trouble" typeId="readonly-switch">
 				<label>Bell Trouble</label>
 				<description>Bell Trouble or Bell Ok</description>
 			</channel>
-			<channel id="bell_tamper" typeId="readonly_switch">
+			<channel id="bell-tamper" typeId="readonly-switch">
 				<label>Bell Tamper</label>
 				<description>Bell Tamper or Bell Tamper Ok</description>
 			</channel>
-			<channel id="service_expired" typeId="readonly_switch">
+			<channel id="service-expired" typeId="readonly-switch">
 				<label>Service Expired</label>
 				<description>Service Expired or Service Ok</description>
 			</channel>
-			<channel id="payment_expired" typeId="readonly_switch">
+			<channel id="payment-expired" typeId="readonly-switch">
 				<label>Payment Expired</label>
 				<description>Payment Expired or Payment Ok</description>
 			</channel>
-			<channel id="service_mode" typeId="readonly_switch">
+			<channel id="service-mode" typeId="readonly-switch">
 				<label>Service Mode</label>
 				<description>Service Mode On or Service Mode Off</description>
 			</channel>
-			<channel id="dual_path" typeId="readonly_switch">
+			<channel id="dual-path" typeId="readonly-switch">
 				<label>Dual Path</label>
 				<description>Dual Path On or Dual Path Off</description>
 			</channel>

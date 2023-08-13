@@ -13,57 +13,57 @@
 		<description>Represents a physical device such as a door, window, or motion sensor</description>
 
 		<channels>
-			<channel id="open" typeId="zone_contact">
+			<channel id="open" typeId="readonly-contact">
 				<label>Open</label>
 				<description>Open or Closed</description>
 			</channel>
-			<channel id="arm" typeId="readonly_switch">
+			<channel id="arm" typeId="readonly-switch">
 				<label>Arm</label>
 				<description>Armed or Disarmed</description>
 			</channel>
-			<channel id="alarm" typeId="readonly_switch">
+			<channel id="alarm" typeId="readonly-switch">
 				<label>Alarm</label>
 				<description>Alarm or Standby</description>
 			</channel>
-			<channel id="tamper" typeId="readonly_switch">
+			<channel id="tamper" typeId="readonly-switch">
 				<label>Tamper</label>
 				<description>Tamper or Hold</description>
 			</channel>
-			<channel id="trouble" typeId="readonly_switch">
+			<channel id="trouble" typeId="readonly-switch">
 				<label>Trouble</label>
 				<description>Trouble or Sureness</description>
 			</channel>
-			<channel id="lost" typeId="readonly_switch">
+			<channel id="lost" typeId="readonly-switch">
 				<label>Lost</label>
 				<description>Lost or Located</description>
 			</channel>
-			<channel id="low_battery" typeId="readonly_switch">
+			<channel id="low-battery" typeId="readonly-switch">
 				<label>Low Battery</label>
 				<description>Low Battery or Battery Ok</description>
 			</channel>
-			<channel id="bypass" typeId="zone_bypass">
+			<channel id="bypass" typeId="switch">
 				<label>Bypass</label>
 				<description>Bypassed or Unbypassed</description>
 			</channel>
-			<channel id="comm_trouble" typeId="readonly_switch">
+			<channel id="comm-trouble" typeId="readonly-switch">
 				<label>Comm Trouble</label>
 				<description>Communication Trouble or Communication Ok</description>
 			</channel>
-			<channel id="soak_test" typeId="readonly_switch">
+			<channel id="soak-test" typeId="readonly-switch">
 				<label>Soak Test</label>
 				<description>Soak Test or Exit Soak Test</description>
 			</channel>
-			<channel id="hours24" typeId="readonly_switch">
+			<channel id="hours24" typeId="readonly-switch">
 				<label>Hours 24</label>
 				<description>24 Hours zone or Normal zone</description>
 			</channel>
-			<channel id="not_used" typeId="readonly_switch">
+			<channel id="not-used" typeId="readonly-switch">
 				<label>Not Used</label>
 				<description>Zone not used or Zone used</description>
 			</channel>
 
 			<!-- Name -->
-			<channel id="name" typeId="readonly_text">
+			<channel id="name" typeId="readonly-text">
 				<label>Name</label>
 				<description>The Zone name</description>
 			</channel>
