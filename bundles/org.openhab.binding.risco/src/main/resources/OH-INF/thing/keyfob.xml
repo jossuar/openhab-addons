@@ -26,7 +26,7 @@
 		<representation-property>keyfobNumber</representation-property>
 
 		<config-description>
-			<parameter name="keyfobNumber" type="integer" required="true" min="1" max="32">
+			<parameter name="keyfobNumber" type="integer" required="true" min="1" max="256">
 				<label>Keyfob Number</label>
 				<description>The Keyfob Number</description>
 				<default>1</default>
