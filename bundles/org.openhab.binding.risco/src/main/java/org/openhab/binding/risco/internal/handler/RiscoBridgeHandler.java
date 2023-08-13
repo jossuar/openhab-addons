@@ -116,6 +116,8 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
         RiscoCommunicator communicator = this.communicator;
         if (communicator != null) {
             communicator.addListener(this);
+            // communicator.send("KPALOC&?");
+            // communicator.send("KFALOC&?");
             // communicator.send("PNLCNF?");
             // communicator.send("PNLVER?");
             // communicator.send("PNLSERD?");
