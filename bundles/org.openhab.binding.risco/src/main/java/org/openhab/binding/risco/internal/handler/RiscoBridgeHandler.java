@@ -25,6 +25,8 @@ import org.openhab.binding.risco.internal.RiscoCommunicator;
 import org.openhab.binding.risco.internal.RiscoCommunicator.RiscoPanelListener;
 import org.openhab.binding.risco.internal.config.RiscoBridgeConfiguration;
 import org.openhab.binding.risco.internal.discovery.RiscoDiscoveryService;
+import org.openhab.binding.risco.internal.handler.thing.RiscoOutputHandler;
+import org.openhab.binding.risco.internal.handler.thing.RiscoPartitionHandler;
 import org.openhab.binding.risco.internal.handler.thing.RiscoSystemHandler;
 import org.openhab.binding.risco.internal.handler.thing.RiscoZoneHandler;
 import org.openhab.binding.risco.internal.protocol.DiscoveryInfo;
@@ -58,7 +60,9 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
 
     // Things served by the bridge
     private Map<String, Thing> thingGeneralMap = new ConcurrentHashMap<>();
+    private Map<Integer, Thing> thingPartitionMap = new ConcurrentHashMap<>();
     private Map<Integer, Thing> thingZoneMap = new ConcurrentHashMap<>();
+    private Map<Integer, Thing> thingOutputMap = new ConcurrentHashMap<>();
 
     // Communication
     private @Nullable RiscoCommunicator communicator = null;
@@ -118,6 +122,13 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
             updateStatus(ThingStatus.ONLINE);
         }
 
+        // Send status commands to the zones and partitions
+        /*
+         * thingZoneMap
+         * .forEach((k, v) -> v.getHandler().handleCommand(v.getChannels().get(0).getUID(), RefreshType.REFRESH)); //
+         * sendCommand(ZoneStatus.getReadCommand(k)));
+         * thingPartitionMap.forEach((k, v) -> sendCommand(PartitionStatus.getReadCommand(k)));
+         */
         // list all channels
         if (logger.isTraceEnabled()) {
             logger.trace("list all {} channels:", getThing().getChannels().size());
@@ -194,6 +205,7 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
                 if (index != null) {
                     return thingZoneMap.get(Integer.valueOf(index));
                 }
+                break;
             case BUS_EXPANDER:
                 break;
             case CELLULAR_ON_BUS:
@@ -203,10 +215,16 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
             case KEYPAD:
                 break;
             case OUTPUT:
+                if (index != null) {
+                    return thingOutputMap.get(Integer.valueOf(index));
+                }
                 break;
             case OUTPUT_EXPANDER:
                 break;
             case PARTITION:
+                if (index != null) {
+                    return thingPartitionMap.get(Integer.valueOf(index));
+                }
                 break;
             case SIREN:
                 break;
@@ -337,11 +355,17 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
 
     @Override
     public void childHandlerInitialized(ThingHandler childHandler, Thing childThing) {
-        if (childHandler instanceof RiscoZoneHandler) {
+        if (childHandler instanceof RiscoSystemHandler) {
+            thingGeneralMap.put(RiscoBindingConstants.SYSTEM, childThing);
+        } else if (childHandler instanceof RiscoZoneHandler) {
             RiscoZoneHandler handler = (RiscoZoneHandler) childHandler;
             thingZoneMap.put(handler.getZoneNumber(), childThing);
-        } else if (childHandler instanceof RiscoSystemHandler) {
-            thingGeneralMap.put(RiscoBindingConstants.SYSTEM, childThing);
+        } else if (childHandler instanceof RiscoPartitionHandler) {
+            RiscoPartitionHandler handler = (RiscoPartitionHandler) childHandler;
+            thingZoneMap.put(handler.getPartitionNumber(), childThing);
+        } else if (childHandler instanceof RiscoOutputHandler) {
+            RiscoOutputHandler handler = (RiscoOutputHandler) childHandler;
+            thingOutputMap.put(handler.getOutputNumber(), childThing);
         }
 
         super.childHandlerInitialized(childHandler, childThing);

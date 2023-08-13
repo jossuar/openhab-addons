@@ -16,16 +16,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.openhab.binding.risco.internal.RiscoBindingConstants;
 import org.openhab.binding.risco.internal.config.RiscoPartitionConfiguration;
 import org.openhab.binding.risco.internal.handler.RiscoBridgeHandler;
 import org.openhab.binding.risco.internal.handler.RiscoThingHandler;
-import org.openhab.binding.risco.internal.protocol.RiscoProperty;
-import org.openhab.binding.risco.internal.protocol.RiscoThing;
 import org.openhab.binding.risco.internal.protocol.message.PartitionLabel;
 import org.openhab.binding.risco.internal.protocol.message.PartitionStatus;
-import org.openhab.core.library.types.OnOffType;
-import org.openhab.core.library.types.StringType;
 import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.thing.Thing;
 import org.openhab.core.thing.ThingStatus;
@@ -100,32 +95,6 @@ public class RiscoPartitionHandler extends RiscoThingHandler {
         // Send Zone Status update command
         for (String m : messages) {
             bridgeHandler.sendCommand(m);
-        }
-    }
-
-    @Override
-    public void handleEvent(RiscoThing riscoThing) {
-        logger.trace("PartitionHandler received info: {} {}", riscoThing.getRiscoThingType(), riscoThing.getIndex());
-
-        for (RiscoProperty p : riscoThing.getProperties()) {
-            updateChannel(p.getName(), p.getValue());
-        }
-
-        updateStatus(ThingStatus.ONLINE);
-    }
-
-    public void updateChannel(String channelID, String data) {
-        logger.trace("Updating Partition channel: {}, {}", channelID, data);
-
-        if (RiscoBindingConstants.PARTITION_CHANNEL_NAME.equals(channelID)) {
-            updateState(channelID, new StringType(data));
-
-            logger.trace("  updateChannel: {} = {}", channelID, data);
-        } else {
-            OnOffType onOffType = ("true".equals(data)) ? OnOffType.ON : OnOffType.OFF;
-            updateState(channelID, onOffType);
-
-            logger.trace("  updateChannel: {} = {}", channelID, onOffType);
         }
     }
 }

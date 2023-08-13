@@ -20,13 +20,8 @@ import org.openhab.binding.risco.internal.RiscoBindingConstants;
 import org.openhab.binding.risco.internal.config.RiscoZoneConfiguration;
 import org.openhab.binding.risco.internal.handler.RiscoBridgeHandler;
 import org.openhab.binding.risco.internal.handler.RiscoThingHandler;
-import org.openhab.binding.risco.internal.protocol.RiscoProperty;
-import org.openhab.binding.risco.internal.protocol.RiscoThing;
 import org.openhab.binding.risco.internal.protocol.message.ZoneLabel;
 import org.openhab.binding.risco.internal.protocol.message.ZoneStatus;
-import org.openhab.core.library.types.OnOffType;
-import org.openhab.core.library.types.OpenClosedType;
-import org.openhab.core.library.types.StringType;
 import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.thing.Thing;
 import org.openhab.core.thing.ThingStatus;
@@ -75,7 +70,7 @@ public class RiscoZoneHandler extends RiscoThingHandler {
 
         // Send Zone Status update command
         bridgeHandler.sendCommand(ZoneStatus.getReadCommand(zoneNumber));
-        bridgeHandler.sendCommand(ZoneLabel.getReadCommand(getZoneNumber()));
+        bridgeHandler.sendCommand(ZoneLabel.getReadCommand(zoneNumber));
         logger.trace("RiscoZoneHandler initialized [{}]", zoneNumber);
     }
 
@@ -103,37 +98,6 @@ public class RiscoZoneHandler extends RiscoThingHandler {
         // Send Zone Status update command
         for (String m : messages) {
             bridgeHandler.sendCommand(m);
-        }
-    }
-
-    @Override
-    public void handleEvent(RiscoThing riscoThing) {
-        logger.trace("ZoneHandler received info: {} {}", riscoThing.getRiscoThingType(), riscoThing.getIndex());
-
-        for (RiscoProperty p : riscoThing.getProperties()) {
-            updateChannel(p.getName(), p.getValue());
-        }
-
-        updateStatus(ThingStatus.ONLINE);
-    }
-
-    public void updateChannel(String channelID, String data) {
-        logger.trace("Updating zone channel: {}, {}", channelID, data);
-
-        if (RiscoBindingConstants.ZONE_CHANNEL_NAME.equals(channelID)) {
-            updateState(channelID, new StringType(data));
-
-            logger.trace("  updateChannel: {} = {}", channelID, data);
-        } else if (RiscoBindingConstants.ZONE_CHANNEL_OPEN.equals(channelID)) {
-            OpenClosedType openClosedType = ("true".equals(data)) ? OpenClosedType.OPEN : OpenClosedType.CLOSED;
-            updateState(channelID, openClosedType);
-
-            logger.trace("  updateChannel: {} = {}", channelID, data);
-        } else {
-            OnOffType onOffType = ("true".equals(data)) ? OnOffType.ON : OnOffType.OFF;
-            updateState(channelID, onOffType);
-
-            logger.trace("  updateChannel: {} = {}", channelID, onOffType);
         }
     }
 }

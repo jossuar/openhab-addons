@@ -90,7 +90,7 @@ public class RiscoCommunicator {
 
     public RiscoCommunicator(String uid, String hostname, int port, int panelId, String encoding, String password,
             ScheduledExecutorService scheduler) throws IOException {
-        logger.debug("RiscoCommunicator(): Connecting to Risco panel");
+        logger.trace("RiscoCommunicator(): Connecting to Risco panel");
 
         this.uid = uid;
         this.hostname = hostname;
@@ -128,7 +128,7 @@ public class RiscoCommunicator {
     }
 
     public void start() throws IOException {
-        logger.debug("start(): RiscoCommunicator stopping");
+        logger.trace("start(): RiscoCommunicator starting");
         // Reset command id
         sendCommandId = 2;
 
@@ -159,7 +159,7 @@ public class RiscoCommunicator {
     }
 
     public void stop() {
-        logger.debug("stop(): RiscoCommunicator stopping");
+        logger.trace("stop(): RiscoCommunicator stopping");
 
         connected = false;
 
@@ -183,7 +183,7 @@ public class RiscoCommunicator {
         // Close socket
         try {
             tcpSocket.close();
-            logger.debug("closeConnection(): Closed TCP Connection!");
+            logger.trace("closeConnection(): Closed TCP Connection!");
         } catch (IOException ioException) {
             logger.debug("closeConnection(): Unable to close connection - {}", ioException.getMessage());
         } catch (Exception exception) {
@@ -238,14 +238,6 @@ public class RiscoCommunicator {
         for (RiscoPanelListener listener : listenerQueue) {
             listener.handleRiscoMessage(msg);
         }
-
-        /*
-         * else if (msg.getMessageOrigin() == MessageOrigin.BINDING) {
-         * } else {
-         * // Unknown message origin
-         * logger.debug("Unknown message origin. Abnormal situation. {}", msg);
-         * }
-         */
     }
 
     private void handleOutgoingMessage(RiscoMessage msg) {
@@ -256,16 +248,6 @@ public class RiscoCommunicator {
         for (RiscoPanelListener listener : listenerQueue) {
             listener.handleRiscoMessage(msg);
         }
-
-        /*
-         * if (msg.getMessageOrigin() == MessageOrigin.PANEL) {
-         * } else if (msg.getMessageOrigin() == MessageOrigin.BINDING) {
-         * // Nothing to be done
-         * } else {
-         * // Unknown message origin
-         * logger.debug("Unknown message origin. Abnormal situation. {}", msg);
-         * }
-         */
     }
 
     public Boolean isConnected() {
@@ -288,7 +270,7 @@ public class RiscoCommunicator {
                 readMessageBuffer();
             }
 
-            logger.debug("RiscoReceiver. Thread stopped.");
+            logger.trace("RiscoReceiver. Thread stopped.");
         }
 
         private void readMessageBuffer() {
@@ -325,7 +307,7 @@ public class RiscoCommunicator {
 
                 byte[] message = Arrays.copyOfRange(buffer, 0, bufferIndex);
 
-                logger.debug("<---- {}", HexUtils.bytesToHex(message));
+                logger.trace("<---- {}", HexUtils.bytesToHex(message));
 
                 RiscoMessageFactory factory = new RiscoMessageFactory();
                 RiscoMessage msg = factory.create(1, "UTF-8", message);
@@ -387,7 +369,7 @@ public class RiscoCommunicator {
                     handleOutgoingMessage(rm);
                 }
 
-                logger.debug("RiscoCommunicator.SenderThread: Thread interrupted.");
+                logger.trace("RiscoCommunicator.SenderThread: Thread interrupted.");
             } catch (InterruptedException e) {
                 // Just exit the loop
                 logger.debug("RiscoCommunicator.SenderThread: InterruptedException caught.");
@@ -395,7 +377,7 @@ public class RiscoCommunicator {
                 logger.debug("RiscoCommunicator.SenderThread: IOException caught.", e);
             }
 
-            logger.debug("RiscoSender. Thread stopped.");
+            logger.trace("RiscoSender. Thread stopped.");
         }
 
         private void write(byte[] buffer) throws IOException {
@@ -415,21 +397,21 @@ public class RiscoCommunicator {
         public void run() {
             if (ChronoUnit.SECONDS.between(lastSendTime, ZonedDateTime.now()) > 30
                     || ChronoUnit.SECONDS.between(lastReceiveTime, ZonedDateTime.now()) > 70) {
-                logger.debug("check sendBefore: {}, recvBefore: {}, result: {}",
+                logger.trace("check sendBefore: {}, recvBefore: {}, result: {}",
                         ChronoUnit.SECONDS.between(lastSendTime, ZonedDateTime.now()),
                         ChronoUnit.SECONDS.between(lastReceiveTime, ZonedDateTime.now()), "--");
 
-                logger.debug("Reconnecting");
+                logger.trace("Reconnecting");
                 try {
                     lastSendTime = ZonedDateTime.now();
                     lastReceiveTime = ZonedDateTime.now();
                     reconnect();
                 } catch (IOException e) {
-                    logger.warn("Could not reconnect to the panel.", e);
+                    logger.debug("Could not reconnect to the panel.", e);
                 }
                 return;
             } else {
-                logger.debug("check sendBefore: {}, recvBefore: {}, result: {}",
+                logger.trace("check sendBefore: {}, recvBefore: {}, result: {}",
                         ChronoUnit.SECONDS.between(lastSendTime, ZonedDateTime.now()),
                         ChronoUnit.SECONDS.between(lastReceiveTime, ZonedDateTime.now()), "OK");
             }
