@@ -19,13 +19,13 @@
 
 
 	<!-- general channel types -->
-	<channel-type id="readonly_switch">
+	<channel-type id="readonly-switch">
 		<item-type>Switch</item-type>
 		<label>Read-only Switch</label>
 		<description>Read-only Switch</description>
 		<state readOnly="true"></state>
 	</channel-type>
-	<channel-type id="readonly_text">
+	<channel-type id="readonly-text">
 		<item-type>String</item-type>
 		<label>Read-only Text</label>
 		<description>Read-only text</description>
@@ -33,14 +33,14 @@
 	</channel-type>
 
 	<!-- zone -->
-	<channel-type id="zone_contact">
+	<channel-type id="readonly-contact">
 		<item-type>Contact</item-type>
 		<label>Zone Status</label>
 		<description>Zone Status (Open/Closed)</description>
 		<state readOnly="true"></state>
 	</channel-type>
 
-	<channel-type id="zone_bypass">
+	<channel-type id="switch">
 		<item-type>Switch</item-type>
 		<label>Bypass Mode</label>
 		<description>Bypass Mode (OFF=Armed, ON=Bypassed)</description>

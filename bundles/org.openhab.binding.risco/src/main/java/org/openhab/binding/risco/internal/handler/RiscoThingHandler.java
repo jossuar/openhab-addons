@@ -112,5 +112,4 @@ public abstract class RiscoThingHandler extends BaseThingHandler implements Risc
 
         updateStatus(ThingStatus.ONLINE);
     }
-
 }

@@ -13,75 +13,75 @@
 		<description>Represents a partition within a Risco Alarm System</description>
 
 		<channels>
-			<channel id="alarm" typeId="readonly_switch">
+			<channel id="alarm" typeId="readonly-switch">
 				<label>Alarm</label>
 				<description>Alarm or Stand By</description>
 			</channel>
-			<channel id="duress" typeId="readonly_switch">
+			<channel id="duress" typeId="readonly-switch">
 				<label>Duress</label>
 				<description>Duress or Free</description>
 			</channel>
-			<channel id="false_code" typeId="readonly_switch">
+			<channel id="false-code" typeId="readonly-switch">
 				<label>False Code</label>
 				<description>False Code or Code Ok</description>
 			</channel>
-			<channel id="fire" typeId="readonly_switch">
+			<channel id="fire" typeId="readonly-switch">
 				<label>Fire</label>
 				<description>Fire or No Fire</description>
 			</channel>
-			<channel id="panic" typeId="readonly_switch">
+			<channel id="panic" typeId="readonly-switch">
 				<label>Panic</label>
 				<description>Panic or No Panic</description>
 			</channel>
-			<channel id="medic" typeId="readonly_switch">
+			<channel id="medic" typeId="readonly-switch">
 				<label>Medic</label>
 				<description>Medic or No Medic</description>
 			</channel>
-			<channel id="arm" typeId="readonly_switch">
+			<channel id="arm" typeId="readonly-switch">
 				<label>Arm</label>
 				<description>Armed or Disarmed</description>
 			</channel>
-			<channel id="home_stay" typeId="readonly_switch">
+			<channel id="home-stay" typeId="readonly-switch">
 				<label>Home Stay</label>
 				<description>Home Stay or Home Disarmed</description>
 			</channel>
-			<channel id="ready" typeId="readonly_switch">
+			<channel id="ready" typeId="readonly-switch">
 				<label>Ready</label>
 				<description>Ready or Not Ready</description>
 			</channel>
-			<channel id="open" typeId="readonly_switch">
+			<channel id="open" typeId="readonly-switch">
 				<label>Open</label>
 				<description>Zone Open or Zones Closed</description>
 			</channel>
-			<channel id="exist" typeId="readonly_switch">
+			<channel id="exist" typeId="readonly-switch">
 				<label>Exist</label>
 				<description>Exist or Not Exist</description>
 			</channel>
-			<channel id="reset_required" typeId="readonly_switch">
+			<channel id="reset-required" typeId="readonly-switch">
 				<label>Reset Required</label>
 				<description>Memory Event or Memory Ack</description>
 			</channel>
-			<channel id="no_activity" typeId="readonly_switch">
+			<channel id="no-activity" typeId="readonly-switch">
 				<label>No Activity</label>
 				<description>Activity Alert or Activity Ok</description>
 			</channel>
-			<channel id="group_a_arm" typeId="readonly_switch">
+			<channel id="group-a-arm" typeId="readonly-switch">
 				<label>Group A Arm</label>
 				<description>Group A Armed or Group A Disarmed</description>
 			</channel>
-			<channel id="group_b_arm" typeId="readonly_switch">
+			<channel id="group-b-arm" typeId="readonly-switch">
 				<label>Group B Arm</label>
 				<description>Group B Armed or Group B Disarmed</description>
 			</channel>
-			<channel id="group_c_arm" typeId="readonly_switch">
+			<channel id="group-c-arm" typeId="readonly-switch">
 				<label>Group C Arm</label>
 				<description>Group C Armed or Group C Disarmed</description>
 			</channel>
-			<channel id="group_d_arm" typeId="readonly_switch">
+			<channel id="group-d-arm" typeId="readonly-switch">
 				<label>Group D Arm</label>
 				<description>Group D Armed or Group D Disarmed</description>
 			</channel>
-			<channel id="trouble" typeId="readonly_switch">
+			<channel id="trouble" typeId="readonly-switch">
 				<label>Trouble</label>
 				<description>Trouble or Ok</description>
 			</channel>
