@@ -17,9 +17,9 @@
 				<label>Alarm</label>
 				<description>Alarm or Stand By</description>
 			</channel>
-			<channel id="exist" typeId="readonly-switch">
-				<label>Exist</label>
-				<description>Exist or Not Exist</description>
+			<channel id="exists" typeId="readonly-switch">
+				<label>Exists</label>
+				<description>Exists or Not Exists</description>
 			</channel>
 		</channels>
 
