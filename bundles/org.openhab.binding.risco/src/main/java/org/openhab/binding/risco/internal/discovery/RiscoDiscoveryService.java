@@ -19,11 +19,16 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.binding.risco.internal.RiscoBindingConstants;
 import org.openhab.binding.risco.internal.handler.RiscoBridgeHandler;
+import org.openhab.binding.risco.internal.protocol.message.BusExpanderAllocation;
 import org.openhab.binding.risco.internal.protocol.message.KeyfobAllocation;
 import org.openhab.binding.risco.internal.protocol.message.KeypadAllocation;
 import org.openhab.binding.risco.internal.protocol.message.OutputAllocation;
+import org.openhab.binding.risco.internal.protocol.message.OutputExpanderAllocation;
 import org.openhab.binding.risco.internal.protocol.message.PanelConfiguration;
 import org.openhab.binding.risco.internal.protocol.message.PartitionAllocation;
+import org.openhab.binding.risco.internal.protocol.message.PowerSupplyAllocation;
+import org.openhab.binding.risco.internal.protocol.message.ProximityReaderAllocation;
+import org.openhab.binding.risco.internal.protocol.message.SounderAllocation;
 import org.openhab.binding.risco.internal.protocol.message.WirelessModuleAllocation;
 import org.openhab.binding.risco.internal.protocol.message.ZoneAllocation;
 import org.openhab.binding.risco.internal.protocol.message.ZoneExpanderAllocation;
@@ -59,6 +64,8 @@ public class RiscoDiscoveryService extends AbstractDiscoveryService implements D
 
         RiscoBridgeHandler bridge = bridgeHandler;
         if (bridge != null) {
+            // Bus Expanders
+            bridge.sendCommand(BusExpanderAllocation.COMMAND);
             // Keyfobs
             bridge.sendCommand(KeyfobAllocation.COMMAND);
             // Keypads
@@ -66,29 +73,26 @@ public class RiscoDiscoveryService extends AbstractDiscoveryService implements D
             bridge.sendCommand(KeypadAllocation.COMMAND2);
             // Outputs
             bridge.sendCommand(OutputAllocation.COMMAND);
+            // Output Expanders
+            bridge.sendCommand(OutputExpanderAllocation.COMMAND);
             // System
             bridge.sendCommand(PanelConfiguration.COMMAND);
             // Partitions
             bridge.sendCommand(PartitionAllocation.COMMAND);
+            // Power Supplies
+            bridge.sendCommand(PowerSupplyAllocation.COMMAND);
+            // Proximity Readers
+            bridge.sendCommand(ProximityReaderAllocation.COMMAND);
+            // Sounders
+            bridge.sendCommand(SounderAllocation.COMMAND);
             // Wireless modules
             bridge.sendCommand(WirelessModuleAllocation.COMMAND);
-            // Zone Expanders
-            bridge.sendCommand(ZoneExpanderAllocation.COMMAND);
-            // Output Expanders
-            bridge.sendCommand("UOALOC&");
-            // Power Supplies
-            bridge.sendCommand("PSALOC&");
-            // Proximity readers
-            bridge.sendCommand("KRALOC&");
-            // Sounders
-            bridge.sendCommand("ODSALOC&");
-            bridge.sendCommand("WSALOC&");
-            // Bus Expanders
-            bridge.sendCommand("BZEALOC&");
             // Zones
             bridge.sendCommand(ZoneAllocation.COMMAND1);
             bridge.sendCommand(ZoneAllocation.COMMAND2);
             bridge.sendCommand(ZoneAllocation.COMMAND3);
+            // Zone Expanders
+            bridge.sendCommand(ZoneExpanderAllocation.COMMAND);
         }
     }
 
