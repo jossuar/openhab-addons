@@ -24,6 +24,7 @@ import org.openhab.binding.risco.internal.protocol.message.KeypadAllocation;
 import org.openhab.binding.risco.internal.protocol.message.OutputAllocation;
 import org.openhab.binding.risco.internal.protocol.message.PanelConfiguration;
 import org.openhab.binding.risco.internal.protocol.message.PartitionAllocation;
+import org.openhab.binding.risco.internal.protocol.message.WirelessModuleAllocation;
 import org.openhab.binding.risco.internal.protocol.message.ZoneAllocation;
 import org.openhab.binding.risco.internal.protocol.message.ZoneExpanderAllocation;
 import org.openhab.core.config.discovery.AbstractDiscoveryService;
@@ -58,27 +59,27 @@ public class RiscoDiscoveryService extends AbstractDiscoveryService implements D
 
         RiscoBridgeHandler bridge = bridgeHandler;
         if (bridge != null) {
-            // Panel
-            bridge.sendCommand(PanelConfiguration.COMMAND);
-            // Zone Expanders
-            bridge.sendCommand(ZoneExpanderAllocation.COMMAND);
-            // Partitions
-            bridge.sendCommand(PartitionAllocation.COMMAND);
-            // Output Expanders
-            bridge.sendCommand("UOALOC&");
-            // Outputs
-            bridge.sendCommand(OutputAllocation.COMMAND);
+            // Keyfobs
+            bridge.sendCommand(KeyfobAllocation.COMMAND);
             // Keypads
             bridge.sendCommand(KeypadAllocation.COMMAND1);
             bridge.sendCommand(KeypadAllocation.COMMAND2);
-            // Keyfobs
-            bridge.sendCommand(KeyfobAllocation.COMMAND);
+            // Outputs
+            bridge.sendCommand(OutputAllocation.COMMAND);
+            // System
+            bridge.sendCommand(PanelConfiguration.COMMAND);
+            // Partitions
+            bridge.sendCommand(PartitionAllocation.COMMAND);
+            // Wireless modules
+            bridge.sendCommand(WirelessModuleAllocation.COMMAND);
+            // Zone Expanders
+            bridge.sendCommand(ZoneExpanderAllocation.COMMAND);
+            // Output Expanders
+            bridge.sendCommand("UOALOC&");
             // Power Supplies
             bridge.sendCommand("PSALOC&");
             // Proximity readers
             bridge.sendCommand("KRALOC&");
-            // Receivers
-            bridge.sendCommand("WMEALOC&");
             // Sounders
             bridge.sendCommand("ODSALOC&");
             bridge.sendCommand("WSALOC&");

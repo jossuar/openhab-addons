@@ -20,7 +20,6 @@ import org.openhab.binding.risco.internal.config.RiscoKeypadConfiguration;
 import org.openhab.binding.risco.internal.handler.RiscoBridgeHandler;
 import org.openhab.binding.risco.internal.handler.RiscoThingHandler;
 import org.openhab.binding.risco.internal.protocol.message.KeypadStatus;
-import org.openhab.binding.risco.internal.protocol.message.SirenStatus;
 import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.thing.Thing;
 import org.openhab.core.thing.ThingStatus;
@@ -68,7 +67,7 @@ public class RiscoKeypadHandler extends RiscoThingHandler {
         }
 
         // Send Siren Status update command
-        bridgeHandler.sendCommand(SirenStatus.getReadCommand(keypadNumber));
+        bridgeHandler.sendCommand(KeypadStatus.getReadCommand(keypadNumber));
         logger.trace("RiscoKeypadHandler initialized [{}]", keypadNumber);
     }
 
