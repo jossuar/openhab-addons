@@ -83,6 +83,8 @@ public class RiscoDiscoveryService extends AbstractDiscoveryService implements D
             // Sounders
             bridge.sendCommand("ODSALOC&");
             bridge.sendCommand("WSALOC&");
+            // Bus Expanders
+            bridge.sendCommand("BZEALOC&");
             // Zones
             bridge.sendCommand(ZoneAllocation.COMMAND1);
             bridge.sendCommand(ZoneAllocation.COMMAND2);
