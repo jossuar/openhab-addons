@@ -15,9 +15,15 @@ package org.openhab.binding.risco.internal.handler;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.binding.risco.internal.RiscoBindingConstants;
+import org.openhab.binding.risco.internal.handler.thing.RiscoKeyfobHandler;
+import org.openhab.binding.risco.internal.handler.thing.RiscoKeypadHandler;
 import org.openhab.binding.risco.internal.handler.thing.RiscoOutputHandler;
 import org.openhab.binding.risco.internal.handler.thing.RiscoPartitionHandler;
+import org.openhab.binding.risco.internal.handler.thing.RiscoSirenHandler;
 import org.openhab.binding.risco.internal.handler.thing.RiscoSystemHandler;
+import org.openhab.binding.risco.internal.handler.thing.RiscoVoiceModuleHandler;
+import org.openhab.binding.risco.internal.handler.thing.RiscoWirelessModuleHandler;
+import org.openhab.binding.risco.internal.handler.thing.RiscoZoneExpanderHandler;
 import org.openhab.binding.risco.internal.handler.thing.RiscoZoneHandler;
 import org.openhab.core.thing.Bridge;
 import org.openhab.core.thing.Thing;
@@ -58,31 +64,31 @@ public class RiscoHandlerFactory extends BaseThingHandlerFactory {
 
         if (RiscoBindingConstants.BRIDGE_THING_TYPE.equals(thingTypeUID)) {
             return new RiscoBridgeHandler((Bridge) thing);
-        } else if (RiscoBindingConstants.SYSTEM_THING_TYPE.equals(thingTypeUID)) {
-            return new RiscoSystemHandler(thing);
-        } else if (RiscoBindingConstants.PARTITION_THING_TYPE.equals(thingTypeUID)) {
-            return new RiscoPartitionHandler(thing);
-        } else if (RiscoBindingConstants.ZONE_THING_TYPE.equals(thingTypeUID)) {
-            return new RiscoZoneHandler(thing);
+        } else if (RiscoBindingConstants.KEYFOB_THING_TYPE.equals(thingTypeUID)) {
+            return new RiscoKeyfobHandler(thing);
+        } else if (RiscoBindingConstants.KEYPAD_THING_TYPE.equals(thingTypeUID)) {
+            return new RiscoKeypadHandler(thing);
         } else if (RiscoBindingConstants.OUTPUT_THING_TYPE.equals(thingTypeUID)) {
             return new RiscoOutputHandler(thing);
-        } else if (RiscoBindingConstants.KEYPAD_THING_TYPE.equals(thingTypeUID)) {
-            logger.debug("createHandler(): ThingHandler not implemented for {}", thingTypeUID);
-        } else if (RiscoBindingConstants.KEYFOB_THING_TYPE.equals(thingTypeUID)) {
-            logger.debug("createHandler(): ThingHandler not implemented for {}", thingTypeUID);
-        } else if (RiscoBindingConstants.BUS_EXPANDER_THING_TYPE.equals(thingTypeUID)) {
-            logger.debug("createHandler(): ThingHandler not implemented for {}", thingTypeUID);
+        } else if (RiscoBindingConstants.PARTITION_THING_TYPE.equals(thingTypeUID)) {
+            return new RiscoPartitionHandler(thing);
+        } else if (RiscoBindingConstants.SIREN_THING_TYPE.equals(thingTypeUID)) {
+            return new RiscoSirenHandler(thing);
+        } else if (RiscoBindingConstants.SYSTEM_THING_TYPE.equals(thingTypeUID)) {
+            return new RiscoSystemHandler(thing);
+        } else if (RiscoBindingConstants.VOICE_MODULE_THING_TYPE.equals(thingTypeUID)) {
+            return new RiscoVoiceModuleHandler(thing);
+        } else if (RiscoBindingConstants.WIRELESS_MODULE_THING_TYPE.equals(thingTypeUID)) {
+            return new RiscoWirelessModuleHandler(thing);
         } else if (RiscoBindingConstants.ZONE_EXPANDER_THING_TYPE.equals(thingTypeUID)) {
+            return new RiscoZoneExpanderHandler(thing);
+        } else if (RiscoBindingConstants.ZONE_THING_TYPE.equals(thingTypeUID)) {
+            return new RiscoZoneHandler(thing);
+        } else if (RiscoBindingConstants.BUS_EXPANDER_THING_TYPE.equals(thingTypeUID)) {
             logger.debug("createHandler(): ThingHandler not implemented for {}", thingTypeUID);
         } else if (RiscoBindingConstants.OUTPUT_EXPANDER_THING_TYPE.equals(thingTypeUID)) {
             logger.debug("createHandler(): ThingHandler not implemented for {}", thingTypeUID);
-        } else if (RiscoBindingConstants.WIRELESS_MODULE_THING_TYPE.equals(thingTypeUID)) {
-            logger.debug("createHandler(): ThingHandler not implemented for {}", thingTypeUID);
-        } else if (RiscoBindingConstants.VOICE_MODULE_THING_TYPE.equals(thingTypeUID)) {
-            logger.debug("createHandler(): ThingHandler not implemented for {}", thingTypeUID);
         } else if (RiscoBindingConstants.CELLULAR_ON_BUS_THING_TYPE.equals(thingTypeUID)) {
-            logger.debug("createHandler(): ThingHandler not implemented for {}", thingTypeUID);
-        } else if (RiscoBindingConstants.SIREN_THING_TYPE.equals(thingTypeUID)) {
             logger.debug("createHandler(): ThingHandler not implemented for {}", thingTypeUID);
         } else {
             logger.debug("createHandler(): ThingHandler not found for {}", thingTypeUID);
