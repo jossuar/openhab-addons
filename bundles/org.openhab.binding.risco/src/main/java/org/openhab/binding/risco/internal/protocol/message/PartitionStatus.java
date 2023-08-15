@@ -20,6 +20,7 @@ import org.openhab.binding.risco.internal.protocol.RiscoMessage;
 import org.openhab.binding.risco.internal.protocol.RiscoProperty;
 import org.openhab.binding.risco.internal.protocol.RiscoThing;
 import org.openhab.binding.risco.internal.protocol.RiscoThingType;
+import org.openhab.binding.risco.internal.protocol.StatusProperty;
 
 /**
  * @author Georgios Moutsos - Initial contribution
@@ -29,24 +30,24 @@ public class PartitionStatus extends RiscoMessage {
     public static final String COMMAND = "PSTT";
 
     // @formatter:off
-    private final STTProperty[] properties = {
-            new STTProperty("alarm", "a"),
-            new STTProperty("duress", "D"),
-            new STTProperty("false-code", "C"),
-            new STTProperty("fire", "F"),
-            new STTProperty("panic", "P"),
-            new STTProperty("medic", "M"),
-            new STTProperty("arm", "A"),
-            new STTProperty("home-stay", "H"),
-            new STTProperty("ready-to-arm", "R"),
-            new STTProperty("exists", "E"),
-            new STTProperty("reset-required", "S"),
-            new STTProperty("no-activity-alert", "N"),
-            new STTProperty("group-a-arm", "1"),
-            new STTProperty("group-b-arm", "2"),
-            new STTProperty("group-c-arm", "3"),
-            new STTProperty("group-d-arm", "4"),
-            new STTProperty("trouble", "T") };
+    private final StatusProperty[] properties = {
+            new StatusProperty("alarm", "a"),
+            new StatusProperty("duress", "D"),
+            new StatusProperty("false-code", "C"),
+            new StatusProperty("fire", "F"),
+            new StatusProperty("panic", "P"),
+            new StatusProperty("medic", "M"),
+            new StatusProperty("arm", "A"),
+            new StatusProperty("home-stay", "H"),
+            new StatusProperty("ready-to-arm", "R"),
+            new StatusProperty("exists", "E"),
+            new StatusProperty("reset-required", "S"),
+            new StatusProperty("no-activity-alert", "N"),
+            new StatusProperty("group-a-arm", "1"),
+            new StatusProperty("group-b-arm", "2"),
+            new StatusProperty("group-c-arm", "3"),
+            new StatusProperty("group-d-arm", "4"),
+            new StatusProperty("trouble", "T") };
     // @formatter:on
 
     private List<RiscoThing> messageThings = new ArrayList<RiscoThing>();
@@ -68,7 +69,7 @@ public class PartitionStatus extends RiscoMessage {
                 if (value != null) {
                     List<RiscoProperty> props = new ArrayList<RiscoProperty>();
 
-                    for (STTProperty prop : properties) {
+                    for (StatusProperty prop : properties) {
                         if (value.contains(prop.flag)) {
                             props.add(new RiscoProperty(prop.property, "true"));
                         } else {

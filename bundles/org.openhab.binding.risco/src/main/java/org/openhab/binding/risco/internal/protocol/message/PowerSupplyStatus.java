@@ -20,6 +20,7 @@ import org.openhab.binding.risco.internal.protocol.RiscoMessage;
 import org.openhab.binding.risco.internal.protocol.RiscoProperty;
 import org.openhab.binding.risco.internal.protocol.RiscoThing;
 import org.openhab.binding.risco.internal.protocol.RiscoThingType;
+import org.openhab.binding.risco.internal.protocol.StatusProperty;
 
 /**
  * @author Georgios Moutsos - Initial contribution
@@ -29,14 +30,14 @@ public class PowerSupplyStatus extends RiscoMessage {
     public static final String COMMAND = "PSSTT";
 
     // @formatter:off
-    private final STTProperty[] properties = {
-            new STTProperty("tamper", "T"),
-            new STTProperty("communication-trouble", "C"),
-            new STTProperty("ac-trouble", "A"),
-            new STTProperty("low-battery", "L"),
-            new STTProperty("aux-trouble", "X"),
-            new STTProperty("bell-trouble", "B"),
-            new STTProperty("exists", "E") };
+    private final StatusProperty[] properties = {
+            new StatusProperty("tamper", "T"),
+            new StatusProperty("communication-trouble", "C"),
+            new StatusProperty("ac-trouble", "A"),
+            new StatusProperty("low-battery", "L"),
+            new StatusProperty("aux-trouble", "X"),
+            new StatusProperty("bell-trouble", "B"),
+            new StatusProperty("exists", "E") };
     // @formatter:on
 
     private List<RiscoThing> messageThings = new ArrayList<RiscoThing>();
@@ -58,7 +59,7 @@ public class PowerSupplyStatus extends RiscoMessage {
                 if (value != null) {
                     List<RiscoProperty> props = new ArrayList<RiscoProperty>();
 
-                    for (STTProperty prop : properties) {
+                    for (StatusProperty prop : properties) {
                         if (value.contains(prop.flag)) {
                             props.add(new RiscoProperty(prop.property, "true"));
                         } else {
