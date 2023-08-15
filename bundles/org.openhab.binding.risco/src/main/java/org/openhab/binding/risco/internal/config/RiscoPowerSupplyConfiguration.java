@@ -10,30 +10,27 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  */
-package org.openhab.binding.risco.internal.protocol;
+package org.openhab.binding.risco.internal.config;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 
 /**
- * Used to map thing types from the binding string to an ENUM value.
+ * Configuration class for the Risco PowerSupply Thing.
  *
  * @author Georgios Moutsos - Initial contribution
  */
 @NonNullByDefault
-public enum RiscoThingType {
-    BUS_EXPANDER,
-    CELLULAR_ON_BUS,
-    KEYFOB,
-    KEYPAD,
-    OUTPUT,
-    OUTPUT_EXPANDER,
-    PARTITION,
-    POWER_SUPPLY,
-    PROXIMITY_READER,
-    SOUNDER,
-    VOICE_MODULE,
-    WIRELESS_MODULE,
-    SYSTEM,
-    ZONE,
-    ZONE_EXPANDER
-};
+public class RiscoPowerSupplyConfiguration {
+
+    // Partition Thing constants
+    public static final String POWER_SUPPLY_NUMBER = "powerSupplyNumber";
+
+    /**
+     * The Partition Number. Can be in the range of 1-32. This is a required parameter for a power supply.
+     */
+    private int powerSupplyNumber;
+
+    public int getPowerSupplyNumber() {
+        return powerSupplyNumber;
+    }
+}
