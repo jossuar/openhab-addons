@@ -25,18 +25,18 @@
 				<label>AC Trouble</label>
 				<description>AC Trouble</description>
 			</channel>
-            <channel id="low-battery" typeId="readonly-switch">
-                <label>Low Battery</label>
-                <description>Low Battery</description>
-            </channel>
-            <channel id="aux-trouble" typeId="readonly-switch">
-                <label>Aux Trouble</label>
-                <description>Aux Trouble</description>
-            </channel>
-            <channel id="bell-trouble" typeId="readonly-switch">
-                <label>Bell Trouble</label>
-                <description>Bell Trouble</description>
-            </channel>
+			<channel id="low-battery" typeId="readonly-switch">
+				<label>Low Battery</label>
+				<description>Low Battery</description>
+			</channel>
+			<channel id="aux-trouble" typeId="readonly-switch">
+				<label>Aux Trouble</label>
+				<description>Aux Trouble</description>
+			</channel>
+			<channel id="bell-trouble" typeId="readonly-switch">
+				<label>Bell Trouble</label>
+				<description>Bell Trouble</description>
+			</channel>
 			<channel id="exists" typeId="readonly-switch">
 				<label>Exists</label>
 				<description>Exists or Not Exists</description>

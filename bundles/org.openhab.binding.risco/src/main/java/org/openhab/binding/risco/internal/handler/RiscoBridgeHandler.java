@@ -55,8 +55,9 @@ import org.openhab.binding.risco.internal.protocol.DiscoveryInfo;
 import org.openhab.binding.risco.internal.protocol.RiscoMessage;
 import org.openhab.binding.risco.internal.protocol.RiscoThing;
 import org.openhab.binding.risco.internal.protocol.RiscoThingType;
+import org.openhab.binding.risco.internal.protocol.message.connection.Local;
+import org.openhab.binding.risco.internal.protocol.message.connection.Remote;
 import org.openhab.core.thing.Bridge;
-import org.openhab.core.thing.Channel;
 import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.thing.Thing;
 import org.openhab.core.thing.ThingStatus;
@@ -67,7 +68,6 @@ import org.openhab.core.thing.binding.BaseBridgeHandler;
 import org.openhab.core.thing.binding.ThingHandler;
 import org.openhab.core.thing.binding.ThingHandlerService;
 import org.openhab.core.types.Command;
-import org.openhab.core.types.RefreshType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -105,7 +105,7 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
     }
 
     @Override
-    public void initialize() {
+    public synchronized void initialize() {
         updateStatus(ThingStatus.UNKNOWN);
 
         RiscoBridgeConfiguration configuration = getConfigAs(RiscoBridgeConfiguration.class);
@@ -125,8 +125,15 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
         logger.debug("Starting interface with host {} at port {}", hostname, port);
 
         try {
-            communicator = new RiscoCommunicator(getThing().getUID().getAsString(), hostname, port,
+            RiscoCommunicator communicator = new RiscoCommunicator(getThing().getUID().getAsString(), hostname, port,
                     configuration.getId(), configuration.getEncoding(), configuration.getPassword(), scheduler);
+
+            // Initialize the communication with the panel
+            communicator.sendAndWait(Remote.getReadCommand(configuration.getPassword()));
+            communicator.sendAndWait(Local.getReadCommand());
+
+            this.communicator = communicator;
+            notifyAll();
         } catch (IOException e) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR,
                     "Communication cannot be initialized. " + e.toString());
@@ -270,7 +277,6 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
                 break;
         }
         return null;
-
     }
 
     private DiscoveryInfo mapInfo(RiscoThingType type, @Nullable Integer index) {
@@ -388,8 +394,16 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
      * @param command The command to be send
      * @param data The associated command data
      */
-    public boolean sendCommand(String command) {
+    public synchronized boolean sendCommand(String command) {
         logger.trace("sendCommand(): Attempting to send Command: command - {}", command);
+
+        // Wait until the communicator initializes
+        while (communicator == null) {
+            try {
+                wait();
+            } catch (InterruptedException e) {
+            }
+        }
 
         RiscoCommunicator comm = communicator;
         if (comm != null) {
@@ -446,9 +460,11 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
         super.childHandlerInitialized(childHandler, childThing);
 
         // refresh all channels
-        for (Channel c : childThing.getChannels()) {
-            childHandler.handleCommand(c.getUID(), RefreshType.REFRESH);
-        }
+        /*
+         * for (Channel c : childThing.getChannels()) {
+         * childHandler.handleCommand(c.getUID(), RefreshType.REFRESH);
+         * }
+         */
     }
 
     @Override

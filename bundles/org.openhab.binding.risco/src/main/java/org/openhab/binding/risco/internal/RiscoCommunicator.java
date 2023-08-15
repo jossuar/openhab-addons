@@ -31,6 +31,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.binding.risco.internal.protocol.MessageOrigin;
 import org.openhab.binding.risco.internal.protocol.RiscoMessage;
 import org.openhab.binding.risco.internal.protocol.RiscoMessageFactory;
@@ -122,11 +123,6 @@ public class RiscoCommunicator {
         riscoWatchdog = scheduler.scheduleWithFixedDelay(new RiscoWatchdog(), 10, 20, TimeUnit.SECONDS);
 
         connected = true;
-
-        // Initialize the communication with the panel
-        send(Remote.getReadCommand(password));
-        send(Local.getReadCommand());
-
         logger.trace("RiscoCommunicator communication threads started successfully");
     }
 
@@ -157,8 +153,16 @@ public class RiscoCommunicator {
         connected = true;
 
         // Initialize the communication with the panel
-        send(String.format("RMT=%s", password)); // REMOTE
-        send("LCL"); // LOCAL
+        send(Remote.getReadCommand(password));
+        send(Local.getReadCommand());
+
+        // Delay two seconds for the initial connection
+        try {
+            Thread.sleep(60000);
+        } catch (InterruptedException e) {
+        }
+
+        connected = true;
     }
 
     public void stop() {
@@ -213,10 +217,40 @@ public class RiscoCommunicator {
         riscoWatchdog.cancel(true);
     }
 
-    public synchronized void send(String command) {
+    @Nullable
+    private Integer responseCommandId;
+
+    public synchronized void sendAndWait(String command) {
         RiscoMessageFactory factory = new RiscoMessageFactory();
         RiscoMessage msg = factory.create(panelId, encoding, sendCommandId, command, true);
-        // RiscoMessagePair pair = new RiscoMessagePair(msg);
+        sendQueue.add(msg);
+
+        responseCommandId = sendCommandId;
+
+        while (responseCommandId != null) {
+            try {
+                wait();
+            } catch (InterruptedException e) {
+            }
+        }
+
+        // adjust command id For next send (1-45)
+        sendCommandId++;
+        if (sendCommandId == 46) {
+            sendCommandId = 1;
+        }
+    }
+
+    public synchronized void send(String command) {
+        while (responseCommandId != null) {
+            try {
+                wait();
+            } catch (InterruptedException e) {
+            }
+        }
+
+        RiscoMessageFactory factory = new RiscoMessageFactory();
+        RiscoMessage msg = factory.create(panelId, encoding, sendCommandId, command, true);
 
         // adjust command id For next send (1-45)
         sendCommandId++;
@@ -224,7 +258,6 @@ public class RiscoCommunicator {
             sendCommandId = 1;
         }
 
-        // inFlightQueue.add(pair);
         sendQueue.add(msg);
     }
 
@@ -235,10 +268,15 @@ public class RiscoCommunicator {
         sendQueue.add(msg);
     }
 
-    private void handleIncomingMessage(RiscoMessage msg) {
+    private synchronized void handleIncomingMessage(RiscoMessage msg) {
         logger.debug("<---- {}", msg);
 
         lastReceiveTime = ZonedDateTime.now();
+
+        if (responseCommandId != null && msg.getCommandId() == responseCommandId) {
+            responseCommandId = null;
+            notifyAll();
+        }
 
         if (msg.getMessageOrigin() == MessageOrigin.PANEL) {
             sendFirst(msg.getCommandId(), "ACK");
