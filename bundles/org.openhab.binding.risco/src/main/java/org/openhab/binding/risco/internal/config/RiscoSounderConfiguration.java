@@ -23,7 +23,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 public class RiscoSounderConfiguration {
 
     // Zone Thing constants
-    public static final String SIREN_NUMBER = "sounderNumber";
+    public static final String SOUNDER_NUMBER = "sounderNumber";
 
     /**
      * The Sounder Number. Can be in the range of 1-32. This is a required parameter for a sounder

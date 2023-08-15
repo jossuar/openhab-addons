@@ -24,11 +24,27 @@ import org.openhab.binding.risco.internal.RiscoBindingConstants;
 import org.openhab.binding.risco.internal.RiscoCommunicator;
 import org.openhab.binding.risco.internal.RiscoCommunicator.RiscoPanelListener;
 import org.openhab.binding.risco.internal.config.RiscoBridgeConfiguration;
+import org.openhab.binding.risco.internal.config.RiscoBusExpanderConfiguration;
+import org.openhab.binding.risco.internal.config.RiscoKeyfobConfiguration;
+import org.openhab.binding.risco.internal.config.RiscoKeypadConfiguration;
+import org.openhab.binding.risco.internal.config.RiscoOutputConfiguration;
+import org.openhab.binding.risco.internal.config.RiscoOutputExpanderConfiguration;
+import org.openhab.binding.risco.internal.config.RiscoPartitionConfiguration;
+import org.openhab.binding.risco.internal.config.RiscoPowerSupplyConfiguration;
+import org.openhab.binding.risco.internal.config.RiscoProximityReaderConfiguration;
+import org.openhab.binding.risco.internal.config.RiscoSounderConfiguration;
+import org.openhab.binding.risco.internal.config.RiscoWirelessModuleConfiguration;
+import org.openhab.binding.risco.internal.config.RiscoZoneConfiguration;
+import org.openhab.binding.risco.internal.config.RiscoZoneExpanderConfiguration;
 import org.openhab.binding.risco.internal.discovery.RiscoDiscoveryService;
+import org.openhab.binding.risco.internal.handler.thing.RiscoBusExpanderHandler;
 import org.openhab.binding.risco.internal.handler.thing.RiscoKeyfobHandler;
 import org.openhab.binding.risco.internal.handler.thing.RiscoKeypadHandler;
+import org.openhab.binding.risco.internal.handler.thing.RiscoOutputExpanderHandler;
 import org.openhab.binding.risco.internal.handler.thing.RiscoOutputHandler;
 import org.openhab.binding.risco.internal.handler.thing.RiscoPartitionHandler;
+import org.openhab.binding.risco.internal.handler.thing.RiscoPowerSupplyHandler;
+import org.openhab.binding.risco.internal.handler.thing.RiscoProximityReaderHandler;
 import org.openhab.binding.risco.internal.handler.thing.RiscoSounderHandler;
 import org.openhab.binding.risco.internal.handler.thing.RiscoSystemHandler;
 import org.openhab.binding.risco.internal.handler.thing.RiscoVoiceModuleHandler;
@@ -66,14 +82,18 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
 
     // Things served by the bridge
     private Map<String, Thing> thingGeneralMap = new ConcurrentHashMap<>();
-    private Map<Integer, Thing> thingPartitionMap = new ConcurrentHashMap<>();
-    private Map<Integer, Thing> thingZoneMap = new ConcurrentHashMap<>();
-    private Map<Integer, Thing> thingOutputMap = new ConcurrentHashMap<>();
-    private Map<Integer, Thing> thingZoneExpanderMap = new ConcurrentHashMap<>();
-    private Map<Integer, Thing> thingWirelessModuleMap = new ConcurrentHashMap<>();
-    private Map<Integer, Thing> thingSounderMap = new ConcurrentHashMap<>();
-    private Map<Integer, Thing> thingKeypadMap = new ConcurrentHashMap<>();
+    private Map<Integer, Thing> thingBusExpanderMap = new ConcurrentHashMap<>();
     private Map<Integer, Thing> thingKeyfobMap = new ConcurrentHashMap<>();
+    private Map<Integer, Thing> thingKeypadMap = new ConcurrentHashMap<>();
+    private Map<Integer, Thing> thingOutputMap = new ConcurrentHashMap<>();
+    private Map<Integer, Thing> thingOutputExpanderMap = new ConcurrentHashMap<>();
+    private Map<Integer, Thing> thingPartitionMap = new ConcurrentHashMap<>();
+    private Map<Integer, Thing> thingPowerSupplyMap = new ConcurrentHashMap<>();
+    private Map<Integer, Thing> thingProximityReaderMap = new ConcurrentHashMap<>();
+    private Map<Integer, Thing> thingSounderMap = new ConcurrentHashMap<>();
+    private Map<Integer, Thing> thingWirelessModuleMap = new ConcurrentHashMap<>();
+    private Map<Integer, Thing> thingZoneMap = new ConcurrentHashMap<>();
+    private Map<Integer, Thing> thingZoneExpanderMap = new ConcurrentHashMap<>();
 
     // Communication
     private @Nullable RiscoCommunicator communicator = null;
@@ -219,58 +239,47 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
         switch (riscoThingType) {
             case SYSTEM:
                 return thingGeneralMap.get(RiscoBindingConstants.SYSTEM);
-            case ZONE:
-                if (index != null) {
-                    return thingZoneMap.get(Integer.valueOf(index));
-                }
-                break;
-            case BUS_EXPANDER:
-                break;
             case CELLULAR_ON_BUS:
-                break;
-            case KEYFOB:
-                if (index != null) {
-                    return thingKeyfobMap.get(Integer.valueOf(index));
-                }
-                break;
-            case KEYPAD:
-                if (index != null) {
-                    return thingKeypadMap.get(Integer.valueOf(index));
-                }
-                break;
-            case OUTPUT:
-                if (index != null) {
-                    return thingOutputMap.get(Integer.valueOf(index));
-                }
-                break;
-            case OUTPUT_EXPANDER:
-                break;
-            case PARTITION:
-                if (index != null) {
-                    return thingPartitionMap.get(Integer.valueOf(index));
-                }
-                break;
-            case SOUNDER:
-                if (index != null) {
-                    return thingSounderMap.get(Integer.valueOf(index));
-                }
                 break;
             case VOICE_MODULE:
                 return thingGeneralMap.get(RiscoBindingConstants.VOICE_MODULE);
+            default:
+                break;
+        }
+        if (index == null) {
+            return null;
+        }
+
+        switch (riscoThingType) {
+            case BUS_EXPANDER:
+                return thingBusExpanderMap.get(Integer.valueOf(index));
+            case KEYFOB:
+                return thingKeyfobMap.get(Integer.valueOf(index));
+            case KEYPAD:
+                return thingKeypadMap.get(Integer.valueOf(index));
+            case OUTPUT:
+                return thingOutputMap.get(Integer.valueOf(index));
+            case OUTPUT_EXPANDER:
+                return thingOutputExpanderMap.get(Integer.valueOf(index));
+            case PARTITION:
+                return thingPartitionMap.get(Integer.valueOf(index));
+            case POWER_SUPPLY:
+                return thingPowerSupplyMap.get(Integer.valueOf(index));
+            case PROXIMITY_READER:
+                return thingProximityReaderMap.get(Integer.valueOf(index));
+            case SOUNDER:
+                return thingSounderMap.get(Integer.valueOf(index));
             case WIRELESS_MODULE:
-                if (index != null) {
-                    return thingWirelessModuleMap.get(Integer.valueOf(index));
-                }
-                break;
+                return thingWirelessModuleMap.get(Integer.valueOf(index));
+            case ZONE:
+                return thingZoneMap.get(Integer.valueOf(index));
             case ZONE_EXPANDER:
-                if (index != null) {
-                    return thingZoneExpanderMap.get(Integer.valueOf(index));
-                }
-                break;
+                return thingZoneExpanderMap.get(Integer.valueOf(index));
             default:
                 break;
         }
         return null;
+
     }
 
     private DiscoveryInfo mapInfo(RiscoThingType type, @Nullable Integer index) {
@@ -280,71 +289,11 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
         String indexProperty;
 
         switch (type) {
-            case SYSTEM:
-                ttUID = RiscoBindingConstants.SYSTEM_THING_TYPE;
-                prefix = RiscoBindingConstants.SYSTEM;
-                label = "System";
-                indexProperty = null;
-                break;
-            case PARTITION:
-                ttUID = RiscoBindingConstants.PARTITION_THING_TYPE;
-                prefix = RiscoBindingConstants.PARTITION;
-                label = "Partition " + index;
-                indexProperty = "partitionNumber";
-                break;
-            case ZONE:
-                ttUID = RiscoBindingConstants.ZONE_THING_TYPE;
-                prefix = RiscoBindingConstants.ZONE;
-                label = "Zone " + index;
-                indexProperty = "zoneNumber";
-                break;
-            case KEYPAD:
-                ttUID = RiscoBindingConstants.KEYPAD_THING_TYPE;
-                prefix = RiscoBindingConstants.KEYPAD;
-                label = "Keypad " + index;
-                indexProperty = "keypadNumber";
-                break;
-            case OUTPUT:
-                ttUID = RiscoBindingConstants.OUTPUT_THING_TYPE;
-                prefix = RiscoBindingConstants.OUTPUT;
-                label = "Output " + index;
-                indexProperty = "outputNumber";
-                break;
-            case KEYFOB:
-                ttUID = RiscoBindingConstants.KEYFOB_THING_TYPE;
-                prefix = RiscoBindingConstants.KEYFOB;
-                label = "Keyfob " + index;
-                indexProperty = "keyfobNumber";
-                break;
             case BUS_EXPANDER:
                 ttUID = RiscoBindingConstants.BUS_EXPANDER_THING_TYPE;
                 prefix = RiscoBindingConstants.BUS_EXPANDER;
                 label = "Bus Expander " + index;
-                indexProperty = "busExpanderNumber";
-                break;
-            case ZONE_EXPANDER:
-                ttUID = RiscoBindingConstants.ZONE_EXPANDER_THING_TYPE;
-                prefix = RiscoBindingConstants.ZONE_EXPANDER;
-                label = "Zone Expander " + index;
-                indexProperty = "zoneExpanderNumber";
-                break;
-            case OUTPUT_EXPANDER:
-                ttUID = RiscoBindingConstants.OUTPUT_EXPANDER_THING_TYPE;
-                prefix = RiscoBindingConstants.OUTPUT_EXPANDER;
-                label = "Output Expander " + index;
-                indexProperty = "outputExpanderNumber";
-                break;
-            case WIRELESS_MODULE:
-                ttUID = RiscoBindingConstants.WIRELESS_MODULE_THING_TYPE;
-                prefix = RiscoBindingConstants.WIRELESS_MODULE;
-                label = "Wireless Module " + index;
-                indexProperty = "wirelesModuleNumber";
-                break;
-            case VOICE_MODULE:
-                ttUID = RiscoBindingConstants.VOICE_MODULE_THING_TYPE;
-                prefix = RiscoBindingConstants.VOICE_MODULE;
-                label = "Voice Module " + index;
-                indexProperty = "voiceModuleNumber";
+                indexProperty = RiscoBusExpanderConfiguration.BUS_EXPANDER_NUMBER;
                 break;
             case CELLULAR_ON_BUS:
                 ttUID = RiscoBindingConstants.CELLULAR_ON_BUS_THING_TYPE;
@@ -352,15 +301,88 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
                 label = "Cellular on Bus " + index;
                 indexProperty = "cellularOnBusNumber";
                 break;
+            case KEYFOB:
+                ttUID = RiscoBindingConstants.KEYFOB_THING_TYPE;
+                prefix = RiscoBindingConstants.KEYFOB;
+                label = "Keyfob " + index;
+                indexProperty = RiscoKeyfobConfiguration.KEYFOB_NUMBER;
+                break;
+            case KEYPAD:
+                ttUID = RiscoBindingConstants.KEYPAD_THING_TYPE;
+                prefix = RiscoBindingConstants.KEYPAD;
+                label = "Keypad " + index;
+                indexProperty = RiscoKeypadConfiguration.KEYPAD_NUMBER;
+                break;
+            case OUTPUT:
+                ttUID = RiscoBindingConstants.OUTPUT_THING_TYPE;
+                prefix = RiscoBindingConstants.OUTPUT;
+                label = "Output " + index;
+                indexProperty = RiscoOutputConfiguration.OUTPUT_NUMBER;
+                break;
+            case OUTPUT_EXPANDER:
+                ttUID = RiscoBindingConstants.OUTPUT_EXPANDER_THING_TYPE;
+                prefix = RiscoBindingConstants.OUTPUT_EXPANDER;
+                label = "Output Expander " + index;
+                indexProperty = RiscoOutputExpanderConfiguration.OUTPUT_EXPANDER_NUMBER;
+                break;
+            case PARTITION:
+                ttUID = RiscoBindingConstants.PARTITION_THING_TYPE;
+                prefix = RiscoBindingConstants.PARTITION;
+                label = "Partition " + index;
+                indexProperty = RiscoPartitionConfiguration.PARTITION_NUMBER;
+                break;
+            case POWER_SUPPLY:
+                ttUID = RiscoBindingConstants.POWER_SUPPLY_THING_TYPE;
+                prefix = RiscoBindingConstants.POWER_SUPPLY;
+                label = "Power Supply " + index;
+                indexProperty = RiscoPowerSupplyConfiguration.POWER_SUPPLY_NUMBER;
+                break;
+            case PROXIMITY_READER:
+                ttUID = RiscoBindingConstants.PROXIMITY_READER_THING_TYPE;
+                prefix = RiscoBindingConstants.PROXIMITY_READER;
+                label = "Proximity Reader " + index;
+                indexProperty = RiscoProximityReaderConfiguration.PROXIMITY_READER_NUMBER;
+                break;
             case SOUNDER:
-                ttUID = RiscoBindingConstants.SIREN_THING_TYPE;
+                ttUID = RiscoBindingConstants.SOUNDER_THING_TYPE;
                 prefix = RiscoBindingConstants.SIREN;
-                label = "Siren " + index;
-                indexProperty = "sirenNumber";
+                label = "Sounder " + index;
+                indexProperty = RiscoSounderConfiguration.SOUNDER_NUMBER;
+                break;
+            case SYSTEM:
+                ttUID = RiscoBindingConstants.SYSTEM_THING_TYPE;
+                prefix = RiscoBindingConstants.SYSTEM;
+                label = "System";
+                indexProperty = null;
+                break;
+            case VOICE_MODULE:
+                ttUID = RiscoBindingConstants.VOICE_MODULE_THING_TYPE;
+                prefix = RiscoBindingConstants.VOICE_MODULE;
+                label = "Voice Module";
+                indexProperty = null;
+                break;
+            case WIRELESS_MODULE:
+                ttUID = RiscoBindingConstants.WIRELESS_MODULE_THING_TYPE;
+                prefix = RiscoBindingConstants.WIRELESS_MODULE;
+                label = "Wireless Module " + index;
+                indexProperty = RiscoWirelessModuleConfiguration.WIRELESS_MODULE_NUMBER;
+                break;
+            case ZONE:
+                ttUID = RiscoBindingConstants.ZONE_THING_TYPE;
+                prefix = RiscoBindingConstants.ZONE;
+                label = "Zone " + index;
+                indexProperty = RiscoZoneConfiguration.ZONE_NUMBER;
+                break;
+            case ZONE_EXPANDER:
+                ttUID = RiscoBindingConstants.ZONE_EXPANDER_THING_TYPE;
+                prefix = RiscoBindingConstants.ZONE_EXPANDER;
+                label = "Zone Expander " + index;
+                indexProperty = RiscoZoneExpanderConfiguration.ZONE_EXPANDER_NUMBER;
                 break;
             default:
                 logger.debug("getThingUID: Missing enum case");
                 throw new IllegalArgumentException("getThingUID: type is unknown. [" + type + "]");
+
         }
 
         ThingUID thingUID = new ThingUID(ttUID, getThing().getUID(), prefix + index);
@@ -390,32 +412,44 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
     public void childHandlerInitialized(ThingHandler childHandler, Thing childThing) {
         if (childHandler instanceof RiscoSystemHandler) {
             thingGeneralMap.put(RiscoBindingConstants.SYSTEM, childThing);
-        } else if (childHandler instanceof RiscoZoneHandler) {
-            RiscoZoneHandler handler = (RiscoZoneHandler) childHandler;
-            thingZoneMap.put(handler.getZoneNumber(), childThing);
-        } else if (childHandler instanceof RiscoPartitionHandler) {
-            RiscoPartitionHandler handler = (RiscoPartitionHandler) childHandler;
-            thingPartitionMap.put(handler.getPartitionNumber(), childThing);
-        } else if (childHandler instanceof RiscoOutputHandler) {
-            RiscoOutputHandler handler = (RiscoOutputHandler) childHandler;
-            thingOutputMap.put(handler.getOutputNumber(), childThing);
-        } else if (childHandler instanceof RiscoZoneExpanderHandler) {
-            RiscoZoneExpanderHandler handler = (RiscoZoneExpanderHandler) childHandler;
-            thingZoneExpanderMap.put(handler.getZoneExpanderNumber(), childThing);
-        } else if (childHandler instanceof RiscoWirelessModuleHandler) {
-            RiscoWirelessModuleHandler handler = (RiscoWirelessModuleHandler) childHandler;
-            thingWirelessModuleMap.put(handler.getWirelessModuleNumber(), childThing);
-        } else if (childHandler instanceof RiscoVoiceModuleHandler) {
-            thingGeneralMap.put(RiscoBindingConstants.VOICE_MODULE, childThing);
-        } else if (childHandler instanceof RiscoSounderHandler) {
-            RiscoSounderHandler handler = (RiscoSounderHandler) childHandler;
-            thingSounderMap.put(handler.getSounderNumber(), childThing);
-        } else if (childHandler instanceof RiscoKeypadHandler) {
-            RiscoKeypadHandler handler = (RiscoKeypadHandler) childHandler;
-            thingKeypadMap.put(handler.getKeypadNumber(), childThing);
+        } else if (childHandler instanceof RiscoBusExpanderHandler) {
+            RiscoBusExpanderHandler handler = (RiscoBusExpanderHandler) childHandler;
+            thingBusExpanderMap.put(handler.getBusExpanderNumber(), childThing);
         } else if (childHandler instanceof RiscoKeyfobHandler) {
             RiscoKeyfobHandler handler = (RiscoKeyfobHandler) childHandler;
             thingKeyfobMap.put(handler.getKeyfobNumber(), childThing);
+        } else if (childHandler instanceof RiscoKeypadHandler) {
+            RiscoKeypadHandler handler = (RiscoKeypadHandler) childHandler;
+            thingKeypadMap.put(handler.getKeypadNumber(), childThing);
+        } else if (childHandler instanceof RiscoOutputHandler) {
+            RiscoOutputHandler handler = (RiscoOutputHandler) childHandler;
+            thingOutputMap.put(handler.getOutputNumber(), childThing);
+        } else if (childHandler instanceof RiscoOutputExpanderHandler) {
+            RiscoOutputExpanderHandler handler = (RiscoOutputExpanderHandler) childHandler;
+            thingOutputExpanderMap.put(handler.getOutputExpanderNumber(), childThing);
+        } else if (childHandler instanceof RiscoPartitionHandler) {
+            RiscoPartitionHandler handler = (RiscoPartitionHandler) childHandler;
+            thingPartitionMap.put(handler.getPartitionNumber(), childThing);
+        } else if (childHandler instanceof RiscoPowerSupplyHandler) {
+            RiscoPowerSupplyHandler handler = (RiscoPowerSupplyHandler) childHandler;
+            thingPowerSupplyMap.put(handler.getPowerSupplyNumber(), childThing);
+        } else if (childHandler instanceof RiscoProximityReaderHandler) {
+            RiscoProximityReaderHandler handler = (RiscoProximityReaderHandler) childHandler;
+            thingPartitionMap.put(handler.getProximityReaderNumber(), childThing);
+        } else if (childHandler instanceof RiscoSounderHandler) {
+            RiscoSounderHandler handler = (RiscoSounderHandler) childHandler;
+            thingSounderMap.put(handler.getSounderNumber(), childThing);
+        } else if (childHandler instanceof RiscoVoiceModuleHandler) {
+            thingGeneralMap.put(RiscoBindingConstants.VOICE_MODULE, childThing);
+        } else if (childHandler instanceof RiscoWirelessModuleHandler) {
+            RiscoWirelessModuleHandler handler = (RiscoWirelessModuleHandler) childHandler;
+            thingWirelessModuleMap.put(handler.getWirelessModuleNumber(), childThing);
+        } else if (childHandler instanceof RiscoZoneHandler) {
+            RiscoZoneHandler handler = (RiscoZoneHandler) childHandler;
+            thingZoneMap.put(handler.getZoneNumber(), childThing);
+        } else if (childHandler instanceof RiscoZoneExpanderHandler) {
+            RiscoZoneExpanderHandler handler = (RiscoZoneExpanderHandler) childHandler;
+            thingZoneExpanderMap.put(handler.getZoneExpanderNumber(), childThing);
         }
 
         super.childHandlerInitialized(childHandler, childThing);
@@ -424,33 +458,45 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
     @Override
     public void childHandlerDisposed(ThingHandler childHandler, Thing childThing) {
         if (childHandler instanceof RiscoSystemHandler) {
-            thingGeneralMap.remove(RiscoBindingConstants.SYSTEM, childThing);
-        } else if (childHandler instanceof RiscoZoneHandler) {
-            RiscoZoneHandler handler = (RiscoZoneHandler) childHandler;
-            thingZoneMap.remove(handler.getZoneNumber());
-        } else if (childHandler instanceof RiscoPartitionHandler) {
-            RiscoPartitionHandler handler = (RiscoPartitionHandler) childHandler;
-            thingPartitionMap.remove(handler.getPartitionNumber());
-        } else if (childHandler instanceof RiscoOutputHandler) {
-            RiscoOutputHandler handler = (RiscoOutputHandler) childHandler;
-            thingOutputMap.remove(handler.getOutputNumber());
-        } else if (childHandler instanceof RiscoZoneExpanderHandler) {
-            RiscoZoneExpanderHandler handler = (RiscoZoneExpanderHandler) childHandler;
-            thingZoneExpanderMap.remove(handler.getZoneExpanderNumber());
-        } else if (childHandler instanceof RiscoWirelessModuleHandler) {
-            RiscoWirelessModuleHandler handler = (RiscoWirelessModuleHandler) childHandler;
-            thingWirelessModuleMap.remove(handler.getWirelessModuleNumber());
-        } else if (childHandler instanceof RiscoVoiceModuleHandler) {
-            thingGeneralMap.remove(RiscoBindingConstants.VOICE_MODULE, childThing);
-        } else if (childHandler instanceof RiscoSounderHandler) {
-            RiscoSounderHandler handler = (RiscoSounderHandler) childHandler;
-            thingSounderMap.remove(handler.getSounderNumber());
-        } else if (childHandler instanceof RiscoKeypadHandler) {
-            RiscoKeypadHandler handler = (RiscoKeypadHandler) childHandler;
-            thingKeypadMap.remove(handler.getKeypadNumber());
+            thingGeneralMap.remove(RiscoBindingConstants.SYSTEM);
+        } else if (childHandler instanceof RiscoBusExpanderHandler) {
+            RiscoBusExpanderHandler handler = (RiscoBusExpanderHandler) childHandler;
+            thingBusExpanderMap.remove(handler.getBusExpanderNumber());
         } else if (childHandler instanceof RiscoKeyfobHandler) {
             RiscoKeyfobHandler handler = (RiscoKeyfobHandler) childHandler;
             thingKeyfobMap.remove(handler.getKeyfobNumber());
+        } else if (childHandler instanceof RiscoKeypadHandler) {
+            RiscoKeypadHandler handler = (RiscoKeypadHandler) childHandler;
+            thingKeypadMap.remove(handler.getKeypadNumber());
+        } else if (childHandler instanceof RiscoOutputHandler) {
+            RiscoOutputHandler handler = (RiscoOutputHandler) childHandler;
+            thingOutputMap.remove(handler.getOutputNumber());
+        } else if (childHandler instanceof RiscoOutputExpanderHandler) {
+            RiscoOutputExpanderHandler handler = (RiscoOutputExpanderHandler) childHandler;
+            thingOutputExpanderMap.remove(handler.getOutputExpanderNumber());
+        } else if (childHandler instanceof RiscoPartitionHandler) {
+            RiscoPartitionHandler handler = (RiscoPartitionHandler) childHandler;
+            thingPartitionMap.remove(handler.getPartitionNumber());
+        } else if (childHandler instanceof RiscoPowerSupplyHandler) {
+            RiscoPowerSupplyHandler handler = (RiscoPowerSupplyHandler) childHandler;
+            thingPowerSupplyMap.remove(handler.getPowerSupplyNumber());
+        } else if (childHandler instanceof RiscoProximityReaderHandler) {
+            RiscoProximityReaderHandler handler = (RiscoProximityReaderHandler) childHandler;
+            thingPartitionMap.remove(handler.getProximityReaderNumber());
+        } else if (childHandler instanceof RiscoSounderHandler) {
+            RiscoSounderHandler handler = (RiscoSounderHandler) childHandler;
+            thingSounderMap.remove(handler.getSounderNumber());
+        } else if (childHandler instanceof RiscoVoiceModuleHandler) {
+            thingGeneralMap.remove(RiscoBindingConstants.VOICE_MODULE);
+        } else if (childHandler instanceof RiscoWirelessModuleHandler) {
+            RiscoWirelessModuleHandler handler = (RiscoWirelessModuleHandler) childHandler;
+            thingWirelessModuleMap.remove(handler.getWirelessModuleNumber());
+        } else if (childHandler instanceof RiscoZoneHandler) {
+            RiscoZoneHandler handler = (RiscoZoneHandler) childHandler;
+            thingZoneMap.remove(handler.getZoneNumber());
+        } else if (childHandler instanceof RiscoZoneExpanderHandler) {
+            RiscoZoneExpanderHandler handler = (RiscoZoneExpanderHandler) childHandler;
+            thingZoneExpanderMap.remove(handler.getZoneExpanderNumber());
         }
 
         super.childHandlerDisposed(childHandler, childThing);
