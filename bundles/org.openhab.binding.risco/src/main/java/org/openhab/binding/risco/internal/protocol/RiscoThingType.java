@@ -21,17 +21,19 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
  */
 @NonNullByDefault
 public enum RiscoThingType {
-    SYSTEM,
-    PARTITION,
-    ZONE,
+    BUS_EXPANDER,
+    CELLULAR_ON_BUS,
+    KEYFOB,
     KEYPAD,
     OUTPUT,
-    KEYFOB,
-    BUS_EXPANDER,
-    ZONE_EXPANDER,
     OUTPUT_EXPANDER,
-    WIRELESS_MODULE,
+    PARTITION,
+    POWER_SUPPLY,
+    PROXIMITY_READER,
+    SOUNDER,
     VOICE_MODULE,
-    CELLULAR_ON_BUS,
-    SIREN
+    WIRELESS_MODULE,
+    SYSTEM,
+    ZONE,
+    ZONE_EXPANDER
 };

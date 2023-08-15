@@ -16,10 +16,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.openhab.binding.risco.internal.config.RiscoSirenConfiguration;
+import org.openhab.binding.risco.internal.config.RiscoOutputExpanderConfiguration;
 import org.openhab.binding.risco.internal.handler.RiscoBridgeHandler;
 import org.openhab.binding.risco.internal.handler.RiscoThingHandler;
-import org.openhab.binding.risco.internal.protocol.message.SirenStatus;
+import org.openhab.binding.risco.internal.protocol.message.OutputExpanderStatus;
 import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.thing.Thing;
 import org.openhab.core.thing.ThingStatus;
@@ -29,34 +29,34 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The {@link RiscoSirenHandler} is responsible for handling commands, which are
+ * The {@link RiscoOutputExpanderHandler} is responsible for handling commands, which are
  * sent to one of the channels.
  *
  * @author Georgios Moutsos - Initial contribution
  */
 @NonNullByDefault
-public class RiscoSirenHandler extends RiscoThingHandler {
-    private final Logger logger = LoggerFactory.getLogger(RiscoSirenHandler.class);
+public class RiscoOutputExpanderHandler extends RiscoThingHandler {
+    private final Logger logger = LoggerFactory.getLogger(RiscoOutputExpanderHandler.class);
 
-    private int sirenNumber;
+    private int outputExpanderNumber;
 
-    public RiscoSirenHandler(Thing thing) {
+    public RiscoOutputExpanderHandler(Thing thing) {
         super(thing);
     }
 
-    public int getSirenNumber() {
-        return sirenNumber;
+    public int getOutputExpanderNumber() {
+        return outputExpanderNumber;
     }
 
-    public void setSirenNumber(int sirenNumber) {
-        this.sirenNumber = sirenNumber;
+    public void setOutputExpanderNumber(int outputExpanderNumber) {
+        this.outputExpanderNumber = outputExpanderNumber;
     }
 
     @Override
     public void initialize() {
         // Load configuration
-        RiscoSirenConfiguration config = getConfigAs(RiscoSirenConfiguration.class);
-        setSirenNumber(config.getSirenNumber());
+        RiscoOutputExpanderConfiguration config = getConfigAs(RiscoOutputExpanderConfiguration.class);
+        setOutputExpanderNumber(config.getOutputExpanderNumber());
 
         // set the Thing offline for now
         updateStatus(ThingStatus.OFFLINE);
@@ -66,9 +66,9 @@ public class RiscoSirenHandler extends RiscoThingHandler {
             return;
         }
 
-        // Send Siren Status update command
-        bridgeHandler.sendCommand(SirenStatus.getReadCommand(sirenNumber));
-        logger.trace("RiscoSirenHandler initialized [{}]", sirenNumber);
+        // Send Bus Expander Status update command
+        bridgeHandler.sendCommand(OutputExpanderStatus.getReadCommand(outputExpanderNumber));
+        logger.trace("RiscoBusExpanderHandler initialized [{}]", outputExpanderNumber);
     }
 
     @Override
@@ -78,7 +78,7 @@ public class RiscoSirenHandler extends RiscoThingHandler {
         List<String> messages = new ArrayList<String>();
 
         if (command instanceof RefreshType) {
-            messages.add(SirenStatus.getReadCommand(getSirenNumber()));
+            messages.add(OutputExpanderStatus.getReadCommand(getOutputExpanderNumber()));
         } else {
             logger.debug("Unknown command {}", command);
             return;
