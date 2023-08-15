@@ -29,7 +29,7 @@ import org.openhab.binding.risco.internal.protocol.message.OutputStatus;
 import org.openhab.binding.risco.internal.protocol.message.PanelConfiguration;
 import org.openhab.binding.risco.internal.protocol.message.PartitionAllocation;
 import org.openhab.binding.risco.internal.protocol.message.PartitionStatus;
-import org.openhab.binding.risco.internal.protocol.message.SirenStatus;
+import org.openhab.binding.risco.internal.protocol.message.SounderStatus;
 import org.openhab.binding.risco.internal.protocol.message.SystemStatus;
 import org.openhab.binding.risco.internal.protocol.message.Unknown;
 import org.openhab.binding.risco.internal.protocol.message.VoiceModuleStatus;
@@ -173,8 +173,8 @@ public class RiscoMessageFactory {
                 return new PartitionStatus(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
                         encryptedMessage, decryptedMessage);
 
-            case SirenStatus.COMMAND:
-                return new SirenStatus(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
+            case SounderStatus.COMMAND:
+                return new SounderStatus(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
                         encryptedMessage, decryptedMessage);
 
             case SystemStatus.COMMAND:

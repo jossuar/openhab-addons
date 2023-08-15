@@ -25,31 +25,22 @@ import org.openhab.binding.risco.internal.protocol.RiscoThingType;
  * @author Georgios Moutsos - Initial contribution
  */
 @NonNullByDefault
-public class SirenStatus extends RiscoMessage {
-    public static final String COMMAND = "SNSTT";
+public class OutputExpanderStatus extends RiscoMessage {
+    public static final String COMMAND = "OESTT";
 
     // @formatter:off
     private final STTProperty[] properties = {
-        new STTProperty("radio-low-battery-trouble", "R"),
-            new STTProperty("speaker-low-battery-trouble", "S"),
-            new STTProperty("battery-load", "O"),
             new STTProperty("tamper", "T"),
             new STTProperty("communication-trouble", "C"),
-            new STTProperty("exists", "E"),
-            new STTProperty("proximity-tamper", "P"),
-            new STTProperty("aux-trouble", "U"),
-            new STTProperty("speaker-flt", "N"),
-            new STTProperty("charge-trouble", "T"),
-            new STTProperty("invalid", "T"),
-            new STTProperty("box-tamper", "T"),
-            new STTProperty("lost", "T"),
-            new STTProperty("low-battery", "T") };
+            new STTProperty("phone-line-trouble", "P"),
+            new STTProperty("dual-path-trouble", "D"),
+            new STTProperty("exists", "E") };
     // @formatter:on
 
     private List<RiscoThing> messageThings = new ArrayList<RiscoThing>();
 
-    public SirenStatus(int commandId, String commandName, String modifier, String[] commandValues, int indexFrom,
-            int indexTo, byte[] encryptedMessage, byte[] decryptedMessage) {
+    public OutputExpanderStatus(int commandId, String commandName, String modifier, String[] commandValues,
+            int indexFrom, int indexTo, byte[] encryptedMessage, byte[] decryptedMessage) {
         super(commandId, commandName, modifier, commandValues, indexFrom, indexTo, encryptedMessage, decryptedMessage);
     }
 
@@ -73,7 +64,7 @@ public class SirenStatus extends RiscoMessage {
                         }
                     }
 
-                    things.add(new RiscoThing(RiscoThingType.SIREN, index, props));
+                    things.add(new RiscoThing(RiscoThingType.BUS_EXPANDER, index, props));
                 }
             }
 
@@ -83,7 +74,7 @@ public class SirenStatus extends RiscoMessage {
         return messageThings;
     }
 
-    public static String getReadCommand(int sirenNumber) {
-        return String.format(COMMAND + "%d?", sirenNumber);
+    public static String getReadCommand(int busExpanderNumber) {
+        return String.format(COMMAND + "%d?", busExpanderNumber);
     }
 }
