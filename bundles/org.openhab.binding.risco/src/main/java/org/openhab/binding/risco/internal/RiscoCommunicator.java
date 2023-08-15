@@ -34,6 +34,9 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.openhab.binding.risco.internal.protocol.MessageOrigin;
 import org.openhab.binding.risco.internal.protocol.RiscoMessage;
 import org.openhab.binding.risco.internal.protocol.RiscoMessageFactory;
+import org.openhab.binding.risco.internal.protocol.message.connection.Disconnect;
+import org.openhab.binding.risco.internal.protocol.message.connection.Local;
+import org.openhab.binding.risco.internal.protocol.message.connection.Remote;
 import org.openhab.core.util.HexUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -121,8 +124,8 @@ public class RiscoCommunicator {
         connected = true;
 
         // Initialize the communication with the panel
-        send(String.format("RMT=%s", password)); // REMOTE
-        send("LCL"); // LOCAL
+        send(Remote.getReadCommand(password));
+        send(Local.getReadCommand());
 
         logger.trace("RiscoCommunicator communication threads started successfully");
     }
@@ -164,7 +167,13 @@ public class RiscoCommunicator {
         connected = false;
 
         // Disconnect command
-        send("DCN");
+        send(Disconnect.getReadCommand());
+
+        // Wait a second to receive the ACK from the panel before closing the socket
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+        }
 
         // Interrupt threads
         riscoReceiver.interrupt();

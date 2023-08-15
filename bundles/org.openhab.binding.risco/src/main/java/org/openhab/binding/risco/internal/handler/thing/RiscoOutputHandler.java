@@ -19,7 +19,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.openhab.binding.risco.internal.config.RiscoOutputConfiguration;
 import org.openhab.binding.risco.internal.handler.RiscoBridgeHandler;
 import org.openhab.binding.risco.internal.handler.RiscoThingHandler;
-import org.openhab.binding.risco.internal.protocol.message.OutputStatus;
+import org.openhab.binding.risco.internal.protocol.message.status.OutputStatus;
 import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.thing.Thing;
 import org.openhab.core.thing.ThingStatus;
@@ -39,6 +39,7 @@ public class RiscoOutputHandler extends RiscoThingHandler {
     private final Logger logger = LoggerFactory.getLogger(RiscoOutputHandler.class);
 
     private int outputNumber;
+    private long lastRefreshTime = 0;
 
     public RiscoOutputHandler(Thing thing) {
         super(thing);
@@ -81,7 +82,11 @@ public class RiscoOutputHandler extends RiscoThingHandler {
         List<String> messages = new ArrayList<String>();
 
         if (command instanceof RefreshType) {
-            messages.add(OutputStatus.getReadCommand(getOutputNumber()));
+            // Refresh only if 5 seconds have passed from the last refresh
+            if (System.currentTimeMillis() - lastRefreshTime > 5000) {
+                messages.add(OutputStatus.getReadCommand(getOutputNumber()));
+                lastRefreshTime = System.currentTimeMillis();
+            }
         } else {
             logger.debug("Unknown command {}", command);
             return;
