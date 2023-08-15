@@ -20,6 +20,7 @@ import org.openhab.binding.risco.internal.protocol.RiscoMessage;
 import org.openhab.binding.risco.internal.protocol.RiscoProperty;
 import org.openhab.binding.risco.internal.protocol.RiscoThing;
 import org.openhab.binding.risco.internal.protocol.RiscoThingType;
+import org.openhab.binding.risco.internal.protocol.StatusProperty;
 
 /**
  * @author Georgios Moutsos - Initial contribution
@@ -29,21 +30,21 @@ public class SounderStatus extends RiscoMessage {
     public static final String COMMAND = "SNSTT";
 
     // @formatter:off
-    private final STTProperty[] properties = {
-        new STTProperty("radio-low-battery-trouble", "R"),
-            new STTProperty("speaker-low-battery-trouble", "S"),
-            new STTProperty("battery-load", "O"),
-            new STTProperty("tamper", "T"),
-            new STTProperty("communication-trouble", "C"),
-            new STTProperty("exists", "E"),
-            new STTProperty("proximity-tamper", "P"),
-            new STTProperty("aux-trouble", "U"),
-            new STTProperty("speaker-flt", "N"),
-            new STTProperty("charge-trouble", "T"),
-            new STTProperty("invalid", "T"),
-            new STTProperty("box-tamper", "T"),
-            new STTProperty("lost", "T"),
-            new STTProperty("low-battery", "T") };
+    private final StatusProperty[] properties = {
+        new StatusProperty("radio-low-battery-trouble", "R"),
+            new StatusProperty("speaker-low-battery-trouble", "S"),
+            new StatusProperty("battery-load", "O"),
+            new StatusProperty("tamper", "T"),
+            new StatusProperty("communication-trouble", "C"),
+            new StatusProperty("exists", "E"),
+            new StatusProperty("proximity-tamper", "P"),
+            new StatusProperty("aux-trouble", "U"),
+            new StatusProperty("speaker-flt", "N"),
+            new StatusProperty("charge-trouble", "T"),
+            new StatusProperty("invalid", "T"),
+            new StatusProperty("box-tamper", "T"),
+            new StatusProperty("lost", "T"),
+            new StatusProperty("low-battery", "T") };
     // @formatter:on
 
     private List<RiscoThing> messageThings = new ArrayList<RiscoThing>();
@@ -65,7 +66,7 @@ public class SounderStatus extends RiscoMessage {
                 if (value != null) {
                     List<RiscoProperty> props = new ArrayList<RiscoProperty>();
 
-                    for (STTProperty prop : properties) {
+                    for (StatusProperty prop : properties) {
                         if (value.contains(prop.flag)) {
                             props.add(new RiscoProperty(prop.property, "true"));
                         } else {
