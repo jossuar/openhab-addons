@@ -67,6 +67,7 @@ import org.openhab.core.thing.binding.BaseBridgeHandler;
 import org.openhab.core.thing.binding.ThingHandler;
 import org.openhab.core.thing.binding.ThingHandlerService;
 import org.openhab.core.types.Command;
+import org.openhab.core.types.RefreshType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -136,9 +137,6 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
         RiscoCommunicator communicator = this.communicator;
         if (communicator != null) {
             communicator.addListener(this);
-            // communicator.send("KPALOC&?");
-            // communicator.send("KFALOC&?");
-            // communicator.send("PNLCNF?");
             // communicator.send("PNLVER?");
             // communicator.send("PNLSERD?");
             // communicator.send("DTYPDM?");
@@ -162,13 +160,6 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
          * sendCommand(ZoneStatus.getReadCommand(k)));
          * thingPartitionMap.forEach((k, v) -> sendCommand(PartitionStatus.getReadCommand(k)));
          */
-        // list all channels
-        if (logger.isTraceEnabled()) {
-            logger.trace("list all {} channels:", getThing().getChannels().size());
-            for (Channel c : getThing().getChannels()) {
-                logger.trace("Channel Type {} UID {}", c.getChannelTypeUID(), c.getUID());
-            }
-        }
     }
 
     @Override
@@ -453,6 +444,11 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
         }
 
         super.childHandlerInitialized(childHandler, childThing);
+
+        // refresh all channels
+        for (Channel c : childThing.getChannels()) {
+            childHandler.handleCommand(c.getUID(), RefreshType.REFRESH);
+        }
     }
 
     @Override
