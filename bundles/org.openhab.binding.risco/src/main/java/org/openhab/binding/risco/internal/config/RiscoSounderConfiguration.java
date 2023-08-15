@@ -10,30 +10,27 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  */
-package org.openhab.binding.risco.internal.protocol;
+package org.openhab.binding.risco.internal.config;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 
 /**
- * Used to map thing types from the binding string to an ENUM value.
+ * Configuration class for the Risco Sounder Thing.
  *
  * @author Georgios Moutsos - Initial contribution
  */
 @NonNullByDefault
-public enum RiscoThingType {
-    BUS_EXPANDER,
-    CELLULAR_ON_BUS,
-    KEYFOB,
-    KEYPAD,
-    OUTPUT,
-    OUTPUT_EXPANDER,
-    PARTITION,
-    POWER_SUPPLY,
-    PROXIMITY_READER,
-    SOUNDER,
-    VOICE_MODULE,
-    WIRELESS_MODULE,
-    SYSTEM,
-    ZONE,
-    ZONE_EXPANDER
-};
+public class RiscoSounderConfiguration {
+
+    // Zone Thing constants
+    public static final String SIREN_NUMBER = "sounderNumber";
+
+    /**
+     * The Sounder Number. Can be in the range of 1-32. This is a required parameter for a sounder
+     */
+    private int sounderNumber;
+
+    public int getSounderNumber() {
+        return sounderNumber;
+    }
+}

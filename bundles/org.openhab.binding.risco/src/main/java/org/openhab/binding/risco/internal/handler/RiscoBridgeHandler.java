@@ -29,7 +29,7 @@ import org.openhab.binding.risco.internal.handler.thing.RiscoKeyfobHandler;
 import org.openhab.binding.risco.internal.handler.thing.RiscoKeypadHandler;
 import org.openhab.binding.risco.internal.handler.thing.RiscoOutputHandler;
 import org.openhab.binding.risco.internal.handler.thing.RiscoPartitionHandler;
-import org.openhab.binding.risco.internal.handler.thing.RiscoSirenHandler;
+import org.openhab.binding.risco.internal.handler.thing.RiscoSounderHandler;
 import org.openhab.binding.risco.internal.handler.thing.RiscoSystemHandler;
 import org.openhab.binding.risco.internal.handler.thing.RiscoVoiceModuleHandler;
 import org.openhab.binding.risco.internal.handler.thing.RiscoWirelessModuleHandler;
@@ -71,7 +71,7 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
     private Map<Integer, Thing> thingOutputMap = new ConcurrentHashMap<>();
     private Map<Integer, Thing> thingZoneExpanderMap = new ConcurrentHashMap<>();
     private Map<Integer, Thing> thingWirelessModuleMap = new ConcurrentHashMap<>();
-    private Map<Integer, Thing> thingSirenMap = new ConcurrentHashMap<>();
+    private Map<Integer, Thing> thingSounderMap = new ConcurrentHashMap<>();
     private Map<Integer, Thing> thingKeypadMap = new ConcurrentHashMap<>();
     private Map<Integer, Thing> thingKeyfobMap = new ConcurrentHashMap<>();
 
@@ -250,9 +250,9 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
                     return thingPartitionMap.get(Integer.valueOf(index));
                 }
                 break;
-            case SIREN:
+            case SOUNDER:
                 if (index != null) {
-                    return thingSirenMap.get(Integer.valueOf(index));
+                    return thingSounderMap.get(Integer.valueOf(index));
                 }
                 break;
             case VOICE_MODULE:
@@ -352,7 +352,7 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
                 label = "Cellular on Bus " + index;
                 indexProperty = "cellularOnBusNumber";
                 break;
-            case SIREN:
+            case SOUNDER:
                 ttUID = RiscoBindingConstants.SIREN_THING_TYPE;
                 prefix = RiscoBindingConstants.SIREN;
                 label = "Siren " + index;
@@ -407,9 +407,9 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
             thingWirelessModuleMap.put(handler.getWirelessModuleNumber(), childThing);
         } else if (childHandler instanceof RiscoVoiceModuleHandler) {
             thingGeneralMap.put(RiscoBindingConstants.VOICE_MODULE, childThing);
-        } else if (childHandler instanceof RiscoSirenHandler) {
-            RiscoSirenHandler handler = (RiscoSirenHandler) childHandler;
-            thingSirenMap.put(handler.getSirenNumber(), childThing);
+        } else if (childHandler instanceof RiscoSounderHandler) {
+            RiscoSounderHandler handler = (RiscoSounderHandler) childHandler;
+            thingSounderMap.put(handler.getSounderNumber(), childThing);
         } else if (childHandler instanceof RiscoKeypadHandler) {
             RiscoKeypadHandler handler = (RiscoKeypadHandler) childHandler;
             thingKeypadMap.put(handler.getKeypadNumber(), childThing);
@@ -442,9 +442,9 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
             thingWirelessModuleMap.remove(handler.getWirelessModuleNumber());
         } else if (childHandler instanceof RiscoVoiceModuleHandler) {
             thingGeneralMap.remove(RiscoBindingConstants.VOICE_MODULE, childThing);
-        } else if (childHandler instanceof RiscoSirenHandler) {
-            RiscoSirenHandler handler = (RiscoSirenHandler) childHandler;
-            thingSirenMap.remove(handler.getSirenNumber());
+        } else if (childHandler instanceof RiscoSounderHandler) {
+            RiscoSounderHandler handler = (RiscoSounderHandler) childHandler;
+            thingSounderMap.remove(handler.getSounderNumber());
         } else if (childHandler instanceof RiscoKeypadHandler) {
             RiscoKeypadHandler handler = (RiscoKeypadHandler) childHandler;
             thingKeypadMap.remove(handler.getKeypadNumber());
