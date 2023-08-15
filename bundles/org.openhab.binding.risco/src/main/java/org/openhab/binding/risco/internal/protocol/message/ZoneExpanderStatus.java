@@ -20,6 +20,7 @@ import org.openhab.binding.risco.internal.protocol.RiscoMessage;
 import org.openhab.binding.risco.internal.protocol.RiscoProperty;
 import org.openhab.binding.risco.internal.protocol.RiscoThing;
 import org.openhab.binding.risco.internal.protocol.RiscoThingType;
+import org.openhab.binding.risco.internal.protocol.StatusProperty;
 
 /**
  * @author Georgios Moutsos - Initial contribution
@@ -29,11 +30,11 @@ public class ZoneExpanderStatus extends RiscoMessage {
     public static final String COMMAND = "ZESTT";
 
     // @formatter:off
-    private final STTProperty[] properties = {
-            new STTProperty("tamper", "T"),
-            new STTProperty("communication-trouble", "C"),
-            new STTProperty("aux-trouble", "A"),
-            new STTProperty("exists", "E") };
+    private final StatusProperty[] properties = {
+            new StatusProperty("tamper", "T"),
+            new StatusProperty("communication-trouble", "C"),
+            new StatusProperty("aux-trouble", "A"),
+            new StatusProperty("exists", "E") };
     // @formatter:on
 
     private List<RiscoThing> messageThings = new ArrayList<RiscoThing>();
@@ -55,7 +56,7 @@ public class ZoneExpanderStatus extends RiscoMessage {
                 if (value != null) {
                     List<RiscoProperty> props = new ArrayList<RiscoProperty>();
 
-                    for (STTProperty prop : properties) {
+                    for (StatusProperty prop : properties) {
                         if (value.contains(prop.flag)) {
                             props.add(new RiscoProperty(prop.property, "true"));
                         } else {

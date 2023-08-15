@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  */
-package org.openhab.binding.risco.internal.protocol.message;
+package org.openhab.binding.risco.internal.protocol;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 
@@ -18,11 +18,11 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
  * @author Georgios Moutsos - Initial contribution
  */
 @NonNullByDefault
-public class STTProperty {
+public class StatusProperty {
     public String property;
     public String flag;
 
-    public STTProperty(String property, String flag) {
+    public StatusProperty(String property, String flag) {
         super();
 
         this.property = property;
