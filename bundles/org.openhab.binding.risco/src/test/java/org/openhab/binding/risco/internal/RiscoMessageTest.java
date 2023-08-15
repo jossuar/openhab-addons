@@ -22,8 +22,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.openhab.binding.risco.internal.protocol.RiscoMessage;
 import org.openhab.binding.risco.internal.protocol.RiscoMessageFactory;
-import org.openhab.binding.risco.internal.protocol.message.Unknown;
-import org.openhab.binding.risco.internal.protocol.message.ZoneStatus;
+import org.openhab.binding.risco.internal.protocol.message.general.Unknown;
+import org.openhab.binding.risco.internal.protocol.message.status.ZoneStatus;
 
 /**
  * Test class for Risco Message.

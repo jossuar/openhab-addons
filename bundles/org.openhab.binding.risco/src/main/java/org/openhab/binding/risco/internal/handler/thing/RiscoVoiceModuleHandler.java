@@ -18,7 +18,7 @@ import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.openhab.binding.risco.internal.handler.RiscoBridgeHandler;
 import org.openhab.binding.risco.internal.handler.RiscoThingHandler;
-import org.openhab.binding.risco.internal.protocol.message.VoiceModuleStatus;
+import org.openhab.binding.risco.internal.protocol.message.status.VoiceModuleStatus;
 import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.thing.Thing;
 import org.openhab.core.thing.ThingStatus;
@@ -36,6 +36,8 @@ import org.slf4j.LoggerFactory;
 @NonNullByDefault
 public class RiscoVoiceModuleHandler extends RiscoThingHandler {
     private final Logger logger = LoggerFactory.getLogger(RiscoVoiceModuleHandler.class);
+
+    private long lastRefreshTime = 0;
 
     public RiscoVoiceModuleHandler(Thing thing) {
         super(thing);
@@ -61,7 +63,11 @@ public class RiscoVoiceModuleHandler extends RiscoThingHandler {
         List<String> messages = new ArrayList<String>();
 
         if (command instanceof RefreshType) {
-            messages.add(VoiceModuleStatus.getReadCommand());
+            // Refresh only if 5 seconds have passed from the last refresh
+            if (System.currentTimeMillis() - lastRefreshTime > 5000) {
+                messages.add(VoiceModuleStatus.getReadCommand());
+                lastRefreshTime = System.currentTimeMillis();
+            }
         } else {
             logger.debug("Unknown command {}", command);
             return;

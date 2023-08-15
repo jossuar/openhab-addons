@@ -19,7 +19,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.openhab.binding.risco.internal.config.RiscoProximityReaderConfiguration;
 import org.openhab.binding.risco.internal.handler.RiscoBridgeHandler;
 import org.openhab.binding.risco.internal.handler.RiscoThingHandler;
-import org.openhab.binding.risco.internal.protocol.message.ProximityReaderStatus;
+import org.openhab.binding.risco.internal.protocol.message.status.ProximityReaderStatus;
 import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.thing.Thing;
 import org.openhab.core.thing.ThingStatus;
@@ -39,6 +39,7 @@ public class RiscoProximityReaderHandler extends RiscoThingHandler {
     private final Logger logger = LoggerFactory.getLogger(RiscoProximityReaderHandler.class);
 
     private int proximityReaderNumber;
+    private long lastRefreshTime = 0;
 
     public RiscoProximityReaderHandler(Thing thing) {
         super(thing);
@@ -78,7 +79,11 @@ public class RiscoProximityReaderHandler extends RiscoThingHandler {
         List<String> messages = new ArrayList<String>();
 
         if (command instanceof RefreshType) {
-            messages.add(ProximityReaderStatus.getReadCommand(getProximityReaderNumber()));
+            // Refresh only if 5 seconds have passed from the last refresh
+            if (System.currentTimeMillis() - lastRefreshTime > 5000) {
+                messages.add(ProximityReaderStatus.getReadCommand(getProximityReaderNumber()));
+                lastRefreshTime = System.currentTimeMillis();
+            }
         } else {
             logger.debug("Unknown command {}", command);
             return;
