@@ -19,7 +19,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.openhab.binding.risco.internal.config.RiscoPowerSupplyConfiguration;
 import org.openhab.binding.risco.internal.handler.RiscoBridgeHandler;
 import org.openhab.binding.risco.internal.handler.RiscoThingHandler;
-import org.openhab.binding.risco.internal.protocol.message.PowerSupplyStatus;
+import org.openhab.binding.risco.internal.protocol.message.status.PowerSupplyStatus;
 import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.thing.Thing;
 import org.openhab.core.thing.ThingStatus;
@@ -39,6 +39,7 @@ public class RiscoPowerSupplyHandler extends RiscoThingHandler {
     private final Logger logger = LoggerFactory.getLogger(RiscoPowerSupplyHandler.class);
 
     private int powerSupplyNumber;
+    private long lastRefreshTime = 0;
 
     public RiscoPowerSupplyHandler(Thing thing) {
         super(thing);
@@ -78,7 +79,11 @@ public class RiscoPowerSupplyHandler extends RiscoThingHandler {
         List<String> messages = new ArrayList<String>();
 
         if (command instanceof RefreshType) {
-            messages.add(PowerSupplyStatus.getReadCommand(getPowerSupplyNumber()));
+            // Refresh only if 5 seconds have passed from the last refresh
+            if (System.currentTimeMillis() - lastRefreshTime > 5000) {
+                messages.add(PowerSupplyStatus.getReadCommand(getPowerSupplyNumber()));
+                lastRefreshTime = System.currentTimeMillis();
+            }
         } else {
             logger.debug("Unknown command {}", command);
             return;

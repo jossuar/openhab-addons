@@ -19,7 +19,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.openhab.binding.risco.internal.config.RiscoZoneExpanderConfiguration;
 import org.openhab.binding.risco.internal.handler.RiscoBridgeHandler;
 import org.openhab.binding.risco.internal.handler.RiscoThingHandler;
-import org.openhab.binding.risco.internal.protocol.message.ZoneExpanderStatus;
+import org.openhab.binding.risco.internal.protocol.message.status.ZoneExpanderStatus;
 import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.thing.Thing;
 import org.openhab.core.thing.ThingStatus;
@@ -39,6 +39,7 @@ public class RiscoZoneExpanderHandler extends RiscoThingHandler {
     private final Logger logger = LoggerFactory.getLogger(RiscoZoneExpanderHandler.class);
 
     private int zoneExpanderNumber;
+    private long lastRefreshTime = 0;
 
     public RiscoZoneExpanderHandler(Thing thing) {
         super(thing);
@@ -78,7 +79,11 @@ public class RiscoZoneExpanderHandler extends RiscoThingHandler {
         List<String> messages = new ArrayList<String>();
 
         if (command instanceof RefreshType) {
-            messages.add(ZoneExpanderStatus.getReadCommand(getZoneExpanderNumber()));
+            // Refresh only if 5 seconds have passed from the last refresh
+            if (System.currentTimeMillis() - lastRefreshTime > 5000) {
+                messages.add(ZoneExpanderStatus.getReadCommand(getZoneExpanderNumber()));
+                lastRefreshTime = System.currentTimeMillis();
+            }
         } else {
             logger.debug("Unknown command {}", command);
             return;

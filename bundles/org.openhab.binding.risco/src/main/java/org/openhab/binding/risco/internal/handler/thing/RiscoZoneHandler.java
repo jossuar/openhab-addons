@@ -20,8 +20,8 @@ import org.openhab.binding.risco.internal.RiscoBindingConstants;
 import org.openhab.binding.risco.internal.config.RiscoZoneConfiguration;
 import org.openhab.binding.risco.internal.handler.RiscoBridgeHandler;
 import org.openhab.binding.risco.internal.handler.RiscoThingHandler;
-import org.openhab.binding.risco.internal.protocol.message.ZoneLabel;
-import org.openhab.binding.risco.internal.protocol.message.ZoneStatus;
+import org.openhab.binding.risco.internal.protocol.message.general.ZoneLabel;
+import org.openhab.binding.risco.internal.protocol.message.status.ZoneStatus;
 import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.thing.Thing;
 import org.openhab.core.thing.ThingStatus;
@@ -41,6 +41,7 @@ public class RiscoZoneHandler extends RiscoThingHandler {
     private final Logger logger = LoggerFactory.getLogger(RiscoZoneHandler.class);
 
     private int zoneNumber;
+    private long lastRefreshTime = 0;
 
     public RiscoZoneHandler(Thing thing) {
         super(thing);
@@ -81,8 +82,12 @@ public class RiscoZoneHandler extends RiscoThingHandler {
         List<String> messages = new ArrayList<String>();
 
         if (command instanceof RefreshType) {
-            messages.add(ZoneStatus.getReadCommand(getZoneNumber()));
-            messages.add(ZoneLabel.getReadCommand(getZoneNumber()));
+            // Refresh only if 5 seconds have passed from the last refresh
+            if (System.currentTimeMillis() - lastRefreshTime > 5000) {
+                messages.add(ZoneStatus.getReadCommand(getZoneNumber()));
+                messages.add(ZoneLabel.getReadCommand(getZoneNumber()));
+                lastRefreshTime = System.currentTimeMillis();
+            }
         } else if (channelUID.getId().equals(RiscoBindingConstants.ZONE_CHANNEL_BYPASS)) {
             // TODO: To be changed
         } else {
