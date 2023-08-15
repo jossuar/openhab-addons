@@ -20,15 +20,25 @@ import java.util.regex.Pattern;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.openhab.binding.risco.internal.RiscoBindingConstants;
+import org.openhab.binding.risco.internal.protocol.message.BusExpanderAllocation;
+import org.openhab.binding.risco.internal.protocol.message.BusExpanderStatus;
 import org.openhab.binding.risco.internal.protocol.message.KeyfobAllocation;
 import org.openhab.binding.risco.internal.protocol.message.KeyfobStatus;
 import org.openhab.binding.risco.internal.protocol.message.KeypadAllocation;
 import org.openhab.binding.risco.internal.protocol.message.KeypadStatus;
 import org.openhab.binding.risco.internal.protocol.message.OutputAllocation;
+import org.openhab.binding.risco.internal.protocol.message.OutputExpanderAllocation;
+import org.openhab.binding.risco.internal.protocol.message.OutputExpanderStatus;
 import org.openhab.binding.risco.internal.protocol.message.OutputStatus;
 import org.openhab.binding.risco.internal.protocol.message.PanelConfiguration;
 import org.openhab.binding.risco.internal.protocol.message.PartitionAllocation;
+import org.openhab.binding.risco.internal.protocol.message.PartitionLabel;
 import org.openhab.binding.risco.internal.protocol.message.PartitionStatus;
+import org.openhab.binding.risco.internal.protocol.message.PowerSupplyAllocation;
+import org.openhab.binding.risco.internal.protocol.message.PowerSupplyStatus;
+import org.openhab.binding.risco.internal.protocol.message.ProximityReaderAllocation;
+import org.openhab.binding.risco.internal.protocol.message.ProximityReaderStatus;
+import org.openhab.binding.risco.internal.protocol.message.SounderAllocation;
 import org.openhab.binding.risco.internal.protocol.message.SounderStatus;
 import org.openhab.binding.risco.internal.protocol.message.SystemStatus;
 import org.openhab.binding.risco.internal.protocol.message.Unknown;
@@ -136,6 +146,14 @@ public class RiscoMessageFactory {
     private RiscoMessage createMessage(int commandId, String commandName, String modifier, String[] commandValues,
             int indexFrom, int indexTo, byte[] encryptedMessage, byte[] decryptedMessage) {
         switch (commandName) {
+            case BusExpanderAllocation.COMMAND:
+                return new BusExpanderAllocation(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
+                        encryptedMessage, decryptedMessage);
+
+            case BusExpanderStatus.COMMAND:
+                return new BusExpanderStatus(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
+                        encryptedMessage, decryptedMessage);
+
             case KeyfobAllocation.COMMAND:
                 return new KeyfobAllocation(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
                         encryptedMessage, decryptedMessage);
@@ -157,6 +175,14 @@ public class RiscoMessageFactory {
                 return new OutputAllocation(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
                         encryptedMessage, decryptedMessage);
 
+            case OutputExpanderAllocation.COMMAND:
+                return new OutputExpanderAllocation(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
+                        encryptedMessage, decryptedMessage);
+
+            case OutputExpanderStatus.COMMAND:
+                return new OutputExpanderStatus(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
+                        encryptedMessage, decryptedMessage);
+
             case OutputStatus.COMMAND:
                 return new OutputStatus(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
                         encryptedMessage, decryptedMessage);
@@ -169,8 +195,32 @@ public class RiscoMessageFactory {
                 return new PartitionAllocation(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
                         encryptedMessage, decryptedMessage);
 
+            case PartitionLabel.COMMAND:
+                return new PartitionLabel(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
+                        encryptedMessage, decryptedMessage);
+
             case PartitionStatus.COMMAND:
                 return new PartitionStatus(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
+                        encryptedMessage, decryptedMessage);
+
+            case PowerSupplyAllocation.COMMAND:
+                return new PowerSupplyAllocation(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
+                        encryptedMessage, decryptedMessage);
+
+            case PowerSupplyStatus.COMMAND:
+                return new PowerSupplyStatus(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
+                        encryptedMessage, decryptedMessage);
+
+            case ProximityReaderAllocation.COMMAND:
+                return new ProximityReaderAllocation(commandId, commandName, modifier, commandValues, indexFrom,
+                        indexTo, encryptedMessage, decryptedMessage);
+
+            case ProximityReaderStatus.COMMAND:
+                return new ProximityReaderStatus(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
+                        encryptedMessage, decryptedMessage);
+
+            case SounderAllocation.COMMAND:
+                return new SounderAllocation(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
                         encryptedMessage, decryptedMessage);
 
             case SounderStatus.COMMAND:
