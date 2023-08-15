@@ -23,7 +23,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 public class RiscoProximityReaderConfiguration {
 
     // Partition Thing constants
-    public static final String POWER_SUPPLY_NUMBER = "proximityReaderNumber";
+    public static final String PROXIMITY_READER_NUMBER = "proximityReaderNumber";
 
     /**
      * The Proximity Reader Number. Can be in the range of 1-64. This is a required parameter for a proximity reader.
