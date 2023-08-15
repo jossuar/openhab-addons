@@ -20,6 +20,7 @@ import org.openhab.binding.risco.internal.protocol.RiscoMessage;
 import org.openhab.binding.risco.internal.protocol.RiscoProperty;
 import org.openhab.binding.risco.internal.protocol.RiscoThing;
 import org.openhab.binding.risco.internal.protocol.RiscoThingType;
+import org.openhab.binding.risco.internal.protocol.StatusProperty;
 
 /**
  * @author Georgios Moutsos - Initial contribution
@@ -29,9 +30,9 @@ public class KeyfobStatus extends RiscoMessage {
     public static final String COMMAND = "KFSTT";
 
     // @formatter:off
-    private final STTProperty[] properties = {
-            new STTProperty("low-battery-trouble", "B"),
-            new STTProperty("exists", "E") };
+    private final StatusProperty[] properties = {
+            new StatusProperty("low-battery-trouble", "B"),
+            new StatusProperty("exists", "E") };
     // @formatter:on
 
     private List<RiscoThing> messageThings = new ArrayList<RiscoThing>();
@@ -53,7 +54,7 @@ public class KeyfobStatus extends RiscoMessage {
                 if (value != null) {
                     List<RiscoProperty> props = new ArrayList<RiscoProperty>();
 
-                    for (STTProperty prop : properties) {
+                    for (StatusProperty prop : properties) {
                         if (value.contains(prop.flag)) {
                             props.add(new RiscoProperty(prop.property, "true"));
                         } else {

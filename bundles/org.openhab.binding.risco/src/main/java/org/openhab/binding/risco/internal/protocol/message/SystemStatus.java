@@ -20,6 +20,7 @@ import org.openhab.binding.risco.internal.protocol.RiscoMessage;
 import org.openhab.binding.risco.internal.protocol.RiscoProperty;
 import org.openhab.binding.risco.internal.protocol.RiscoThing;
 import org.openhab.binding.risco.internal.protocol.RiscoThingType;
+import org.openhab.binding.risco.internal.protocol.StatusProperty;
 
 /**
  * @author Georgios Moutsos - Initial contribution
@@ -29,32 +30,32 @@ public class SystemStatus extends RiscoMessage {
     public static final String COMMAND = "SSTT";
 
     // @formatter:off
-    private final STTProperty[] properties = {
-            new STTProperty("low-battery-trouble", "B"),
-            new STTProperty("ac-trouble", "A"),
-            new STTProperty("phone-line-trouble", "P"),
-            new STTProperty("clock-trouble", "C"),
-            new STTProperty("default-switch", "D"),
-            new STTProperty("ms-1-report-trouble", "1"),
-            new STTProperty("ms-2-report-trouble", "2"),
-            new STTProperty("ms-3-report-trouble", "3"),
-            new STTProperty("box-tamper", "X"),
-            new STTProperty("jamming-trouble", "J"),
-            new STTProperty("prog-mode", "I"),
-            new STTProperty("learn-mode", "L"),
-            new STTProperty("three-min-bypass", "M"),
-            new STTProperty("walk-test", "W"),
-            new STTProperty("aux-trouble", "U"),
-            new STTProperty("rs485-bus-trouble", "R"),
-            new STTProperty("ls-switch", "S"),
-            new STTProperty("bell-switch", "F"),
-            new STTProperty("bell-trouble", "E"),
-            new STTProperty("bell-tamper", "Y"),
-            new STTProperty("service-expired", "V"),
-            new STTProperty("payment-expired", "T"),
-            new STTProperty("service-mode", "Z"),
-            new STTProperty("dual-path", "Q"),
-            new STTProperty("bus-speed", "H") };
+    private final StatusProperty[] properties = {
+            new StatusProperty("low-battery-trouble", "B"),
+            new StatusProperty("ac-trouble", "A"),
+            new StatusProperty("phone-line-trouble", "P"),
+            new StatusProperty("clock-trouble", "C"),
+            new StatusProperty("default-switch", "D"),
+            new StatusProperty("ms-1-report-trouble", "1"),
+            new StatusProperty("ms-2-report-trouble", "2"),
+            new StatusProperty("ms-3-report-trouble", "3"),
+            new StatusProperty("box-tamper", "X"),
+            new StatusProperty("jamming-trouble", "J"),
+            new StatusProperty("prog-mode", "I"),
+            new StatusProperty("learn-mode", "L"),
+            new StatusProperty("three-min-bypass", "M"),
+            new StatusProperty("walk-test", "W"),
+            new StatusProperty("aux-trouble", "U"),
+            new StatusProperty("rs485-bus-trouble", "R"),
+            new StatusProperty("ls-switch", "S"),
+            new StatusProperty("bell-switch", "F"),
+            new StatusProperty("bell-trouble", "E"),
+            new StatusProperty("bell-tamper", "Y"),
+            new StatusProperty("service-expired", "V"),
+            new StatusProperty("payment-expired", "T"),
+            new StatusProperty("service-mode", "Z"),
+            new StatusProperty("dual-path", "Q"),
+            new StatusProperty("bus-speed", "H") };
     // @formatter:on
 
     private List<RiscoThing> messageThings = new ArrayList<RiscoThing>();
@@ -76,7 +77,7 @@ public class SystemStatus extends RiscoMessage {
                 if (value != null) {
                     List<RiscoProperty> props = new ArrayList<RiscoProperty>();
 
-                    for (STTProperty prop : properties) {
+                    for (StatusProperty prop : properties) {
                         if (value.contains(prop.flag)) {
                             props.add(new RiscoProperty(prop.property, "true"));
                         } else {
