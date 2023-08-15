@@ -19,7 +19,7 @@ import org.openhab.binding.risco.internal.handler.thing.RiscoKeyfobHandler;
 import org.openhab.binding.risco.internal.handler.thing.RiscoKeypadHandler;
 import org.openhab.binding.risco.internal.handler.thing.RiscoOutputHandler;
 import org.openhab.binding.risco.internal.handler.thing.RiscoPartitionHandler;
-import org.openhab.binding.risco.internal.handler.thing.RiscoSirenHandler;
+import org.openhab.binding.risco.internal.handler.thing.RiscoSounderHandler;
 import org.openhab.binding.risco.internal.handler.thing.RiscoSystemHandler;
 import org.openhab.binding.risco.internal.handler.thing.RiscoVoiceModuleHandler;
 import org.openhab.binding.risco.internal.handler.thing.RiscoWirelessModuleHandler;
@@ -73,7 +73,7 @@ public class RiscoHandlerFactory extends BaseThingHandlerFactory {
         } else if (RiscoBindingConstants.PARTITION_THING_TYPE.equals(thingTypeUID)) {
             return new RiscoPartitionHandler(thing);
         } else if (RiscoBindingConstants.SIREN_THING_TYPE.equals(thingTypeUID)) {
-            return new RiscoSirenHandler(thing);
+            return new RiscoSounderHandler(thing);
         } else if (RiscoBindingConstants.SYSTEM_THING_TYPE.equals(thingTypeUID)) {
             return new RiscoSystemHandler(thing);
         } else if (RiscoBindingConstants.VOICE_MODULE_THING_TYPE.equals(thingTypeUID)) {

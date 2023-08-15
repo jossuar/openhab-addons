@@ -16,11 +16,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.openhab.binding.risco.internal.config.RiscoKeyfobConfiguration;
+import org.openhab.binding.risco.internal.config.RiscoBusExpanderConfiguration;
 import org.openhab.binding.risco.internal.handler.RiscoBridgeHandler;
 import org.openhab.binding.risco.internal.handler.RiscoThingHandler;
-import org.openhab.binding.risco.internal.protocol.message.KeyfobStatus;
-import org.openhab.binding.risco.internal.protocol.message.SounderStatus;
+import org.openhab.binding.risco.internal.protocol.message.BusExpanderStatus;
 import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.thing.Thing;
 import org.openhab.core.thing.ThingStatus;
@@ -30,34 +29,34 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The {@link RiscoKeyfobHandler} is responsible for handling commands, which are
+ * The {@link RiscoBusExpanderHandler} is responsible for handling commands, which are
  * sent to one of the channels.
  *
  * @author Georgios Moutsos - Initial contribution
  */
 @NonNullByDefault
-public class RiscoKeyfobHandler extends RiscoThingHandler {
-    private final Logger logger = LoggerFactory.getLogger(RiscoKeyfobHandler.class);
+public class RiscoBusExpanderHandler extends RiscoThingHandler {
+    private final Logger logger = LoggerFactory.getLogger(RiscoBusExpanderHandler.class);
 
-    private int keyfobNumber;
+    private int busExpanderNumber;
 
-    public RiscoKeyfobHandler(Thing thing) {
+    public RiscoBusExpanderHandler(Thing thing) {
         super(thing);
     }
 
-    public int getKeyfobNumber() {
-        return keyfobNumber;
+    public int getBusExpanderNumber() {
+        return busExpanderNumber;
     }
 
-    public void setKeyfobNumber(int keyfobNumber) {
-        this.keyfobNumber = keyfobNumber;
+    public void setBusExpanderNumber(int busExpanderNumber) {
+        this.busExpanderNumber = busExpanderNumber;
     }
 
     @Override
     public void initialize() {
         // Load configuration
-        RiscoKeyfobConfiguration config = getConfigAs(RiscoKeyfobConfiguration.class);
-        setKeyfobNumber(config.getKeyfobNumber());
+        RiscoBusExpanderConfiguration config = getConfigAs(RiscoBusExpanderConfiguration.class);
+        setBusExpanderNumber(config.getBusExpanderNumber());
 
         // set the Thing offline for now
         updateStatus(ThingStatus.OFFLINE);
@@ -67,9 +66,9 @@ public class RiscoKeyfobHandler extends RiscoThingHandler {
             return;
         }
 
-        // Send Siren Status update command
-        bridgeHandler.sendCommand(SounderStatus.getReadCommand(keyfobNumber));
-        logger.trace("RiscoKeyfobHandler initialized [{}]", keyfobNumber);
+        // Send Bus Expander Status update command
+        bridgeHandler.sendCommand(BusExpanderStatus.getReadCommand(busExpanderNumber));
+        logger.trace("RiscoBusExpanderHandler initialized [{}]", busExpanderNumber);
     }
 
     @Override
@@ -79,7 +78,7 @@ public class RiscoKeyfobHandler extends RiscoThingHandler {
         List<String> messages = new ArrayList<String>();
 
         if (command instanceof RefreshType) {
-            messages.add(KeyfobStatus.getReadCommand(getKeyfobNumber()));
+            messages.add(BusExpanderStatus.getReadCommand(getBusExpanderNumber()));
         } else {
             logger.debug("Unknown command {}", command);
             return;
