@@ -15,23 +15,22 @@ package org.openhab.binding.risco.internal.config;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 
 /**
- * Configuration class for the Risco Zone Thing.
+ * Configuration class for the Risco Output Expander Thing.
  *
  * @author Georgios Moutsos - Initial contribution
  */
 @NonNullByDefault
-public class RiscoSirenConfiguration {
+public class RiscoOutputExpanderConfiguration {
 
     // Zone Thing constants
-    public static final String SIREN_NUMBER = "sirenNumber";
+    public static final String OUTPUT_EXPANDER_NUMBER = "outputExpanderNumber";
 
     /**
-     * The Zone Number. Can be in the range of 1-512. Depends on the Panel model. This is a required parameter for a
-     * zone.
+     * The Output Expander Number. Can be in the range of 1-32. This is a required parameter for a output expander.
      */
-    private int sirenNumber;
+    private int outputExpanderNumber;
 
-    public int getSirenNumber() {
-        return sirenNumber;
+    public int getOutputExpanderNumber() {
+        return outputExpanderNumber;
     }
 }

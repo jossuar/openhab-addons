@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<thing:thing-descriptions bindingId="risco"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
+	xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
+
+	<thing-type id="power-supply">
+		<supported-bridge-type-refs>
+			<bridge-type-ref id="bridge"/>
+		</supported-bridge-type-refs>
+
+		<label>Risco Power Supply</label>
+		<description>Represents a power supply within a Risco Alarm System</description>
+
+		<channels>
+			<channel id="tamper" typeId="readonly-switch">
+				<label>Tamper</label>
+				<description>Tamper</description>
+			</channel>
+			<channel id="communication-trouble" typeId="readonly-switch">
+				<label>Communication Trouble</label>
+				<description>Communication Trouble</description>
+			</channel>
+			<channel id="ac-trouble" typeId="readonly-switch">
+				<label>AC Trouble</label>
+				<description>AC Trouble</description>
+			</channel>
+            <channel id="low-battery" typeId="readonly-switch">
+                <label>Low Battery</label>
+                <description>Low Battery</description>
+            </channel>
+            <channel id="aux-trouble" typeId="readonly-switch">
+                <label>Aux Trouble</label>
+                <description>Aux Trouble</description>
+            </channel>
+            <channel id="bell-trouble" typeId="readonly-switch">
+                <label>Bell Trouble</label>
+                <description>Bell Trouble</description>
+            </channel>
+			<channel id="exists" typeId="readonly-switch">
+				<label>Exists</label>
+				<description>Exists or Not Exists</description>
+			</channel>
+		</channels>
+
+		<representation-property>powerSupplyNumber</representation-property>
+
+		<config-description>
+			<parameter name="powerSupplyNumber" type="integer" required="true" min="1" max="32">
+				<label>Power Supply Number</label>
+				<description>The Power Supply Number</description>
+				<default>1</default>
+			</parameter>
+		</config-description>
+	</thing-type>
+
+</thing:thing-descriptions>

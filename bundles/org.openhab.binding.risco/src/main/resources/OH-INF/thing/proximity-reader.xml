@@ -21,26 +21,18 @@
 				<label>Communication Trouble</label>
 				<description>Communication Trouble</description>
 			</channel>
-			<channel id="jamming" typeId="readonly-switch">
-				<label>Jamming</label>
-				<description>Jamming</description>
-			</channel>
-			<channel id="lost-signal" typeId="readonly-switch">
-				<label>Lost Signal</label>
-				<description>Lost Signal</description>
-			</channel>
 			<channel id="exists" typeId="readonly-switch">
 				<label>Exists</label>
 				<description>Exists or Not Exists</description>
 			</channel>
 		</channels>
 
-		<representation-property>wirelessModuleNumber</representation-property>
+		<representation-property>proximityReaderNumber</representation-property>
 
 		<config-description>
-			<parameter name="wirelessModuleNumber" type="integer" required="true" min="1" max="16">
-				<label>Wireless Module Number</label>
-				<description>The Wireless Module Number</description>
+			<parameter name="proximityReaderNumber" type="integer" required="true" min="1" max="16">
+				<label>Proximity Reader Number</label>
+				<description>The Proximity Reader Number</description>
 				<default>1</default>
 			</parameter>
 		</config-description>
