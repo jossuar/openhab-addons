@@ -20,6 +20,7 @@ import org.openhab.binding.risco.internal.RiscoBindingConstants;
 import org.openhab.binding.risco.internal.config.RiscoZoneConfiguration;
 import org.openhab.binding.risco.internal.handler.RiscoBridgeHandler;
 import org.openhab.binding.risco.internal.handler.RiscoThingHandler;
+import org.openhab.binding.risco.internal.protocol.message.general.ZoneBypass;
 import org.openhab.binding.risco.internal.protocol.message.general.ZoneLabel;
 import org.openhab.binding.risco.internal.protocol.message.status.ZoneStatus;
 import org.openhab.core.thing.ChannelUID;
@@ -89,7 +90,7 @@ public class RiscoZoneHandler extends RiscoThingHandler {
                 lastRefreshTime = System.currentTimeMillis();
             }
         } else if (channelUID.getId().equals(RiscoBindingConstants.ZONE_CHANNEL_BYPASS)) {
-            // TODO: To be changed
+            messages.add(ZoneBypass.getCommand(getZoneNumber()));
         } else {
             logger.debug("Unknown command {}", command);
             return;
