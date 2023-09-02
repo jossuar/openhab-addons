@@ -273,7 +273,7 @@ public class RiscoCommunicator {
 
         lastReceiveTime = ZonedDateTime.now();
 
-        if (responseCommandId != null && msg.getCommandId() == responseCommandId) {
+        if (responseCommandId != null && msg.getCommandId().equals(responseCommandId)) {
             responseCommandId = null;
             notifyAll();
         }
