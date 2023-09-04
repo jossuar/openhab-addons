@@ -45,14 +45,14 @@
 				<label>Home Stay</label>
 				<description>Home Stay or Home Disarmed</description>
 			</channel>
-            <channel id="ready-to-arm" typeId="readonly-switch">
-                <label>Ready</label>
-                <description>Ready or Not Ready</description>
-            </channel>
-            <channel id="open" typeId="readonly-switch">
-                <label>Open</label>
-                <description>At least one zone is tripped</description>
-            </channel>
+			<channel id="ready-to-arm" typeId="readonly-switch">
+				<label>Ready</label>
+				<description>Ready or Not Ready</description>
+			</channel>
+			<channel id="open" typeId="readonly-switch">
+				<label>Open</label>
+				<description>At least one zone is tripped</description>
+			</channel>
 			<channel id="exists" typeId="readonly-switch">
 				<label>Exists</label>
 				<description>Exists or Not Exists</description>
