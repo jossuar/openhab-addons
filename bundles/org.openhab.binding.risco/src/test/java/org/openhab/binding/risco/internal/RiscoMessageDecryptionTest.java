@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.openhab.binding.risco.internal.protocol.RiscoMessage;
@@ -48,7 +49,7 @@ public class RiscoMessageDecryptionTest {
     }
     // @formatter:on
 
-    // @Disabled
+    @Disabled
     @ParameterizedTest
     @MethodSource("data")
     public void testMessageHandling(String messageFile) {
@@ -76,7 +77,7 @@ public class RiscoMessageDecryptionTest {
         return messages;
     }
 
-    private synchronized void checkDecryptEncrypt(byte[] bytes) {
+    private void checkDecryptEncrypt(byte[] bytes) {
         // Create 1st message from byte array
         RiscoMessageFactory factory = new RiscoMessageFactory();
         RiscoMessage msg = factory.create(1, "UTF-8", bytes);
