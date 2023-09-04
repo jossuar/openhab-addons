@@ -18,7 +18,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.core.thing.ThingTypeUID;
 
 /**
@@ -81,7 +80,9 @@ public class RiscoBindingConstants {
             .collect(Collectors.toSet()));
 
     // Special channels
-    public static final @Nullable Object ZONE_CHANNEL_BYPASS = "bypass";
+    public static final String ZONE_CHANNEL_BYPASS = "bypass";
+    public static final String PARTITION_CHANNEL_ARM = "arm";
+    public static final String PARTITION_CHANNEL_HOME_STAY = "home-stay";
 
     // Channel types
     @SuppressWarnings("null")

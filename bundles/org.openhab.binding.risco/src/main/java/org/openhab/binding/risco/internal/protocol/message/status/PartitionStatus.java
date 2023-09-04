@@ -40,6 +40,7 @@ public class PartitionStatus extends RiscoMessage {
             new StatusProperty("arm", "A"),
             new StatusProperty("home-stay", "H"),
             new StatusProperty("ready-to-arm", "R"),
+            new StatusProperty("open", "O"),
             new StatusProperty("exists", "E"),
             new StatusProperty("reset-required", "S"),
             new StatusProperty("no-activity-alert", "N"),
