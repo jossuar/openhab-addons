@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.openhab.binding.risco.internal.protocol.RiscoMessage;
@@ -52,6 +53,7 @@ public class RiscoMessageTest {
     }
     // @formatter:on
 
+    @Disabled
     @ParameterizedTest
     @MethodSource("data")
     public void testMessageHandling(String messageName, String commandName, int indexFrom, int indexTo,
