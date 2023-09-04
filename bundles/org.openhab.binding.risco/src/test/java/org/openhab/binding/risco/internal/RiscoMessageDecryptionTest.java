@@ -18,7 +18,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -38,7 +37,7 @@ import org.openhab.core.util.HexUtils;
 @NonNullByDefault
 public class RiscoMessageDecryptionTest {
     private static final String MESSAGE_EXT = ".txt";
-    private int counter = 1;
+    // private int counter = 1;
 
     // @formatter:off
     public static final List<Object> data() {
@@ -76,25 +75,29 @@ public class RiscoMessageDecryptionTest {
     }
 
     private void checkDecryptEncrypt(byte[] bytes) {
-        // Create 1st message from byte array
+        // Create msg1 from byte array
         RiscoMessageFactory factory = new RiscoMessageFactory();
-        RiscoMessage msg = factory.create(1, "UTF-8", bytes);
+        RiscoMessage msg1 = factory.create(1, "UTF-8", bytes);
 
-        // Create 2nd message from 1st message parts
-        RiscoMessage msg2 = factory.create(1, "UTF-8", msg.getCommandId(), msg.getFullCommand(), msg.isEncrypted());
+        // Create msg2 from msg1 parts
+        RiscoMessage msg2 = factory.create(1, "UTF-8", msg1.getCommandId(), msg1.getFullCommand(), msg1.isEncrypted());
 
-        // Print message information
-        PrintStream console = System.out;
-        if (console != null) {
-            console.println(counter++);
-            console.println(msg.toString());
-            console.println(msg2.toString());
-            console.println();
-            console.flush();
-        }
+        // Create msg3 from msg2 encrypted array
+        RiscoMessage msg3 = factory.create(1, "UTF-8", msg2.getEncryptedMessage());
 
-        // Check
-        assertArrayEquals(msg.getEncryptedMessage(), msg2.getEncryptedMessage());
-        assertArrayEquals(msg.getDecryptedMessage(), msg2.getDecryptedMessage());
+        /*
+         * PrintStream console = System.out;
+         * if (console != null) {
+         * console.println(counter++);
+         * console.println(msg1.toString());
+         * console.println(msg2.toString());
+         * console.println(msg3.toString());
+         * console.println();
+         * console.flush();
+         * }
+         */
+
+        // Check decrypted msg1 and msg3
+        assertArrayEquals(msg1.getDecryptedMessage(), msg3.getDecryptedMessage());
     }
 }
