@@ -419,8 +419,12 @@ public class RiscoMessageFactory {
             switch (buffer[i]) {
                 case 2:
                 case 3:
-                case 16:
                     outputStream.write(0x10);
+                    break;
+                case 16:
+                    if (i != buffer.length - 1) {
+                        outputStream.write(0x10);
+                    }
             }
 
             outputStream.write(buffer[i]);
