@@ -16,11 +16,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.openhab.binding.risco.internal.RiscoBindingConstants;
 import org.openhab.binding.risco.internal.config.RiscoPartitionConfiguration;
 import org.openhab.binding.risco.internal.handler.RiscoBridgeHandler;
 import org.openhab.binding.risco.internal.handler.RiscoThingHandler;
+import org.openhab.binding.risco.internal.protocol.message.general.PartitionArm;
+import org.openhab.binding.risco.internal.protocol.message.general.PartitionDisarm;
 import org.openhab.binding.risco.internal.protocol.message.general.PartitionLabel;
+import org.openhab.binding.risco.internal.protocol.message.general.PartitionStay;
 import org.openhab.binding.risco.internal.protocol.message.status.PartitionStatus;
+import org.openhab.core.library.types.OnOffType;
 import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.thing.Thing;
 import org.openhab.core.thing.ThingStatus;
@@ -87,8 +92,34 @@ public class RiscoPartitionHandler extends RiscoThingHandler {
                 messages.add(PartitionLabel.getReadCommand(getPartitionNumber()));
                 lastRefreshTime = System.currentTimeMillis();
             }
+        } else if (channelUID.getId().equals(RiscoBindingConstants.PARTITION_CHANNEL_ARM)) {
+            if (command instanceof OnOffType) {
+                OnOffType oo = (OnOffType) command;
+                if (oo == OnOffType.OFF) {
+                    messages.add(PartitionArm.getCommand(getPartitionNumber()));
+                    messages.add(PartitionStatus.getReadCommand(getPartitionNumber()));
+                    messages.add(PartitionLabel.getReadCommand(getPartitionNumber()));
+                } else {
+                    messages.add(PartitionDisarm.getCommand(getPartitionNumber()));
+                    messages.add(PartitionStatus.getReadCommand(getPartitionNumber()));
+                    messages.add(PartitionLabel.getReadCommand(getPartitionNumber()));
+                }
+            }
+        } else if (channelUID.getId().equals(RiscoBindingConstants.PARTITION_CHANNEL_HOME_STAY)) {
+            if (command instanceof OnOffType) {
+                OnOffType oo = (OnOffType) command;
+                if (oo == OnOffType.OFF) {
+                    messages.add(PartitionStay.getCommand(getPartitionNumber()));
+                    messages.add(PartitionStatus.getReadCommand(getPartitionNumber()));
+                    messages.add(PartitionLabel.getReadCommand(getPartitionNumber()));
+                } else {
+                    messages.add(PartitionDisarm.getCommand(getPartitionNumber()));
+                    messages.add(PartitionStatus.getReadCommand(getPartitionNumber()));
+                    messages.add(PartitionLabel.getReadCommand(getPartitionNumber()));
+                }
+            }
         } else {
-            logger.debug("Unknown command {}", command);
+            logger.debug("Unknown command channel:{} command:{}", channelUID, command);
             return;
         }
 
