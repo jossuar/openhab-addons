@@ -434,15 +434,17 @@ public class RiscoMessageFactory {
 
     private byte[] decrypt(int panelId, byte[] encryptedMessage) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        Boolean skip = false;
 
         // Remove DLE chars
         for (int i = 0; i < encryptedMessage.length; i++) {
-            if ((encryptedMessage[i] == 0x10) && (encryptedMessage[i + 1] == 0x02 || encryptedMessage[i + 1] == 0x03
-                    || encryptedMessage[i + 1] == 0x10) && (i != encryptedMessage.length - 2)) {
-                outputStream.write(encryptedMessage[i + 1]);
-                i++;
+            if (encryptedMessage[i] == 0x10 && !skip && i + 2 < encryptedMessage.length
+                    && (encryptedMessage[i + 1] == 0x02 || encryptedMessage[i + 1] == 0x03
+                            || encryptedMessage[i + 1] == 0x10)) {
+                skip = true;
             } else {
                 outputStream.write(encryptedMessage[i]);
+                skip = false;
             }
         }
         byte[] encryptedWithoutDle = outputStream.toByteArray();
