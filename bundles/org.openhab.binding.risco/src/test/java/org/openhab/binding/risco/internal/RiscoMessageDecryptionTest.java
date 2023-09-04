@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.openhab.binding.risco.internal.protocol.RiscoMessage;
@@ -49,7 +48,6 @@ public class RiscoMessageDecryptionTest {
     }
     // @formatter:on
 
-    @Disabled
     @ParameterizedTest
     @MethodSource("data")
     public void testMessageHandling(String messageFile) {
@@ -82,18 +80,18 @@ public class RiscoMessageDecryptionTest {
         RiscoMessageFactory factory = new RiscoMessageFactory();
         RiscoMessage msg = factory.create(1, "UTF-8", bytes);
 
+        // Create 2nd message from 1st message parts
+        RiscoMessage msg2 = factory.create(1, "UTF-8", msg.getCommandId(), msg.getFullCommand(), msg.isEncrypted());
+
         // Print message information
         PrintStream console = System.out;
         if (console != null) {
             console.println(counter++);
-            String ss = msg.toString();
-            console.println(ss);
+            console.println(msg.toString());
+            console.println(msg2.toString());
             console.println();
             console.flush();
         }
-
-        // Create 2nd message from 1st message parts
-        RiscoMessage msg2 = factory.create(1, "UTF-8", msg.getCommandId(), msg.getFullCommand(), msg.isEncrypted());
 
         // Check
         assertArrayEquals(msg.getEncryptedMessage(), msg2.getEncryptedMessage());
