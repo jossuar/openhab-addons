@@ -266,6 +266,8 @@ public class RiscoMessageFactory {
                         encryptedMessage, decryptedMessage);
 
             default:
+                logger.debug("Unknown command [{}]", commandName);
+
                 return new Unknown(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
                         encryptedMessage, decryptedMessage);
         }
