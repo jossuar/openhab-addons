@@ -220,19 +220,25 @@ public class RiscoCommunicator {
     @Nullable
     private Integer responseCommandId;
 
-    public synchronized void sendAndWait(String command) {
-        RiscoMessageFactory factory = new RiscoMessageFactory();
-        RiscoMessage msg = factory.create(panelId, encoding, sendCommandId, command, true);
-        sendQueue.add(msg);
-
-        responseCommandId = sendCommandId;
-
+    public synchronized void suspendForPendingResponseIfNeeded() {
         while (responseCommandId != null) {
             try {
                 wait();
             } catch (InterruptedException e) {
             }
         }
+    }
+
+    public synchronized void sendAndWait(String command) {
+        suspendForPendingResponseIfNeeded();
+
+        RiscoMessageFactory factory = new RiscoMessageFactory();
+        RiscoMessage msg = factory.create(panelId, encoding, sendCommandId, command, true);
+        sendQueue.add(msg);
+
+        responseCommandId = sendCommandId;
+
+        suspendForPendingResponseIfNeeded();
 
         // adjust command id For next send (1-45)
         sendCommandId++;
@@ -242,12 +248,7 @@ public class RiscoCommunicator {
     }
 
     public synchronized void send(String command) {
-        while (responseCommandId != null) {
-            try {
-                wait();
-            } catch (InterruptedException e) {
-            }
-        }
+        suspendForPendingResponseIfNeeded();
 
         RiscoMessageFactory factory = new RiscoMessageFactory();
         RiscoMessage msg = factory.create(panelId, encoding, sendCommandId, command, true);
@@ -261,7 +262,9 @@ public class RiscoCommunicator {
         sendQueue.add(msg);
     }
 
-    public void sendFirst(int commandId, String command) {
+    public synchronized void sendFirst(int commandId, String command) {
+        suspendForPendingResponseIfNeeded();
+
         RiscoMessageFactory factory = new RiscoMessageFactory();
         RiscoMessage msg = factory.create(panelId, encoding, commandId, command, true);
 
