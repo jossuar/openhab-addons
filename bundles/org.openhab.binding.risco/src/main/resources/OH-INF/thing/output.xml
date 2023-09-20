@@ -14,8 +14,8 @@
 
 		<channels>
 			<channel id="output-is-active" typeId="readonly-switch">
-				<label>Alarm</label>
-				<description>Alarm or Stand By</description>
+				<label>Output is Active</label>
+				<description>Output is Active</description>
 			</channel>
 			<channel id="exists" typeId="readonly-switch">
 				<label>Exists</label>
