@@ -2,15 +2,11 @@
 
 
 The openHAB Risco Binding allows openHAB to communicate with Risco security panels.
-
 The connectivity to the panel is via TCP/IP on the local network.
 
 ## Supported Things
 
 Currently the following things are supported:
-_Please describe the different supported things / devices including their ThingTypeUID within this section._
-_Which different types are supported, which models were tested etc.?_
-_Note that it is planned to generate some part of this based on the XML files within ```src/main/resources/OH-INF/thing``` of your binding._
 
 - `bridge`: The bridge is the communication point with the panel. Agility LightSys, LightSysPlus, ProSys panels should be working. Tested only on LightSysPlus. 
 - `bus-expander`: Represents a bus expander within a Risco Alarm System
