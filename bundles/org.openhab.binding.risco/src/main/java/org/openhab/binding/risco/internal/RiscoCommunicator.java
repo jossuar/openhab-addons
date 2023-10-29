@@ -126,7 +126,7 @@ public class RiscoCommunicator {
         logger.trace("RiscoCommunicator communication threads started successfully");
     }
 
-    public void start() throws IOException {
+    private void start() throws IOException {
         logger.trace("start(): RiscoCommunicator starting");
         // Reset command id
         sendCommandId = 2;
@@ -150,17 +150,9 @@ public class RiscoCommunicator {
         // Start watchdog
         riscoWatchdog = scheduler.scheduleWithFixedDelay(new RiscoWatchdog(), 10, 20, TimeUnit.SECONDS);
 
-        connected = true;
-
         // Initialize the communication with the panel
-        send(Remote.getReadCommand(password));
-        send(Local.getReadCommand());
-
-        // Delay two seconds for the initial connection
-        try {
-            Thread.sleep(60000);
-        } catch (InterruptedException e) {
-        }
+        sendPlainAndWait(Remote.getReadCommand(password));
+        sendPlainAndWait(Local.getReadCommand());
 
         connected = true;
     }
@@ -229,37 +221,38 @@ public class RiscoCommunicator {
         }
     }
 
-    public synchronized void sendAndWait(String command) {
+    private synchronized void send(String command, boolean encrypt, boolean wait) {
         suspendForPendingResponseIfNeeded();
 
         RiscoMessageFactory factory = new RiscoMessageFactory();
-        RiscoMessage msg = factory.create(panelId, encoding, sendCommandId, command, true);
+        RiscoMessage msg = factory.create(panelId, encoding, sendCommandId, command, encrypt);
+
+        if (wait) {
+            responseCommandId = sendCommandId;
+        }
         sendQueue.add(msg);
 
-        responseCommandId = sendCommandId;
-
-        suspendForPendingResponseIfNeeded();
-
-        // adjust command id For next send (1-45)
+        // adjust command id for the next send
         sendCommandId++;
         if (sendCommandId == 46) {
             sendCommandId = 1;
         }
     }
 
+    public synchronized void sendPlainAndWait(String command) {
+        send(command, false, true);
+    }
+
+    public synchronized void sendAndWait(String command) {
+        send(command, true, true);
+    }
+
+    public synchronized void sendPlain(String command) {
+        send(command, false, false);
+    }
+
     public synchronized void send(String command) {
-        suspendForPendingResponseIfNeeded();
-
-        RiscoMessageFactory factory = new RiscoMessageFactory();
-        RiscoMessage msg = factory.create(panelId, encoding, sendCommandId, command, true);
-
-        // adjust command id For next send (1-45)
-        sendCommandId++;
-        if (sendCommandId == 46) {
-            sendCommandId = 1;
-        }
-
-        sendQueue.add(msg);
+        send(command, true, false);
     }
 
     public synchronized void sendFirst(int commandId, String command) {
