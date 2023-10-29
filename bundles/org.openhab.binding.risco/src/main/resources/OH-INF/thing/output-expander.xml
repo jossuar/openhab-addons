@@ -23,7 +23,7 @@
 			</channel>
 			<channel id="phone-line-trouble" typeId="readonly-switch">
 				<label>Phone Line Trouble</label>
-				<description>Phone Line  Trouble</description>
+				<description>Phone Line Trouble</description>
 			</channel>
 			<channel id="dual-path-trouble" typeId="readonly-switch">
 				<label>Dual Path Trouble</label>
