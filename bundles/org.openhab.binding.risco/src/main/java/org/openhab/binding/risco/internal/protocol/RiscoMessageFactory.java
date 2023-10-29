@@ -67,11 +67,11 @@ public class RiscoMessageFactory {
     // Create a RiscoMessage from the received data
     public RiscoMessage create(int panelId, String encoding, byte[] encryptedMessage) {
 
-        logger.debug("Enc: " + HexUtils.bytesToHex(encryptedMessage));
+        logger.debug("Enc: {}", HexUtils.bytesToHex(encryptedMessage));
         byte[] decryptedMessage = decrypt(panelId, encryptedMessage);
-        logger.debug("Dec: " + HexUtils.bytesToHex(decryptedMessage));
+        logger.debug("Dec: {}", HexUtils.bytesToHex(decryptedMessage));
         String stringMessage = bytesToString(decryptedMessage, encoding);
-        logger.debug("Msg: " + stringMessage);
+        logger.debug("Msg: {}", stringMessage);
 
         int commandId;
         String wholeMessage;
