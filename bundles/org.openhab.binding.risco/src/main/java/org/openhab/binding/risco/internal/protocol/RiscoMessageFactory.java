@@ -66,8 +66,13 @@ public class RiscoMessageFactory {
 
     // Create a RiscoMessage from the received data
     public RiscoMessage create(int panelId, String encoding, byte[] encryptedMessage) {
+
+        logger.debug("Enc: " + HexUtils.bytesToHex(encryptedMessage));
         byte[] decryptedMessage = decrypt(panelId, encryptedMessage);
+        logger.debug("Dec: " + HexUtils.bytesToHex(decryptedMessage));
         String stringMessage = bytesToString(decryptedMessage, encoding);
+        logger.debug("Msg: " + stringMessage);
+
         int commandId;
         String wholeMessage;
         String crcValue;
@@ -94,8 +99,10 @@ public class RiscoMessageFactory {
                 encryptedMessage, decryptedMessage);
 
         // Check CRC
-        if (!isValidCRC(crcValue, String.format("%02d", commandId) + wholeMessage + ETB)) {
-            throw new IllegalArgumentException("CRC value is not correct.");
+        if (!(stringMessage.startsWith("N") || stringMessage.startsWith("B"))) {
+            if (!isValidCRC(crcValue, String.format("%02d", commandId) + wholeMessage + ETB)) {
+                throw new IllegalArgumentException("CRC value is not correct.");
+            }
         }
 
         return msg;
