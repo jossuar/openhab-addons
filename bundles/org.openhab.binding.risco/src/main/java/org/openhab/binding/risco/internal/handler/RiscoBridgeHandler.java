@@ -129,8 +129,8 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
                     configuration.getId(), configuration.getEncoding(), configuration.getPassword(), scheduler);
 
             // Initialize the communication with the panel
-            communicator.sendAndWait(Remote.getReadCommand(configuration.getPassword()));
-            communicator.sendAndWait(Local.getReadCommand());
+            communicator.sendPlainAndWait(Remote.getReadCommand(configuration.getPassword()));
+            communicator.sendPlainAndWait(Local.getReadCommand());
 
             this.communicator = communicator;
             notifyAll();
