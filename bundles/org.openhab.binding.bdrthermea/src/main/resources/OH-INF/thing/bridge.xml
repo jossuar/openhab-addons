@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<thing:thing-descriptions bindingId="bdrthermea"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
+	xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
+
+	<bridge-type id="bridge">
+		<label>BDR Thermea Bridge</label>
+		<description>This bridge communicates with the BDR Thermea cloud.</description>
+
+		<channels>
+			<channel id="send-command" typeId="command">
+				<label>Send Command</label>
+				<description>Sends an Alarm Panel Command</description>
+			</channel>
+		</channels>
+
+		<config-description>
+			<parameter name="brand" type="text" required="true">
+				<limitToOptions>true</limitToOptions>
+				<label>The equipment brand</label>
+				<description>The equipment brand. Currently remeha and baxi are supported</description>
+				<default>baxi</default>
+				<options>
+					<option value="baxi">baxi</option>
+                    <option value="remeha">remeha</option>
+                    <option value="broetje">broetje</option>
+                    <option value="dedietrich">dedietrich</option>
+                    <option value="chappee">chappee</option>
+				</options>
+			</parameter>
+
+			<parameter name="email" type="text" required="true">
+				<label>Registration email</label>
+				<description>The email which has registered the devices in the cloud</description>
+			</parameter>
+			<parameter name="password" type="text" required="true">
+				<label>Account password</label>
+				<description>The password</description>
+			</parameter>
+		</config-description>
+	</bridge-type>
+
+</thing:thing-descriptions>
