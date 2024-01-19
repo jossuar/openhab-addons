@@ -23,10 +23,10 @@
 				<default>baxi</default>
 				<options>
 					<option value="baxi">baxi</option>
-                    <option value="remeha">remeha</option>
-                    <option value="broetje">broetje</option>
-                    <option value="dedietrich">dedietrich</option>
-                    <option value="chappee">chappee</option>
+					<option value="remeha">remeha</option>
+					<option value="broetje">broetje</option>
+					<option value="dedietrich">dedietrich</option>
+					<option value="chappee">chappee</option>
 				</options>
 			</parameter>
 
