@@ -24,11 +24,11 @@ import java.util.Random;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jetty.client.HttpClient;
+import org.eclipse.jetty.client.HttpProxy;
+import org.eclipse.jetty.client.ProxyConfiguration;
 import org.eclipse.jetty.client.api.ContentResponse;
 import org.eclipse.jetty.client.api.Request;
 import org.eclipse.jetty.client.util.FormContentProvider;
-import org.eclipse.jetty.client.util.MultiPartContentProvider;
-import org.eclipse.jetty.client.util.StringContentProvider;
 import org.eclipse.jetty.http.HttpFields;
 import org.eclipse.jetty.http.HttpMethod;
 import org.eclipse.jetty.http.HttpURI;
@@ -60,7 +60,7 @@ public class BdrThermeaBridgeHandler extends BaseBridgeHandler {
 
     private final Logger logger = LoggerFactory.getLogger(BdrThermeaBridgeHandler.class);
 
-    private SslContextFactory.Client sslContextFactory = new SslContextFactory.Client();
+    private SslContextFactory.Client sslContextFactory = new SslContextFactory.Client(true);
     private HttpClient httpClient = new HttpClient(sslContextFactory);
 
     @Nullable
@@ -179,6 +179,10 @@ public class BdrThermeaBridgeHandler extends BaseBridgeHandler {
         random.nextBytes(codeChallengeArray);
         String codeChallenge = Base64.getEncoder().encodeToString(codeChallengeArray);
 
+//        ProxyConfiguration proxyConfig = httpClient.getProxyConfiguration();
+//        HttpProxy proxy = new HttpProxy("localhost", 8080);
+//        proxyConfig.getProxies().add(proxy);
+
         MessageDigest digest;
         try {
             digest = MessageDigest.getInstance("SHA-256");
@@ -186,6 +190,10 @@ public class BdrThermeaBridgeHandler extends BaseBridgeHandler {
             throw new IllegalArgumentException("SHA 256 is not supported on the current platform");
         }
         byte[] codeChallengeSha256 = digest.digest(codeChallenge.getBytes());
+        // code_challenge_sha256: 2Ldml58kYdgQ5V9ODBFUDbhjNpWT5J3AD1u1VaSG_So
+        // 2Ldml58kYdgQ5V9ODBFUDbhjNpWT5J3AD1u1VaSG/So=
+        // 2Ldml58kYdgQ5V9ODBFUDbhjNpWT5J3AD1u1VaSG_So=
+        String s = Base64.getUrlEncoder().withoutPadding().encodeToString(codeChallengeSha256);
 
         // Building a request with a timeout
         Request request = httpClient.newRequest(
@@ -194,8 +202,8 @@ public class BdrThermeaBridgeHandler extends BaseBridgeHandler {
         request.param("client_id", "6ce007c6-0628-419e-88f4-bee2e6418eec");
         request.param("redirect_uri", "com.b2c." + brand + "app://login-callback");
         request.param("scope", "openid https://bdrb2cprod.onmicrosoft.com/iotdevice/user_impersonation offline_access");
-        request.param("state", Base64.getEncoder().encodeToString(state));
-        request.param("code_challenge", Base64.getEncoder().encodeToString(codeChallengeSha256));
+        request.param("state", Base64.getUrlEncoder().withoutPadding().encodeToString(state));
+        request.param("code_challenge", Base64.getUrlEncoder().withoutPadding().encodeToString(codeChallengeSha256));
         request.param("code_challenge_method", "S256");
         request.param("p", "B2C_1A_RPSignUpSignInNewRoomV3.1");
         request.param("brand", brand);
@@ -239,15 +247,15 @@ public class BdrThermeaBridgeHandler extends BaseBridgeHandler {
 
         request.header("x-csrf-token", csrfToken);
 
-        request.param("tx", "StateProperties=" + Base64.getEncoder().encodeToString(statePropertiesJson.getBytes()));
+        request.param("tx", "StateProperties="
+                + Base64.getUrlEncoder().withoutPadding().encodeToString(statePropertiesJson.getBytes()));
         request.param("p", "B2C_1A_RPSignUpSignInNewRoomv3.1");
 
-        MultiPartContentProvider multiPart = new MultiPartContentProvider();
-        multiPart.addFieldPart("request_type", new StringContentProvider("RESPONSE"), null);
-        multiPart.addFieldPart("signInName", new StringContentProvider(email), null);
-        multiPart.addFieldPart("password", new StringContentProvider(password), null);
-        multiPart.close();
-        request.content(multiPart);
+        Fields fields = new Fields();
+        fields.put("request_type", "RESPONSE");
+        fields.put("signInName", email);
+        fields.put("password", password);
+        request.content(new FormContentProvider(fields));
 
         try {
             response = request.send();
@@ -273,7 +281,8 @@ public class BdrThermeaBridgeHandler extends BaseBridgeHandler {
 
         request.param("rememberMe", "false");
         request.param("csrf_token", csrfToken);
-        request.param("tx", "StateProperties=" + Base64.getEncoder().encodeToString(statePropertiesJson.getBytes()));
+        request.param("tx", "StateProperties="
+                + Base64.getUrlEncoder().withoutPadding().encodeToString(statePropertiesJson.getBytes()));
         request.param("p", "B2C_1A_RPSignUpSignInNewRoomv3.1");
 
         try {
