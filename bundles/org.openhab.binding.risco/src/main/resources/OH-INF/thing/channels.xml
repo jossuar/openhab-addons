@@ -19,17 +19,17 @@
 		<description>Read-only Switch</description>
 		<state readOnly="true"></state>
 	</channel-type>
+	<channel-type id="readonly-switch-advanced" advanced="true">
+		<item-type>Switch</item-type>
+		<label>Read-only Switch</label>
+		<description>Read-only Switch</description>
+		<state readOnly="true"></state>
+	</channel-type>
 	<channel-type id="readonly-text">
 		<item-type>String</item-type>
 		<label>Read-only Text</label>
 		<description>Read-only text</description>
 		<state pattern="%s" readOnly="true"></state>
-	</channel-type>
-	<channel-type id="readonly-switch-advanced">
-		<item-type>Switch</item-type>
-		<label>Read-only Switch</label>
-		<description>Read-only Switch</description>
-		<state readOnly="true"></state>
 	</channel-type>
 
 	<!-- zone -->
@@ -45,6 +45,5 @@
 		<label>Bypass Mode</label>
 		<description>Bypass Mode (OFF=Armed, ON=Bypassed)</description>
 	</channel-type>
-
 
 </thing:thing-descriptions>
