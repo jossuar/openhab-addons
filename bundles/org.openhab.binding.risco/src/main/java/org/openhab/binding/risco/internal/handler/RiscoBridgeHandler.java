@@ -382,7 +382,7 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
 
         }
 
-        ThingUID thingUID = new ThingUID(ttUID, getThing().getUID(), prefix + index);
+        ThingUID thingUID = new ThingUID(ttUID, getThing().getUID(), prefix + ((index == null) ? "" : index));
         DiscoveryInfo discoveryInfo = new DiscoveryInfo(thingUID, label, indexProperty, index);
 
         return discoveryInfo;
