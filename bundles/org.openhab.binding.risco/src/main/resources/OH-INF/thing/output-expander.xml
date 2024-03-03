@@ -17,19 +17,19 @@
 				<label>Tamper</label>
 				<description>Tamper</description>
 			</channel>
-			<channel id="communication-trouble" typeId="readonly-switch">
+			<channel id="communication-trouble" typeId="readonly-switch-advanced">
 				<label>Communication Trouble</label>
 				<description>Communication Trouble</description>
 			</channel>
-			<channel id="phone-line-trouble" typeId="readonly-switch">
+			<channel id="phone-line-trouble" typeId="readonly-switch-advanced">
 				<label>Phone Line Trouble</label>
 				<description>Phone Line Trouble</description>
 			</channel>
-			<channel id="dual-path-trouble" typeId="readonly-switch">
+			<channel id="dual-path-trouble" typeId="readonly-switch-advanced">
 				<label>Dual Path Trouble</label>
 				<description>Dual Path Trouble</description>
 			</channel>
-			<channel id="exists" typeId="readonly-switch">
+			<channel id="exists" typeId="readonly-switch-advanced">
 				<label>Exists</label>
 				<description>Exists or Not Exists</description>
 			</channel>

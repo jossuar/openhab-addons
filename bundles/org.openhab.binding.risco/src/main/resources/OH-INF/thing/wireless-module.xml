@@ -17,19 +17,19 @@
 				<label>Tamper</label>
 				<description>Tamper</description>
 			</channel>
-			<channel id="communication-trouble" typeId="readonly-switch">
+			<channel id="communication-trouble" typeId="readonly-switch-advanced">
 				<label>Communication Trouble</label>
 				<description>Communication Trouble</description>
 			</channel>
-			<channel id="jamming" typeId="readonly-switch">
+			<channel id="jamming" typeId="readonly-switch-advanced">
 				<label>Jamming</label>
 				<description>Jamming</description>
 			</channel>
-			<channel id="lost-signal" typeId="readonly-switch">
+			<channel id="lost-signal" typeId="readonly-switch-advanced">
 				<label>Lost Signal</label>
 				<description>Lost Signal</description>
 			</channel>
-			<channel id="exists" typeId="readonly-switch">
+			<channel id="exists" typeId="readonly-switch-advanced">
 				<label>Exists</label>
 				<description>Exists or Not Exists</description>
 			</channel>

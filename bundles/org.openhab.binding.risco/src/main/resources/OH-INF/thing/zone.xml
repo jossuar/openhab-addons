@@ -29,11 +29,11 @@
 				<label>Tamper</label>
 				<description>Tamper or Hold</description>
 			</channel>
-			<channel id="trouble" typeId="readonly-switch">
+			<channel id="trouble" typeId="readonly-switch-advanced">
 				<label>Trouble</label>
 				<description>Trouble or Sureness</description>
 			</channel>
-			<channel id="lost" typeId="readonly-switch">
+			<channel id="lost" typeId="readonly-switch-advanced">
 				<label>Lost</label>
 				<description>Lost or Located</description>
 			</channel>
@@ -45,23 +45,23 @@
 				<label>Bypass</label>
 				<description>Bypassed or Unbypassed</description>
 			</channel>
-			<channel id="communication-trouble" typeId="readonly-switch">
+			<channel id="communication-trouble" typeId="readonly-switch-advanced">
 				<label>Communication Trouble</label>
 				<description>Communication Trouble or Communication Ok</description>
 			</channel>
-			<channel id="soak-test" typeId="readonly-switch">
+			<channel id="soak-test" typeId="readonly-switch-advanced">
 				<label>Soak Test</label>
 				<description>Soak Test or Exit Soak Test</description>
 			</channel>
-			<channel id="hours24" typeId="readonly-switch">
+			<channel id="hours24" typeId="readonly-switch-advanced">
 				<label>Hours 24</label>
 				<description>24 Hours zone or Normal zone</description>
 			</channel>
-			<channel id="not-used" typeId="readonly-switch">
+			<channel id="not-used" typeId="readonly-switch-advanced">
 				<label>Not Used</label>
 				<description>Zone not used or Zone used</description>
 			</channel>
-			<channel id="exists" typeId="readonly-switch">
+			<channel id="exists" typeId="readonly-switch-advanced">
 				<label>Exists</label>
 				<description>Zone exists</description>
 			</channel>

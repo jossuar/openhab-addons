@@ -17,7 +17,7 @@
 				<label>Tamper</label>
 				<description>Tamper</description>
 			</channel>
-			<channel id="communication-trouble" typeId="readonly-switch">
+			<channel id="communication-trouble" typeId="readonly-switch-advanced">
 				<label>Communication Trouble</label>
 				<description>Communication Trouble</description>
 			</channel>
@@ -29,15 +29,15 @@
 				<label>Low Battery</label>
 				<description>Low Battery</description>
 			</channel>
-			<channel id="aux-trouble" typeId="readonly-switch">
+			<channel id="aux-trouble" typeId="readonly-switch-advanced">
 				<label>Aux Trouble</label>
 				<description>Aux Trouble</description>
 			</channel>
-			<channel id="bell-trouble" typeId="readonly-switch">
+			<channel id="bell-trouble" typeId="readonly-switch-advanced">
 				<label>Bell Trouble</label>
 				<description>Bell Trouble</description>
 			</channel>
-			<channel id="exists" typeId="readonly-switch">
+			<channel id="exists" typeId="readonly-switch-advanced">
 				<label>Exists</label>
 				<description>Exists or Not Exists</description>
 			</channel>
