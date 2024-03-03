@@ -21,19 +21,19 @@
 				<label>Duress</label>
 				<description>Duress or Free</description>
 			</channel>
-			<channel id="false-code" typeId="readonly-switch">
+			<channel id="false-code" typeId="readonly-switch-advanced">
 				<label>False Code</label>
 				<description>False Code or Code Ok</description>
 			</channel>
-			<channel id="fire" typeId="readonly-switch">
+			<channel id="fire" typeId="readonly-switch-advanced">
 				<label>Fire</label>
 				<description>Fire or No Fire</description>
 			</channel>
-			<channel id="panic" typeId="readonly-switch">
+			<channel id="panic" typeId="readonly-switch-advanced">
 				<label>Panic</label>
 				<description>Panic or No Panic</description>
 			</channel>
-			<channel id="medic" typeId="readonly-switch">
+			<channel id="medic" typeId="readonly-switch-advanced">
 				<label>Medic</label>
 				<description>Medic or No Medic</description>
 			</channel>
@@ -53,35 +53,35 @@
 				<label>Open</label>
 				<description>At least one zone is tripped</description>
 			</channel>
-			<channel id="exists" typeId="readonly-switch">
+			<channel id="exists" typeId="readonly-switch-advanced">
 				<label>Exists</label>
 				<description>Exists or Not Exists</description>
 			</channel>
-			<channel id="reset-required" typeId="readonly-switch">
+			<channel id="reset-required" typeId="readonly-switch-advanced">
 				<label>Reset Required</label>
 				<description>Memory Event or Memory Ack</description>
 			</channel>
-			<channel id="no-activity-alert" typeId="readonly-switch">
+			<channel id="no-activity-alert" typeId="readonly-switch-advanced">
 				<label>No Activity Alert</label>
 				<description>Activity Alert or Activity Ok</description>
 			</channel>
-			<channel id="group-a-arm" typeId="readonly-switch">
+			<channel id="group-a-arm" typeId="readonly-switch-advanced">
 				<label>Group A Arm</label>
 				<description>Group A Armed or Group A Disarmed</description>
 			</channel>
-			<channel id="group-b-arm" typeId="readonly-switch">
+			<channel id="group-b-arm" typeId="readonly-switch-advanced">
 				<label>Group B Arm</label>
 				<description>Group B Armed or Group B Disarmed</description>
 			</channel>
-			<channel id="group-c-arm" typeId="readonly-switch">
+			<channel id="group-c-arm" typeId="readonly-switch-advanced">
 				<label>Group C Arm</label>
 				<description>Group C Armed or Group C Disarmed</description>
 			</channel>
-			<channel id="group-d-arm" typeId="readonly-switch">
+			<channel id="group-d-arm" typeId="readonly-switch-advanced">
 				<label>Group D Arm</label>
 				<description>Group D Armed or Group D Disarmed</description>
 			</channel>
-			<channel id="trouble" typeId="readonly-switch">
+			<channel id="trouble" typeId="readonly-switch-advanced">
 				<label>Trouble</label>
 				<description>Trouble or Ok</description>
 			</channel>
