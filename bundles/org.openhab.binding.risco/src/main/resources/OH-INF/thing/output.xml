@@ -17,7 +17,7 @@
 				<label>Output is Active</label>
 				<description>Output is Active</description>
 			</channel>
-			<channel id="exists" typeId="readonly-switch">
+			<channel id="exists" typeId="readonly-switch-advanced">
 				<label>Exists</label>
 				<description>Exists or Not Exists</description>
 			</channel>

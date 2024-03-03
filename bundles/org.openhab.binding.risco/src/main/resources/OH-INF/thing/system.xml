@@ -34,63 +34,63 @@
 				<label>Clock Trouble</label>
 				<description>Clock Trouble or Clock Ok</description>
 			</channel>
-			<channel id="default-switch" typeId="readonly-switch">
+			<channel id="default-switch" typeId="readonly-switch-advanced">
 				<label>Default Switch</label>
 				<description>Default Switch On or Default Switch Off</description>
 			</channel>
-			<channel id="ms-1-report-trouble" typeId="readonly-switch">
+			<channel id="ms-1-report-trouble" typeId="readonly-switch-advanced">
 				<label>MS 1 Report Trouble</label>
 				<description>MS 1 Report Trouble or MS 1 Report Ok</description>
 			</channel>
-			<channel id="ms-2-report-trouble" typeId="readonly-switch">
+			<channel id="ms-2-report-trouble" typeId="readonly-switch-advanced">
 				<label>MS 2 Report Trouble</label>
 				<description>MS 2 Report Trouble or MS 2 Report Ok</description>
 			</channel>
-			<channel id="ms-3-report-trouble" typeId="readonly-switch">
+			<channel id="ms-3-report-trouble" typeId="readonly-switch-advanced">
 				<label>MS 3 Report Trouble</label>
 				<description>MS 3 Report Trouble or MS 3 Report Ok</description>
 			</channel>
-			<channel id="box-tamper" typeId="panel-contact">
+			<channel id="box-tamper" typeId="readonly-contact">
 				<label>Box Tamper</label>
 				<description>Box Tamper Open or Box Tamper Closed</description>
 			</channel>
-			<channel id="jamming-trouble" typeId="readonly-switch">
+			<channel id="jamming-trouble" typeId="readonly-switch-advanced">
 				<label>Jamming Trouble</label>
 				<description>Jamming Trouble or Jamming Ok</description>
 			</channel>
-			<channel id="prog-mode" typeId="readonly-switch">
+			<channel id="prog-mode" typeId="readonly-switch-advanced">
 				<label>Prog Mode</label>
 				<description>Prog Mode On or Prog Mode Off</description>
 			</channel>
-			<channel id="learn-mode" typeId="readonly-switch">
+			<channel id="learn-mode" typeId="readonly-switch-advanced">
 				<label>Learn Mode</label>
 				<description>Learn Mode On or Learn Mode Off</description>
 			</channel>
-			<channel id="three-min-bypass" typeId="readonly-switch">
+			<channel id="three-min-bypass" typeId="readonly-switch-advanced">
 				<label>Three Min Bypass</label>
 				<description>Three Min Bypass On or Three Min Bypass Off</description>
 			</channel>
-			<channel id="walk-test" typeId="readonly-switch">
+			<channel id="walk-test" typeId="readonly-switch-advanced">
 				<label>Walk Test</label>
 				<description>Walk Test On or Walk Test Off</description>
 			</channel>
-			<channel id="aux-trouble" typeId="readonly-switch">
+			<channel id="aux-trouble" typeId="readonly-switch-advanced">
 				<label>AUX Trouble</label>
 				<description>Aux Trouble or Aux Ok</description>
 			</channel>
-			<channel id="rs485-bus-trouble" typeId="readonly-switch">
+			<channel id="rs485-bus-trouble" typeId="readonly-switch-advanced">
 				<label>RS485 Bus Trouble</label>
 				<description>RS485 Bus Trouble or RS485 Bus Ok</description>
 			</channel>
-			<channel id="ls-switch" typeId="readonly-switch">
+			<channel id="ls-switch" typeId="readonly-switch-advanced">
 				<label>Ls Switch</label>
 				<description>Ls Switch On or Ls Switch Off</description>
 			</channel>
-			<channel id="bell-switch" typeId="readonly-switch">
+			<channel id="bell-switch" typeId="readonly-switch-advanced">
 				<label>Bell Switch</label>
 				<description>Bell Switch On or Bell Switch Off</description>
 			</channel>
-			<channel id="bell-trouble" typeId="readonly-switch">
+			<channel id="bell-trouble" typeId="readonly-switch-advanced">
 				<label>Bell Trouble</label>
 				<description>Bell Trouble or Bell Ok</description>
 			</channel>
@@ -98,19 +98,19 @@
 				<label>Bell Tamper</label>
 				<description>Bell Tamper or Bell Tamper Ok</description>
 			</channel>
-			<channel id="service-expired" typeId="readonly-switch">
+			<channel id="service-expired" typeId="readonly-switch-advanced">
 				<label>Service Expired</label>
 				<description>Service Expired or Service Ok</description>
 			</channel>
-			<channel id="payment-expired" typeId="readonly-switch">
+			<channel id="payment-expired" typeId="readonly-switch-advanced">
 				<label>Payment Expired</label>
 				<description>Payment Expired or Payment Ok</description>
 			</channel>
-			<channel id="service-mode" typeId="readonly-switch">
+			<channel id="service-mode" typeId="readonly-switch-advanced">
 				<label>Service Mode</label>
 				<description>Service Mode On or Service Mode Off</description>
 			</channel>
-			<channel id="dual-path" typeId="readonly-switch">
+			<channel id="dual-path" typeId="readonly-switch-advanced">
 				<label>Dual Path</label>
 				<description>Dual Path On or Dual Path Off</description>
 			</channel>

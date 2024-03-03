@@ -5,13 +5,7 @@
 	xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
 
 	<!-- bridge -->
-	<channel-type id="reset">
-		<item-type>Switch</item-type>
-		<label>Reset</label>
-		<description>Reset Switch</description>
-	</channel-type>
-
-	<channel-type id="command">
+	<channel-type id="command" advanced="true">
 		<item-type>String</item-type>
 		<label>Send Command</label>
 		<description>Sends a Command</description>
@@ -31,12 +25,18 @@
 		<description>Read-only text</description>
 		<state pattern="%s" readOnly="true"></state>
 	</channel-type>
+	<channel-type id="readonly-switch-advanced">
+		<item-type>Switch</item-type>
+		<label>Read-only Switch</label>
+		<description>Read-only Switch</description>
+		<state readOnly="true"></state>
+	</channel-type>
 
 	<!-- zone -->
 	<channel-type id="readonly-contact">
 		<item-type>Contact</item-type>
-		<label>Zone Status</label>
-		<description>Zone Status (Open/Closed)</description>
+		<label>Status</label>
+		<description>Status (Open/Closed)</description>
 		<state readOnly="true"></state>
 	</channel-type>
 
