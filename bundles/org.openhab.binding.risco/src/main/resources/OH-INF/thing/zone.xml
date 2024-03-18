@@ -17,15 +17,15 @@
 				<label>Open</label>
 				<description>Open or Closed</description>
 			</channel>
-			<channel id="arm" typeId="readonly-switch">
+			<channel id="arm" typeId="readonly-switch-advanced">
 				<label>Arm</label>
 				<description>Armed or Disarmed</description>
 			</channel>
-			<channel id="alarm" typeId="readonly-switch">
+			<channel id="alarm" typeId="readonly-switch-advanced">
 				<label>Alarm</label>
 				<description>Alarm or Standby</description>
 			</channel>
-			<channel id="tamper" typeId="readonly-switch">
+			<channel id="tamper" typeId="readonly-switch-advanced">
 				<label>Tamper</label>
 				<description>Tamper or Hold</description>
 			</channel>
@@ -37,7 +37,7 @@
 				<label>Lost</label>
 				<description>Lost or Located</description>
 			</channel>
-			<channel id="low-battery" typeId="readonly-switch">
+			<channel id="low-battery" typeId="low-battery-readonly-switch">
 				<label>Low Battery</label>
 				<description>Low Battery or Battery Ok</description>
 			</channel>

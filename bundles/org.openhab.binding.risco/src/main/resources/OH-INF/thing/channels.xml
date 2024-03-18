@@ -31,12 +31,26 @@
 		<description>Read-only text</description>
 		<state pattern="%s" readOnly="true"></state>
 	</channel-type>
+	<channel-type id="low-battery-readonly-switch">
+		<item-type>Switch</item-type>
+		<label>Read-only Switch</label>
+		<description>Read-only Switch</description>
+		<tags>
+			<tag>LowBattery</tag>
+			<tag>Energy</tag>
+		</tags>
+		<state readOnly="true"></state>
+	</channel-type>
 
 	<!-- zone -->
 	<channel-type id="readonly-contact">
 		<item-type>Contact</item-type>
 		<label>Status</label>
 		<description>Status (Open/Closed)</description>
+		<tags>
+			<tag>OpenState</tag>
+			<tag>Opening</tag>
+		</tags>
 		<state readOnly="true"></state>
 	</channel-type>
 

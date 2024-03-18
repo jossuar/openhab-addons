@@ -25,7 +25,7 @@
 				<label>AC Trouble</label>
 				<description>AC Trouble</description>
 			</channel>
-			<channel id="low-battery" typeId="readonly-switch">
+			<channel id="low-battery" typeId="low-battery-readonly-switch">
 				<label>Low Battery</label>
 				<description>Low Battery</description>
 			</channel>
