@@ -13,7 +13,7 @@
 		<description>Represents a keyfob within a Risco Alarm System</description>
 
 		<channels>
-			<channel id="low-battery-trouble" typeId="readonly-switch">
+			<channel id="low-battery-trouble" typeId="low-battery-readonly-switch">
 				<label>Low Battery Trouble</label>
 				<description>Low Battery Trouble</description>
 			</channel>
