@@ -14,11 +14,11 @@
 
 		<channels>
 
-			<channel id="radio-low-battery-trouble" typeId="readonly-switch">
+			<channel id="radio-low-battery-trouble" typeId="low-battery-readonly-switch">
 				<label>Radio Low Battery Trouble</label>
 				<description>Radio Low Battery Trouble</description>
 			</channel>
-			<channel id="speaker-low-battery-trouble" typeId="readonly-switch">
+			<channel id="speaker-low-battery-trouble" typeId="low-battery-readonly-switch">
 				<label>Speaker Low Battery Trouble</label>
 				<description>Speaker Low Battery Trouble</description>
 			</channel>
@@ -62,7 +62,7 @@
 				<label>Lost</label>
 				<description>Lost</description>
 			</channel>
-			<channel id="low-battery" typeId="readonly-switch">
+			<channel id="low-battery" typeId="low-battery-readonly-switch">
 				<label>Low Battery</label>
 				<description>Low Battery</description>
 			</channel>

@@ -18,7 +18,7 @@
 				<description>Name</description>
 			</channel>
 
-			<channel id="low-battery-trouble" typeId="readonly-switch">
+			<channel id="low-battery-trouble" typeId="low-battery-readonly-switch">
 				<label>Low Battery Trouble</label>
 				<description>Low Battery or Battery Ok</description>
 			</channel>
@@ -50,7 +50,7 @@
 				<label>MS 3 Report Trouble</label>
 				<description>MS 3 Report Trouble or MS 3 Report Ok</description>
 			</channel>
-			<channel id="box-tamper" typeId="readonly-contact">
+			<channel id="box-tamper" typeId="readonly-switch">
 				<label>Box Tamper</label>
 				<description>Box Tamper Open or Box Tamper Closed</description>
 			</channel>
