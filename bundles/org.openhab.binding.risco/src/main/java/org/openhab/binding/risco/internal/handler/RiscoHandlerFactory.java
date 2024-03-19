@@ -20,11 +20,11 @@ import org.openhab.binding.risco.internal.handler.thing.RiscoKeyfobHandler;
 import org.openhab.binding.risco.internal.handler.thing.RiscoKeypadHandler;
 import org.openhab.binding.risco.internal.handler.thing.RiscoOutputExpanderHandler;
 import org.openhab.binding.risco.internal.handler.thing.RiscoOutputHandler;
+import org.openhab.binding.risco.internal.handler.thing.RiscoPanelHandler;
 import org.openhab.binding.risco.internal.handler.thing.RiscoPartitionHandler;
 import org.openhab.binding.risco.internal.handler.thing.RiscoPowerSupplyHandler;
 import org.openhab.binding.risco.internal.handler.thing.RiscoProximityReaderHandler;
 import org.openhab.binding.risco.internal.handler.thing.RiscoSounderHandler;
-import org.openhab.binding.risco.internal.handler.thing.RiscoSystemHandler;
 import org.openhab.binding.risco.internal.handler.thing.RiscoVoiceModuleHandler;
 import org.openhab.binding.risco.internal.handler.thing.RiscoWirelessModuleHandler;
 import org.openhab.binding.risco.internal.handler.thing.RiscoZoneExpanderHandler;
@@ -88,8 +88,8 @@ public class RiscoHandlerFactory extends BaseThingHandlerFactory {
             return new RiscoProximityReaderHandler(thing);
         } else if (RiscoBindingConstants.SOUNDER_THING_TYPE.equals(thingTypeUID)) {
             return new RiscoSounderHandler(thing);
-        } else if (RiscoBindingConstants.SYSTEM_THING_TYPE.equals(thingTypeUID)) {
-            return new RiscoSystemHandler(thing);
+        } else if (RiscoBindingConstants.PANEL_THING_TYPE.equals(thingTypeUID)) {
+            return new RiscoPanelHandler(thing);
         } else if (RiscoBindingConstants.VOICE_MODULE_THING_TYPE.equals(thingTypeUID)) {
             return new RiscoVoiceModuleHandler(thing);
         } else if (RiscoBindingConstants.WIRELESS_MODULE_THING_TYPE.equals(thingTypeUID)) {
