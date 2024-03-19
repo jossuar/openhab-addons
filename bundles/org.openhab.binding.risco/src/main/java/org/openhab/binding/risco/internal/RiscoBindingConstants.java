@@ -45,7 +45,7 @@ public class RiscoBindingConstants {
     public static final String POWER_SUPPLY = "power-supply";
     public static final String PROXIMITY_READER = "proximity-reader";
     public static final String SIREN = "siren";
-    public static final String SYSTEM = "system";
+    public static final String PANEL = "panel";
     public static final String VOICE_MODULE = "voice-module";
     public static final String WIRELESS_MODULE = "wireless-module";
     public static final String ZONE_EXPANDER = "zone-expander";
@@ -65,7 +65,7 @@ public class RiscoBindingConstants {
     public static final ThingTypeUID POWER_SUPPLY_THING_TYPE = new ThingTypeUID(BINDING_ID, POWER_SUPPLY);
     public static final ThingTypeUID PROXIMITY_READER_THING_TYPE = new ThingTypeUID(BINDING_ID, PROXIMITY_READER);
     public static final ThingTypeUID SOUNDER_THING_TYPE = new ThingTypeUID(BINDING_ID, SIREN);
-    public static final ThingTypeUID SYSTEM_THING_TYPE = new ThingTypeUID(BINDING_ID, SYSTEM);
+    public static final ThingTypeUID PANEL_THING_TYPE = new ThingTypeUID(BINDING_ID, PANEL);
     public static final ThingTypeUID VOICE_MODULE_THING_TYPE = new ThingTypeUID(BINDING_ID, VOICE_MODULE);
     public static final ThingTypeUID WIRELESS_MODULE_THING_TYPE = new ThingTypeUID(BINDING_ID, WIRELESS_MODULE);
     public static final ThingTypeUID ZONE_THING_TYPE = new ThingTypeUID(BINDING_ID, ZONE);
@@ -75,7 +75,7 @@ public class RiscoBindingConstants {
     public static final Set<ThingTypeUID> SUPPORTED_THING_TYPES_UIDS = Collections.unmodifiableSet(Stream
             .of(BRIDGE_THING_TYPE, BUS_EXPANDER_THING_TYPE, CELLULAR_ON_BUS_THING_TYPE, KEYFOB_THING_TYPE,
                     KEYPAD_THING_TYPE, OUTPUT_THING_TYPE, OUTPUT_EXPANDER_THING_TYPE, PARTITION_THING_TYPE,
-                    POWER_SUPPLY_THING_TYPE, PROXIMITY_READER_THING_TYPE, SOUNDER_THING_TYPE, SYSTEM_THING_TYPE,
+                    POWER_SUPPLY_THING_TYPE, PROXIMITY_READER_THING_TYPE, SOUNDER_THING_TYPE, PANEL_THING_TYPE,
                     VOICE_MODULE_THING_TYPE, WIRELESS_MODULE_THING_TYPE, ZONE_THING_TYPE, ZONE_EXPANDER_THING_TYPE)
             .collect(Collectors.toSet()));
 

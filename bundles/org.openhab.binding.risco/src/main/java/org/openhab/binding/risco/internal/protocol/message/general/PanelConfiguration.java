@@ -42,7 +42,7 @@ public class PanelConfiguration extends RiscoMessage {
             List<RiscoProperty> props = new ArrayList<RiscoProperty>();
             props.add(new RiscoProperty("name", commandValues[0]));
 
-            things.add(new RiscoThing(RiscoThingType.SYSTEM, null, props));
+            things.add(new RiscoThing(RiscoThingType.PANEL, null, props));
 
             messageThings = things;
         }

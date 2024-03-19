@@ -33,7 +33,7 @@ public enum RiscoThingType {
     SOUNDER,
     VOICE_MODULE,
     WIRELESS_MODULE,
-    SYSTEM,
+    PANEL,
     ZONE,
     ZONE_EXPANDER
 };
