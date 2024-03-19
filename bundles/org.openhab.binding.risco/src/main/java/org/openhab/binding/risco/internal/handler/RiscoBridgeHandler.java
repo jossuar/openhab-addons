@@ -42,11 +42,11 @@ import org.openhab.binding.risco.internal.handler.thing.RiscoKeyfobHandler;
 import org.openhab.binding.risco.internal.handler.thing.RiscoKeypadHandler;
 import org.openhab.binding.risco.internal.handler.thing.RiscoOutputExpanderHandler;
 import org.openhab.binding.risco.internal.handler.thing.RiscoOutputHandler;
+import org.openhab.binding.risco.internal.handler.thing.RiscoPanelHandler;
 import org.openhab.binding.risco.internal.handler.thing.RiscoPartitionHandler;
 import org.openhab.binding.risco.internal.handler.thing.RiscoPowerSupplyHandler;
 import org.openhab.binding.risco.internal.handler.thing.RiscoProximityReaderHandler;
 import org.openhab.binding.risco.internal.handler.thing.RiscoSounderHandler;
-import org.openhab.binding.risco.internal.handler.thing.RiscoSystemHandler;
 import org.openhab.binding.risco.internal.handler.thing.RiscoVoiceModuleHandler;
 import org.openhab.binding.risco.internal.handler.thing.RiscoWirelessModuleHandler;
 import org.openhab.binding.risco.internal.handler.thing.RiscoZoneExpanderHandler;
@@ -235,8 +235,8 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
 
     public @Nullable Thing findThing(RiscoThingType riscoThingType, @Nullable Integer index) {
         switch (riscoThingType) {
-            case SYSTEM:
-                return thingGeneralMap.get(RiscoBindingConstants.SYSTEM);
+            case PANEL:
+                return thingGeneralMap.get(RiscoBindingConstants.PANEL);
             case CELLULAR_ON_BUS:
                 break;
             case VOICE_MODULE:
@@ -346,10 +346,10 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
                 label = "Sounder " + index;
                 indexProperty = RiscoSounderConfiguration.SOUNDER_NUMBER;
                 break;
-            case SYSTEM:
-                ttUID = RiscoBindingConstants.SYSTEM_THING_TYPE;
-                prefix = RiscoBindingConstants.SYSTEM;
-                label = "System";
+            case PANEL:
+                ttUID = RiscoBindingConstants.PANEL_THING_TYPE;
+                prefix = RiscoBindingConstants.PANEL;
+                label = "Panel";
                 indexProperty = null;
                 break;
             case VOICE_MODULE:
@@ -415,8 +415,8 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
 
     @Override
     public void childHandlerInitialized(ThingHandler childHandler, Thing childThing) {
-        if (childHandler instanceof RiscoSystemHandler) {
-            thingGeneralMap.put(RiscoBindingConstants.SYSTEM, childThing);
+        if (childHandler instanceof RiscoPanelHandler) {
+            thingGeneralMap.put(RiscoBindingConstants.PANEL, childThing);
         } else if (childHandler instanceof RiscoBusExpanderHandler) {
             RiscoBusExpanderHandler handler = (RiscoBusExpanderHandler) childHandler;
             thingBusExpanderMap.put(handler.getBusExpanderNumber(), childThing);
@@ -469,8 +469,8 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
 
     @Override
     public void childHandlerDisposed(ThingHandler childHandler, Thing childThing) {
-        if (childHandler instanceof RiscoSystemHandler) {
-            thingGeneralMap.remove(RiscoBindingConstants.SYSTEM);
+        if (childHandler instanceof RiscoPanelHandler) {
+            thingGeneralMap.remove(RiscoBindingConstants.PANEL);
         } else if (childHandler instanceof RiscoBusExpanderHandler) {
             RiscoBusExpanderHandler handler = (RiscoBusExpanderHandler) childHandler;
             thingBusExpanderMap.remove(handler.getBusExpanderNumber());

@@ -85,7 +85,7 @@ public class SystemStatus extends RiscoMessage {
                         }
                     }
 
-                    things.add(new RiscoThing(RiscoThingType.SYSTEM, index, props));
+                    things.add(new RiscoThing(RiscoThingType.PANEL, index, props));
                 }
             }
 

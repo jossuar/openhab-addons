@@ -18,7 +18,7 @@ Currently the following things are supported:
 - `power-supply`: Represents a power supply within a Risco Alarm System
 - `proximity-reader`: Represents a proximity reader within a Risco Alarm System
 - `siren`: Represents a siren within a Risco Alarm System
-- `system`: Represents the Risco Alarm System
+- `panel`: Represents the panel within a Risco Alarm System
 - `voice-module`: Represents a voice module within a Risco Alarm System
 - `wireless-module`: Represents a eireless module within a Risco Alarm System
 - `zone`: Represents a zone within a Risco Alarm System
@@ -235,7 +235,7 @@ The Risco binding things expose the following channels:
 | lost                        | Switch | R          | Lost                                    |
 | low-battery                 | Switch | R          | Low Battery                             |
 
-### `system` Channels
+### `panel` Channels
 
 | Channel               | Type   | Read/Write | Description                             |
 |-----------------------|--------|------------|-----------------------------------------|
