@@ -29,18 +29,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The {@link RiscoSystemHandler} is responsible for handling commands, which are
+ * The {@link RiscoPanelHandler} is responsible for handling commands, which are
  * sent to one of the channels.
  *
  * @author Georgios Moutsos - Initial contribution
  */
 @NonNullByDefault
-public class RiscoSystemHandler extends RiscoThingHandler {
-    private final Logger logger = LoggerFactory.getLogger(RiscoSystemHandler.class);
+public class RiscoPanelHandler extends RiscoThingHandler {
+    private final Logger logger = LoggerFactory.getLogger(RiscoPanelHandler.class);
 
     private long lastRefreshTime = 0;
 
-    public RiscoSystemHandler(Thing thing) {
+    public RiscoPanelHandler(Thing thing) {
         super(thing);
     }
 
@@ -55,7 +55,7 @@ public class RiscoSystemHandler extends RiscoThingHandler {
 
         bridgeHandler.sendCommand(PanelConfiguration.getReadCommand());
         bridgeHandler.sendCommand(SystemStatus.getReadCommand());
-        logger.trace("RiscoSystemHandler initialized");
+        logger.trace("RiscoPanelHandler initialized");
     }
 
     @Override

@@ -75,7 +75,7 @@ public class RiscoDiscoveryService extends AbstractDiscoveryService implements D
             bridge.sendCommand(OutputAllocation.COMMAND);
             // Output Expanders
             bridge.sendCommand(OutputExpanderAllocation.COMMAND);
-            // System
+            // Panel
             bridge.sendCommand(PanelConfiguration.COMMAND);
             // Partitions
             bridge.sendCommand(PartitionAllocation.COMMAND);
