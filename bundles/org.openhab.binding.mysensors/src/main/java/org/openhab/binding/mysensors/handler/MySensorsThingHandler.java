@@ -397,7 +397,7 @@ public class MySensorsThingHandler extends BaseThingHandler implements MySensors
 
     private String getChannelNameFromVar(MySensorsVariable var) {
         // Cover thing has a specific behavior
-        if (getThing().getThingTypeUID() == MySensorsBindingConstants.THING_TYPE_COVER) {
+        if (MySensorsBindingConstants.THING_TYPE_COVER.equals(getThing().getThingTypeUID())) {
             return MySensorsBindingConstants.CHANNEL_COVER;
         } else {
             return CHANNEL_MAP.getOrDefault(var.getType(), "");
