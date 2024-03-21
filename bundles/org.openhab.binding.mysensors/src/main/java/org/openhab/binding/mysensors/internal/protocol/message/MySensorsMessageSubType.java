@@ -15,12 +15,15 @@ package org.openhab.binding.mysensors.internal.protocol.message;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
+
 /**
  * Enum of MessageSubTypes and the corresponding id
  *
  * @author Tim Oberföll - Initial contribution
  *
  */
+@NonNullByDefault
 public enum MySensorsMessageSubType {
 
     S_DOOR(MySensorsMessageSubTypes.S, 0),
@@ -192,14 +195,32 @@ public enum MySensorsMessageSubType {
     }
 
     public static MySensorsMessageSubType getSetReqById(int id) {
-        return SET_REQ_MESSAGE_BY_ID.get(id);
+        MySensorsMessageSubType value = SET_REQ_MESSAGE_BY_ID.get(id);
+
+        if (value == null) {
+            throw new IllegalArgumentException("unknown id: " + id);
+        }
+
+        return value;
     }
 
     public static MySensorsMessageSubType getPresentationById(int id) {
-        return PRESENTATION_MESSAGE_BY_ID.get(id);
+        MySensorsMessageSubType value = PRESENTATION_MESSAGE_BY_ID.get(id);
+
+        if (value == null) {
+            throw new IllegalArgumentException("unknown id: " + id);
+        }
+
+        return value;
     }
 
     public static MySensorsMessageSubType getInternalById(int id) {
-        return INTERNAL_MESSAGE_BY_ID.get(id);
+        MySensorsMessageSubType value = INTERNAL_MESSAGE_BY_ID.get(id);
+
+        if (value == null) {
+            throw new IllegalArgumentException("unknown id: " + id);
+        }
+
+        return value;
     }
 }

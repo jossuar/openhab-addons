@@ -12,12 +12,15 @@
  */
 package org.openhab.binding.mysensors.internal.gateway;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
+
 /**
  * Possible gateway types
  *
  * @author Tim Oberföll - Initial contribution
  *
  */
+@NonNullByDefault
 public enum MySensorsGatewayType {
     SERIAL,
     IP,

@@ -12,12 +12,15 @@
  */
 package org.openhab.binding.mysensors.internal.protocol.message;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
+
 /**
  * A MySensors Message consists of 6 parts splitted by semicolon
  *
  * @author Tim Oberföll - Initial contribution
  *
  */
+@NonNullByDefault
 public enum MySensorsMessagePart {
     NODE(0),
     CHILD(1),
