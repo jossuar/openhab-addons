@@ -334,6 +334,7 @@ public class MySensorsGateway implements MySensorsGatewayEventListener {
         } catch (Exception e) {
             logger.error("Handling outgoing message throw an exception", e);
         }
+        MySensorsAbstractConnection myCon = this.myCon;
         if (myCon != null) {
             logger.debug("MySensorsGateway sending message {}", getConfiguration().getGatewayType());
             myCon.sendMessage(message);
@@ -389,6 +390,7 @@ public class MySensorsGateway implements MySensorsGatewayEventListener {
 
     @Override
     public void connectionStatusUpdate(@Nullable MySensorsAbstractConnection connection, boolean connected) {
+        MySensorsNetworkSanityChecker myNetSanCheck = this.myNetSanCheck;
         if (myNetSanCheck != null) {
             if (connected) {
                 myNetSanCheck.start();
@@ -408,8 +410,10 @@ public class MySensorsGateway implements MySensorsGatewayEventListener {
         synchronized (nodeMap) {
             for (Integer i : nodeMap.keySet()) {
                 MySensorsNode node = nodeMap.get(i);
-                node.setReachable(connected);
-                myEventRegister.notifyNodeReachEvent(node, connected);
+                if (node != null) {
+                    node.setReachable(connected);
+                    myEventRegister.notifyNodeReachEvent(node, connected);
+                }
             }
         }
     }
@@ -655,6 +659,7 @@ public class MySensorsGateway implements MySensorsGatewayEventListener {
      * @param msg, the incoming I_CONFIG message from sensor
      */
     private void answerIConfigMessage(MySensorsMessage msg) {
+        MySensorsAbstractConnection myCon = this.myCon;
         if (myCon == null) {
             logger.warn("Connection or Configuration is null, skipping I_CONFIG");
             return;

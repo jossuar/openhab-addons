@@ -106,6 +106,8 @@ public class MySensorsBridgeHandler extends BaseBridgeHandler implements MySenso
     public void dispose() {
         logger.debug("Disposing of the MySensors bridge {}", getThing().getUID());
         updateStatus(ThingStatus.OFFLINE);
+
+        MySensorsGateway myGateway = this.myGateway;
         if (myGateway != null) {
             myGateway.removeEventListener(this);
             myGateway.shutdown();
@@ -169,6 +171,7 @@ public class MySensorsBridgeHandler extends BaseBridgeHandler implements MySenso
     }
 
     private void updateCacheFile() {
+        MySensorsGateway myGateway = this.myGateway;
         if (myGateway == null) {
             return;
         }

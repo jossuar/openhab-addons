@@ -116,6 +116,7 @@ public class BrokerHandler extends AbstractBrokerHandler implements PinnedCallba
     @Override
     public void dispose() {
         try {
+            MqttBrokerConnection connection = this.connection;
             if (connection != null) {
                 publish(config.shutdownTopic, config.shutdownMessage, config.shutdownRetain).get(1000,
                         TimeUnit.MILLISECONDS);
@@ -246,6 +247,8 @@ public class BrokerHandler extends AbstractBrokerHandler implements PinnedCallba
      * Calls the @NonNull MqttBrokerConnection::publish() with @Nullable topic and message
      */
     private CompletableFuture<Boolean> publish(@Nullable String topic, @Nullable String message, boolean retain) {
+        MqttBrokerConnection connection = this.connection;
+
         if (topic == null || connection == null) {
             return CompletableFuture.completedFuture(true);
         }
