@@ -246,6 +246,7 @@ public abstract class MySensorsAbstractConnection implements Runnable {
      * @param msg The message that should be send.
      */
     public void sendMessage(MySensorsMessage msg) {
+        MySensorsWriter mysConWriter = this.mysConWriter;
         if (mysConWriter == null) {
             logger.warn("Can't send message, connection writer is null");
             return;
@@ -303,7 +304,6 @@ public abstract class MySensorsAbstractConnection implements Runnable {
      * @author Tim Oberföll
      *
      */
-    @NonNullByDefault
     protected class MySensorsReader implements Runnable {
         private final Logger logger = LoggerFactory.getLogger(MySensorsReader.class);
 
@@ -343,6 +343,7 @@ public abstract class MySensorsAbstractConnection implements Runnable {
             while (!stopReader) {
                 // Is there something to read?
                 try {
+                    BufferedReader reads = this.reads;
                     if (reads == null || !reads.ready()) {
                         Thread.sleep(10);
                         continue;
@@ -400,10 +401,11 @@ public abstract class MySensorsAbstractConnection implements Runnable {
                 future = null;
             }
 
+            ExecutorService executor = this.executor;
             if (executor != null) {
                 executor.shutdown();
                 executor.shutdownNow();
-                executor = null;
+                this.executor = null;
             }
 
             try {
@@ -430,11 +432,12 @@ public abstract class MySensorsAbstractConnection implements Runnable {
         }
 
         private void handleAckReceived(MySensorsMessage msg) {
-            if (mysConWriter == null) {
+            MySensorsWriter writer = mysConWriter;
+            if (writer == null) {
                 return;
             }
             try {
-                mysConWriter.confirmAcknowledgeMessage(msg);
+                writer.confirmAcknowledgeMessage(msg);
             } catch (Exception e) {
                 logger.warn("Invalid ACK message received:", e);
             }
@@ -447,10 +450,11 @@ public abstract class MySensorsAbstractConnection implements Runnable {
          * @param msg The heartbeat message received from a node.
          */
         private void handleSmartSleepMessage(MySensorsMessage msg) {
-            if (mysConWriter == null) {
+            MySensorsWriter writer = mysConWriter;
+            if (writer == null) {
                 return;
             }
-            mysConWriter.checkPendingSmartSleepMessage(msg.getNodeId());
+            writer.checkPendingSmartSleepMessage(msg.getNodeId());
         }
     }
 
@@ -461,7 +465,6 @@ public abstract class MySensorsAbstractConnection implements Runnable {
      * @author Tim Oberföll
      *
      */
-    @NonNullByDefault
     protected class MySensorsWriter implements Runnable {
         private final Logger logger = LoggerFactory.getLogger(MySensorsWriter.class);
 
@@ -578,6 +581,7 @@ public abstract class MySensorsAbstractConnection implements Runnable {
                 future = null;
             }
 
+            ExecutorService executor = this.executor;
             if (executor != null) {
                 executor.shutdown();
                 executor.shutdownNow();
@@ -585,10 +589,11 @@ public abstract class MySensorsAbstractConnection implements Runnable {
             }
 
             try {
+                PrintWriter outs = this.outs;
                 if (outs != null) {
                     outs.flush();
                     outs.close();
-                    outs = null;
+                    this.outs = null;
                 }
 
                 if (outStream != null) {
@@ -606,6 +611,7 @@ public abstract class MySensorsAbstractConnection implements Runnable {
          * @param output the message/string/line that should be send to the MySensors gateway.
          */
         protected void sendMessage(String output) {
+            PrintWriter outs = this.outs;
             if (outs != null) {
                 outs.println(output);
                 outs.flush();

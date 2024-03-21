@@ -64,7 +64,9 @@ public class MySensorsSerialConnection extends MySensorsAbstractConnection imple
             if (portIdentifier == null) {
                 throw new IllegalStateException("Serial Port Identifier not found");
             }
-            serialConnection = portIdentifier.open(getClass().getName(), 2000);
+            SerialPort serialConnection = portIdentifier.open(getClass().getName(), 2000);
+            this.serialConnection = serialConnection;
+
             serialConnection.setSerialPortParams(baudRate, SerialPort.DATABITS_8, SerialPort.STOPBITS_1,
                     SerialPort.PARITY_NONE);
             serialConnection.enableReceiveThreshold(1);
@@ -128,6 +130,7 @@ public class MySensorsSerialConnection extends MySensorsAbstractConnection imple
             resetAttachedGateway();
         }
 
+        SerialPort serialConnection = this.serialConnection;
         if (serialConnection != null) {
             try {
                 serialConnection.removeEventListener();
@@ -135,7 +138,7 @@ public class MySensorsSerialConnection extends MySensorsAbstractConnection imple
             } catch (Exception e) {
                 logger.warn("Error removing Serial Connection listener", e);
             }
-            serialConnection = null;
+            this.serialConnection = null;
         }
     }
 
@@ -159,6 +162,7 @@ public class MySensorsSerialConnection extends MySensorsAbstractConnection imple
      */
     public void resetAttachedGateway() {
         logger.debug("Trying to reset of attached gateway with DTR");
+        SerialPort serialConnection = this.serialConnection;
         if (serialConnection == null) {
             logger.warn("Cannot resetAttachedGateway with null serialConnection");
             return;

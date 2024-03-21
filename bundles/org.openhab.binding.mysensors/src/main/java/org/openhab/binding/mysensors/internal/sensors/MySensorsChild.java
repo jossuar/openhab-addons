@@ -287,13 +287,15 @@ public abstract class MySensorsChild implements Mergeable {
     @Nullable
     public static MySensorsChild fromPresentation(MySensorsMessageSubType presentationCode, int childId) {
         @Nullable
-        MySensorsChild ret;
+        MySensorsChild ret = null;
 
         if (PRESENTATION_TO_CHILD_CLASS.containsKey(presentationCode)) {
             try {
                 Class<? extends MySensorsChild> cls = PRESENTATION_TO_CHILD_CLASS.get(presentationCode);
-                Constructor<? extends MySensorsChild> constr = cls.getConstructor(int.class);
-                ret = constr.newInstance(childId);
+                if (cls != null) {
+                    Constructor<? extends MySensorsChild> constr = cls.getConstructor(int.class);
+                    ret = constr.newInstance(childId);
+                }
             } catch (Exception e) {
                 LoggerFactory.getLogger(MySensorsChild.class)
                         .error("Reflection has failed for presentation {}, childId: {}", presentationCode, childId, e);

@@ -45,7 +45,9 @@ public class MySensorsIpConnection extends MySensorsAbstractConnection {
     public boolean establishConnection() {
         logger.debug("Connecting to IP bridge [{}:{}]", myGatewayConfig.getIpAddress(), myGatewayConfig.getTcpPort());
         try {
-            sock = new Socket(myGatewayConfig.getIpAddress(), myGatewayConfig.getTcpPort());
+            Socket sock = new Socket(myGatewayConfig.getIpAddress(), myGatewayConfig.getTcpPort());
+            this.sock = sock;
+
             mysConReader = new MySensorsReader(sock.getInputStream());
             mysConWriter = new MySensorsWriter(sock.getOutputStream());
 
@@ -79,9 +81,10 @@ public class MySensorsIpConnection extends MySensorsAbstractConnection {
 
         // Shut down socket
         try {
+            Socket sock = this.sock;
             if (sock != null && sock.isConnected()) {
                 sock.close();
-                sock = null;
+                this.sock = null;
             }
         } catch (IOException e) {
             logger.error("cannot disconnect from socket, message: {}", e.getMessage());

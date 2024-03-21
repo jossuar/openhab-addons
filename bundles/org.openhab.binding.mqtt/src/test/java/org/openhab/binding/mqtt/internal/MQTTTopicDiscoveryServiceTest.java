@@ -35,6 +35,7 @@ import org.openhab.binding.mqtt.handler.BrokerHandler;
 import org.openhab.binding.mqtt.handler.BrokerHandlerEx;
 import org.openhab.binding.mqtt.handler.MqttBrokerConnectionEx;
 import org.openhab.core.config.core.Configuration;
+import org.openhab.core.io.transport.mqtt.internal.Subscription;
 import org.openhab.core.thing.Bridge;
 import org.openhab.core.thing.binding.ThingHandlerCallback;
 
@@ -92,7 +93,12 @@ public class MQTTTopicDiscoveryServiceTest {
         assertThat(subject.discoveryTopics.get("topic"), hasItem(listenerMock));
         // Simulate receiving
         final byte[] bytes = "TEST".getBytes();
-        connection.getSubscribers().get("topic").messageArrived("topic", bytes, false);
+        Subscription topic = connection.getSubscribers().get("topic");
+        if (topic == null) {
+            throw new IllegalArgumentException("Cannot get topic");
+        }
+        topic.messageArrived("topic", bytes, false);
+
         verify(listenerMock).receivedMessage(eq(thingMock.getUID()), eq(connection), eq("topic"), eq(bytes));
     }
 
@@ -107,7 +113,12 @@ public class MQTTTopicDiscoveryServiceTest {
 
         // Simulate receiving
         final byte[] bytes = "TEST".getBytes();
-        connection.getSubscribers().get("topic").messageArrived("topic", bytes, false);
+        Subscription topic = connection.getSubscribers().get("topic");
+        if (topic == null) {
+            throw new IllegalArgumentException("Cannot get topic");
+        }
+        topic.messageArrived("topic", bytes, false);
+
         verify(listenerMock).receivedMessage(eq(thingMock.getUID()), eq(connection), eq("topic"), eq(bytes));
     }
 
@@ -123,7 +134,12 @@ public class MQTTTopicDiscoveryServiceTest {
 
         // Simulate receiving
         final byte[] bytes = "TEST".getBytes();
-        connection.getSubscribers().get("topic").messageArrived("topic", bytes, false);
+        Subscription topic = connection.getSubscribers().get("topic");
+        if (topic == null) {
+            throw new IllegalArgumentException("Cannot get topic");
+        }
+        topic.messageArrived("topic", bytes, false);
+
         verify(listenerMock).receivedMessage(eq(thingMock.getUID()), eq(connection), eq("topic"), eq(bytes));
     }
 
@@ -138,7 +154,12 @@ public class MQTTTopicDiscoveryServiceTest {
 
         // Simulate receiving
         final byte[] bytes = "".getBytes();
-        connection.getSubscribers().get("topic").messageArrived("topic", bytes, false);
+        Subscription topic = connection.getSubscribers().get("topic");
+        if (topic == null) {
+            throw new IllegalArgumentException("Cannot get topic");
+        }
+        topic.messageArrived("topic", bytes, false);
+
         verify(listenerMock).topicVanished(eq(thingMock.getUID()), eq(connection), eq("topic"));
     }
 }
