@@ -12,6 +12,8 @@
  */
 package org.openhab.binding.mysensors.internal.protocol.message;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
+
 /**
  * Differentiates between the directions of a message.
  * Incoming == from the gateway to the binding
@@ -20,6 +22,7 @@ package org.openhab.binding.mysensors.internal.protocol.message;
  * @author Tim Oberföll - Initial contribution
  *
  */
+@NonNullByDefault
 public enum MySensorsMessageDirection {
     INCOMING(0),
     OUTGOING(1);

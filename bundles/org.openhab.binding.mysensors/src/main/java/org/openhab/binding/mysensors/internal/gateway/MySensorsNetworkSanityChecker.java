@@ -240,8 +240,9 @@ public class MySensorsNetworkSanityChecker implements MySensorsGatewayEventListe
             if ((maxAttemptsBeforeDisconnecting - missedIVersionMessages) <= 0) {
                 logger.error("Retry period expired, gateway is down. Disconneting bridge...");
 
-                if (myCon != null)
+                if (myCon != null) {
                     myCon.requestDisconnection(true);
+                }
                 ret = false;
             } else {
                 missedIVersionMessages++;

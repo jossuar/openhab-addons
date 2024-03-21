@@ -12,7 +12,12 @@
  */
 package org.openhab.binding.mysensors.internal.gateway;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.TimeZone;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -23,7 +28,11 @@ import org.openhab.binding.mysensors.internal.exception.MergeException;
 import org.openhab.binding.mysensors.internal.exception.NoMoreIdsException;
 import org.openhab.binding.mysensors.internal.protocol.MySensorsAbstractConnection;
 import org.openhab.binding.mysensors.internal.protocol.ip.MySensorsIpConnection;
-import org.openhab.binding.mysensors.internal.protocol.message.*;
+import org.openhab.binding.mysensors.internal.protocol.message.MySensorsMessage;
+import org.openhab.binding.mysensors.internal.protocol.message.MySensorsMessageAck;
+import org.openhab.binding.mysensors.internal.protocol.message.MySensorsMessageDirection;
+import org.openhab.binding.mysensors.internal.protocol.message.MySensorsMessageSubType;
+import org.openhab.binding.mysensors.internal.protocol.message.MySensorsMessageType;
 import org.openhab.binding.mysensors.internal.protocol.mqtt.MySensorsMqttConnection;
 import org.openhab.binding.mysensors.internal.protocol.serial.MySensorsSerialConnection;
 import org.openhab.binding.mysensors.internal.sensors.MySensorsChild;
@@ -320,7 +329,6 @@ public class MySensorsGateway implements MySensorsGatewayEventListener {
      * @param message to send
      */
     public void sendMessage(MySensorsMessage message) {
-
         try {
             handleOutgoingMessage(message);
         } catch (Exception e) {
@@ -548,8 +556,9 @@ public class MySensorsGateway implements MySensorsGatewayEventListener {
                         logger.debug("Request received!");
                         msg.setMsgType(MySensorsMessageType.SET);
                         msg.setMsg(Objects.requireNonNullElse(value, "0"));
-                        if (myCon != null)
+                        if (myCon != null) {
                             myCon.sendMessage(msg);
+                        }
                     }
                     return true;
                 } else {
@@ -635,8 +644,9 @@ public class MySensorsGateway implements MySensorsGatewayEventListener {
         MySensorsMessage newMsg = new MySensorsMessage(msg.getNodeId(), msg.getChildId(), MySensorsMessageType.INTERNAL,
                 MySensorsMessageAck.FALSE, false, MySensorsMessageSubType.I_TIME, time);
 
-        if (myCon != null)
+        if (myCon != null) {
             myCon.sendMessage(newMsg);
+        }
     }
 
     /**

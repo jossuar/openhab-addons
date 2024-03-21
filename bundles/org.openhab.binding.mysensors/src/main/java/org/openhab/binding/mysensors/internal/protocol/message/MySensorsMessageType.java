@@ -15,6 +15,8 @@ package org.openhab.binding.mysensors.internal.protocol.message;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
+
 /**
  * A MySensorsMessage is defined by its MessageType
  * Presentation: for a new sensors
@@ -26,6 +28,7 @@ import java.util.Map;
  * @author Tim Oberföll - Initial contribution
  *
  */
+@NonNullByDefault
 public enum MySensorsMessageType {
     PRESENTATION(0),
     SET(1),
@@ -53,6 +56,12 @@ public enum MySensorsMessageType {
     }
 
     public static MySensorsMessageType getById(int id) {
-        return ID.get(id);
+        MySensorsMessageType value = ID.get(id);
+
+        if (value == null) {
+            throw new IllegalArgumentException("unknown id: " + id);
+        }
+
+        return value;
     }
 }

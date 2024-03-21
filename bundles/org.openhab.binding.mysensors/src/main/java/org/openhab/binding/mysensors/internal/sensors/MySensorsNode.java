@@ -189,8 +189,9 @@ public class MySensorsNode {
         synchronized (childMap) {
             for (Integer i : node.childMap.keySet()) {
                 MySensorsChild child = node.childMap.get(i);
-                if (child == null)
+                if (child == null) {
                     continue;
+                }
                 childMap.merge(i, child, (child1, child2) -> {
                     child1.merge(child2);
                     return child1;

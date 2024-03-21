@@ -36,7 +36,7 @@ import com.google.gson.stream.JsonWriter;
 public class MySensorsCacheFactory {
     private Logger logger = LoggerFactory.getLogger(getClass());
 
-    private String CACHE_BASE_PATH;
+    private String cacheBasePath;
     private static final String CACHE_FILE_SUFFIX = ".cached";
 
     public static final String GIVEN_IDS_CACHE_FILE = "given_ids";
@@ -44,12 +44,12 @@ public class MySensorsCacheFactory {
     private final Gson gson = new Gson();
 
     public MySensorsCacheFactory(String userDataFolder) {
-        CACHE_BASE_PATH = userDataFolder + "/mysensors/cache";
+        cacheBasePath = userDataFolder + "/mysensors/cache";
         initializeCacheDir();
     }
 
     private void initializeCacheDir() {
-        File f = new File(CACHE_BASE_PATH);
+        File f = new File(cacheBasePath);
         if (!f.exists()) {
             logger.debug("Creating cache directory...");
             f.mkdirs();
@@ -77,7 +77,7 @@ public class MySensorsCacheFactory {
         T ret = def;
 
         try {
-            File f = new File(CACHE_BASE_PATH + "/" + fileName + CACHE_FILE_SUFFIX);// FTi
+            File f = new File(cacheBasePath + "/" + fileName + CACHE_FILE_SUFFIX);// FTi
 
             if (f.exists()) {
                 logger.debug("Cache file: {} exist.", GIVEN_IDS_CACHE_FILE + CACHE_FILE_SUFFIX);
@@ -108,7 +108,7 @@ public class MySensorsCacheFactory {
     private synchronized <T> void jsonToFile(String fileName, T obj, Type clasz) {
         JsonWriter jsonWriter = null;
         try {
-            File f = new File(CACHE_BASE_PATH + "/" + fileName + CACHE_FILE_SUFFIX);// FTi
+            File f = new File(cacheBasePath + "/" + fileName + CACHE_FILE_SUFFIX);// FTi
 
             jsonWriter = new JsonWriter(new FileWriter(f));
 
@@ -128,7 +128,7 @@ public class MySensorsCacheFactory {
     }
 
     public void deleteCache(String cacheId) {
-        File f = new File(CACHE_BASE_PATH + "/" + cacheId + CACHE_FILE_SUFFIX);
+        File f = new File(cacheBasePath + "/" + cacheId + CACHE_FILE_SUFFIX);
         if (f.exists()) {
             if (f.delete()) {
                 logger.debug("Cache {} file deleted", cacheId);
