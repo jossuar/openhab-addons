@@ -86,8 +86,9 @@ public class RiscoBindingConstants {
 
     // Channel types
     @SuppressWarnings("null")
-    public static final Set<String> CHANNEL_TYPES_SWITCH = Collections
-            .unmodifiableSet(Stream.of("switch", "readonly-switch").collect(Collectors.toSet()));
+    public static final Set<String> CHANNEL_TYPES_SWITCH = Collections.unmodifiableSet(
+            Stream.of("switch", "readonly-switch", "readonly-switch-advanced", "low-battery-readonly-switch")
+                    .collect(Collectors.toSet()));
     @SuppressWarnings("null")
     public static final Set<String> CHANNEL_TYPES_CONTACT = Collections
             .unmodifiableSet(Stream.of("contact", "readonly-contact").collect(Collectors.toSet()));
