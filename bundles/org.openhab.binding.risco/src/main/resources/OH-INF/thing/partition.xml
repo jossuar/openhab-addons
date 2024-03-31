@@ -37,11 +37,11 @@
 				<label>Medic</label>
 				<description>Medic or No Medic</description>
 			</channel>
-			<channel id="arm" typeId="switch">
+			<channel id="arm" typeId="readonly-switch">
 				<label>Arm</label>
 				<description>Armed or Disarmed</description>
 			</channel>
-			<channel id="home-stay" typeId="switch">
+			<channel id="home-stay" typeId="readonly-switch">
 				<label>Home Stay</label>
 				<description>Home Stay or Home Disarmed</description>
 			</channel>
@@ -93,6 +93,11 @@
 			<parameter name="partitionNumber" type="integer" required="true" min="1" max="32">
 				<label>Partition Number</label>
 				<description>The Partition Number</description>
+				<default>1</default>
+			</parameter>
+			<parameter name="userIndex" type="integer" required="true" min="1" max="500">
+				<label>User Index</label>
+				<description>The index of the user of which the PIN is checked on ARM/DISARM. Default is User 1</description>
 				<default>1</default>
 			</parameter>
 		</config-description>
