@@ -25,19 +25,13 @@ import org.eclipse.jdt.annotation.Nullable;
 public class RiscoBridgeConfiguration {
 
     // Risco Bridge Thing constants
-    // public static final String PANEL_IP = "hostname";
-    // public static final String PANEL_PORT = "port";
-    // public static final String PANEL_ID = "id";
-    // public static final String PANEL_PASSWORD = "password";
-    // public static final String ENCODING = "encoding";
-    // public static final String PANEL_CONNECTION_DELAY = "connectionDelay";
-
     private @Nullable String hostname;
     private int port = 1000;
     private int id = 1;
     private String password = "5678";
     private String encoding = "utf-8";
     private int connectionDelay = 0;
+    private int userIndex = 1;
 
     public @Nullable String getHostname() {
         return hostname;
@@ -61,5 +55,9 @@ public class RiscoBridgeConfiguration {
 
     public int getConnectionDelay() {
         return connectionDelay;
+    }
+
+    public int getUserIndex() {
+        return userIndex;
     }
 }
