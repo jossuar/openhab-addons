@@ -13,10 +13,13 @@
 package org.openhab.binding.risco.internal.handler.thing;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.openhab.binding.risco.internal.RiscoBindingConstants;
+import org.openhab.binding.risco.internal.action.RiscoZoneActions;
 import org.openhab.binding.risco.internal.config.RiscoZoneConfiguration;
 import org.openhab.binding.risco.internal.handler.RiscoBridgeHandler;
 import org.openhab.binding.risco.internal.handler.RiscoThingHandler;
@@ -26,6 +29,7 @@ import org.openhab.binding.risco.internal.protocol.message.status.ZoneStatus;
 import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.thing.Thing;
 import org.openhab.core.thing.ThingStatus;
+import org.openhab.core.thing.binding.ThingHandlerService;
 import org.openhab.core.types.Command;
 import org.openhab.core.types.RefreshType;
 import org.slf4j.Logger;
@@ -105,5 +109,23 @@ public class RiscoZoneHandler extends RiscoThingHandler {
         for (String m : messages) {
             bridgeHandler.sendCommand(m);
         }
+    }
+
+    public void bypass() {
+        RiscoBridgeHandler bridgeHandler = getBridgeHandler();
+        if (bridgeHandler == null) {
+            return;
+        }
+
+        List<String> messages = new ArrayList<String>();
+        messages.add(ZoneBypass.getCommand(getZoneNumber()));
+        for (String m : messages) {
+            bridgeHandler.sendCommand(m);
+        }
+    }
+
+    @Override
+    public Collection<Class<? extends ThingHandlerService>> getServices() {
+        return Set.of(RiscoZoneActions.class);
     }
 }

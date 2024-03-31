@@ -25,12 +25,15 @@ public class RiscoPartitionConfiguration {
     // Partition Thing constants
     public static final String PARTITION_NUMBER = "partitionNumber";
 
-    /**
-     * The Partition Number. Can be in the range of 1-32. This is a required parameter for a partition.
-     */
+    // Partition Thing parameters
     private int partitionNumber;
+    private int userIndex = 1;
 
     public int getPartitionNumber() {
         return partitionNumber;
+    }
+
+    public int getUserIndex() {
+        return userIndex;
     }
 }

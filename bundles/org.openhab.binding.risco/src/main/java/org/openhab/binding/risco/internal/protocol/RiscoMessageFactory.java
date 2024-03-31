@@ -35,6 +35,7 @@ import org.openhab.binding.risco.internal.protocol.message.allocation.ZoneExpand
 import org.openhab.binding.risco.internal.protocol.message.general.PanelConfiguration;
 import org.openhab.binding.risco.internal.protocol.message.general.PartitionLabel;
 import org.openhab.binding.risco.internal.protocol.message.general.Unknown;
+import org.openhab.binding.risco.internal.protocol.message.general.UserPin;
 import org.openhab.binding.risco.internal.protocol.message.general.ZoneLabel;
 import org.openhab.binding.risco.internal.protocol.message.status.BusExpanderStatus;
 import org.openhab.binding.risco.internal.protocol.message.status.KeyfobStatus;
@@ -235,6 +236,10 @@ public class RiscoMessageFactory {
 
             case SystemStatus.COMMAND:
                 return new SystemStatus(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
+                        encryptedMessage, decryptedMessage);
+
+            case UserPin.COMMAND:
+                return new UserPin(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
                         encryptedMessage, decryptedMessage);
 
             case VoiceModuleStatus.COMMAND:
