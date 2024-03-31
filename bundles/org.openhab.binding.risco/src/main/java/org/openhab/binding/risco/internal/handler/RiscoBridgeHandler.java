@@ -14,8 +14,8 @@ package org.openhab.binding.risco.internal.handler;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -132,7 +132,11 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
             communicator.sendPlainAndWait(Remote.getReadCommand(configuration.getPassword()));
             communicator.sendPlainAndWait(Local.getReadCommand());
 
+            communicator.addListener(this);
             this.communicator = communicator;
+
+            updateStatus(ThingStatus.ONLINE);
+
             notifyAll();
         } catch (IOException e) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR,
@@ -140,33 +144,6 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
 
             return;
         }
-
-        RiscoCommunicator communicator = this.communicator;
-        if (communicator != null) {
-            communicator.addListener(this);
-            // communicator.send("PNLVER?");
-            // communicator.send("PNLSERD?");
-            // communicator.send("DTYPDM?");
-            // communicator.send("DTYPMAT?");
-            // communicator.send("DTYPVM?");
-            // communicator.send("DTYPCOB?");
-            // communicator.send("DTYPGSM?");
-            // communicator.send("DTYPBE1?");
-            // communicator.send("DTYPZE1?");
-            // communicator.send("DTYPZE2?");
-            // communicator.send("DTYPZE3?");
-            // communicator.send("ZSTT*25:32?");
-
-            updateStatus(ThingStatus.ONLINE);
-        }
-
-        // Send status commands to the zones and partitions
-        /*
-         * thingZoneMap
-         * .forEach((k, v) -> v.getHandler().handleCommand(v.getChannels().get(0).getUID(), RefreshType.REFRESH)); //
-         * sendCommand(ZoneStatus.getReadCommand(k)));
-         * thingPartitionMap.forEach((k, v) -> sendCommand(PartitionStatus.getReadCommand(k)));
-         */
     }
 
     @Override
@@ -516,11 +493,7 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
 
     @Override
     public Collection<Class<? extends ThingHandlerService>> getServices() {
-        return Collections.singleton(RiscoDiscoveryService.class);
-        // Set<Class<? extends ThingHandlerService>> set = new HashSet<Class<? extends ThingHandlerService>>(2);
-        // set.add(RiscoDiscoveryService.class);
-        // set.add(RiscoBridgeActions.class);
-        // return set;
+        return Set.of(RiscoDiscoveryService.class);
     }
 
     /**
@@ -539,5 +512,12 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
     public void unregisterDiscoveryService() {
         logger.trace("unregisterDiscoveryService(): Discovery Service Unregistered!");
         discoveryService = null;
+    }
+
+    public void addListener(RiscoPanelListener listener) {
+        RiscoCommunicator communicator = this.communicator;
+        if (communicator != null) {
+            communicator.addListener(listener);
+        }
     }
 }
