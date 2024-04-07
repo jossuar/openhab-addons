@@ -86,5 +86,4 @@ public class MySensorsActions implements ThingActions {
     public static void presentation(ThingActions actions) {
         ((MySensorsActions) actions).presentation();
     }
-
 }
