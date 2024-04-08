@@ -117,26 +117,29 @@ public abstract class AbstractBrokerHandler extends BaseBridgeHandler implements
         connectionFuture.complete(connection);
 
         discoveryTopics.forEach((topic, listenerMap) -> {
-            listenerMap.replaceAll((listener, oldTopicSubscribe) -> {
-                if (oldTopicSubscribe.isStarted()) {
-                    oldTopicSubscribe.stop();
-                }
+            if (listenerMap != null) {
+                listenerMap.replaceAll((listener, oldTopicSubscribe) -> {
 
-                TopicSubscribe topicSubscribe = new TopicSubscribe(connection, topic, listener, thing.getUID());
-                if (discoveryEnabled()) {
-                    topicSubscribe.start().handle((result, ex) -> {
-                        if (ex != null) {
-                            logger.warn("Failed to subscribe {} to discovery topic {} on broker {}", listener, topic,
-                                    thing.getUID());
-                        } else {
-                            logger.trace("Subscribed {} to discovery topic {} on broker {}", listener, topic,
-                                    thing.getUID());
-                        }
-                        return null;
-                    });
-                }
-                return topicSubscribe;
-            });
+                    if (oldTopicSubscribe != null && oldTopicSubscribe.isStarted()) {
+                        oldTopicSubscribe.stop();
+                    }
+
+                    TopicSubscribe topicSubscribe = new TopicSubscribe(connection, topic, listener, thing.getUID());
+                    if (discoveryEnabled()) {
+                        topicSubscribe.start().handle((result, ex) -> {
+                            if (ex != null) {
+                                logger.warn("Failed to subscribe {} to discovery topic {} on broker {}", listener,
+                                        topic, thing.getUID());
+                            } else {
+                                logger.trace("Subscribed {} to discovery topic {} on broker {}", listener, topic,
+                                        thing.getUID());
+                            }
+                            return null;
+                        });
+                    }
+                    return topicSubscribe;
+                });
+            }
         });
     }
 
@@ -170,9 +173,13 @@ public abstract class AbstractBrokerHandler extends BaseBridgeHandler implements
 
         // keep topics, but stop subscriptions
         discoveryTopics.forEach((topic, listenerMap) -> {
-            listenerMap.forEach((listener, topicSubscribe) -> {
-                topicSubscribe.stop();
-            });
+            if (listenerMap != null) {
+                listenerMap.forEach((listener, topicSubscribe) -> {
+                    if (topicSubscribe != null) {
+                        topicSubscribe.stop();
+                    }
+                });
+            }
         });
 
         if (connection != null) {
@@ -195,28 +202,31 @@ public abstract class AbstractBrokerHandler extends BaseBridgeHandler implements
     public final void registerDiscoveryListener(MQTTTopicDiscoveryParticipant listener, String topic) {
         Map<MQTTTopicDiscoveryParticipant, @Nullable TopicSubscribe> topicListeners = discoveryTopics
                 .computeIfAbsent(topic, t -> new HashMap<>());
-        topicListeners.compute(listener, (k, v) -> {
-            if (v != null) {
-                logger.warn("Duplicate subscription for {} to discovery topic {} on broker {}. Check discovery logic!",
-                        listener, topic, thing.getUID());
-                v.stop();
-            }
+        if (topicListeners != null) {
+            topicListeners.compute(listener, (k, v) -> {
+                if (v != null) {
+                    logger.warn(
+                            "Duplicate subscription for {} to discovery topic {} on broker {}. Check discovery logic!",
+                            listener, topic, thing.getUID());
+                    v.stop();
+                }
 
-            TopicSubscribe topicSubscribe = new TopicSubscribe(connection, topic, listener, thing.getUID());
-            if (discoveryEnabled()) {
-                topicSubscribe.start().handle((result, ex) -> {
-                    if (ex != null) {
-                        logger.warn("Failed to subscribe {} to discovery topic {} on broker {}", listener, topic,
-                                thing.getUID());
-                    } else {
-                        logger.trace("Subscribed {} to discovery topic {} on broker {}", listener, topic,
-                                thing.getUID());
-                    }
-                    return null;
-                });
-            }
-            return topicSubscribe;
-        });
+                TopicSubscribe topicSubscribe = new TopicSubscribe(connection, topic, listener, thing.getUID());
+                if (discoveryEnabled()) {
+                    topicSubscribe.start().handle((result, ex) -> {
+                        if (ex != null) {
+                            logger.warn("Failed to subscribe {} to discovery topic {} on broker {}", listener, topic,
+                                    thing.getUID());
+                        } else {
+                            logger.trace("Subscribed {} to discovery topic {} on broker {}", listener, topic,
+                                    thing.getUID());
+                        }
+                        return null;
+                    });
+                }
+                return topicSubscribe;
+            });
+        }
     }
 
     /**

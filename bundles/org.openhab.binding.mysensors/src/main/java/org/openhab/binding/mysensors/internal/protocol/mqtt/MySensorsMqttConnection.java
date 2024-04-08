@@ -61,11 +61,8 @@ public class MySensorsMqttConnection extends MySensorsAbstractConnection impleme
 
     public MySensorsMqttConnection(MySensorsGatewayConfig myGatewayConfig, MySensorsEventRegister myEventRegister) {
         super(myGatewayConfig, myEventRegister);
-        @Nullable
+
         String topic = myGatewayConfig.getTopicSubscribe();
-        if (topic == null) {
-            throw new IllegalArgumentException("Tried to create MQTT Connection with null subscript topic");
-        }
         myMqttSub = new MySensorsMqttSubscriber(topic);
         try {
             in.connect(out);
@@ -166,7 +163,6 @@ public class MySensorsMqttConnection extends MySensorsAbstractConnection impleme
      * @author Sean McGuire
      * @author Tim Oberföll
      */
-    @NonNullByDefault
     public class MySensorsMqttSubscriber implements MqttMessageSubscriber {
 
         private String topicSubscribe;
@@ -228,7 +224,6 @@ public class MySensorsMqttConnection extends MySensorsAbstractConnection impleme
      * @author Tim Oberföll
      *
      */
-    @NonNullByDefault
     protected class MySensorsMqttWriter extends MySensorsWriter {
         @Nullable
         private MqttBrokerConnection conn;

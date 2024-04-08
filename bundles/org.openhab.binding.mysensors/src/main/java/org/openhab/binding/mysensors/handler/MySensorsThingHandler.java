@@ -202,44 +202,44 @@ public class MySensorsThingHandler extends BaseThingHandler implements MySensors
                 adapter = loadAdapterForChannelType(channelUID.getId());
             }
 
-            logger.debug("Adapter: {} loaded", adapter.getClass());
+            if (adapter != null) {
+                logger.debug("Adapter: {} loaded", adapter.getClass());
+                logger.trace("Adapter {} found for type {}", adapter.getClass().getSimpleName(), channelUID.getId());
 
-            logger.trace("Adapter {} found for type {}", adapter.getClass().getSimpleName(), channelUID.getId());
+                MySensorsMessageSubType type = adapter.typeFromChannelCommand(channelUID.getId(), command);
 
-            MySensorsMessageSubType type = adapter.typeFromChannelCommand(channelUID.getId(), command);
-
-            if (type != null) {
                 logger.trace("Type for channel: {}, command: {} of thing {} is: {}", thing.getUID(), command,
                         thing.getUID(), type);
 
-                MySensorsVariable var = myGateway.getVariable(configuration.nodeId, configuration.childId, type);
+                MySensorsGateway myGateway = this.myGateway;
+                if (myGateway != null) {
 
-                if (var != null) {
-                    MySensorsMessageSubType subType;
-                    if (rgbPercentageValue) {
-                        subType = MySensorsMessageSubType.V_PERCENTAGE;
-                    } else if (rgbOnOffValue) {
-                        subType = MySensorsMessageSubType.V_STATUS;
+                    MySensorsVariable var = myGateway.getVariable(configuration.nodeId, configuration.childId, type);
+
+                    if (var != null) {
+                        MySensorsMessageSubType subType;
+                        if (rgbPercentageValue) {
+                            subType = MySensorsMessageSubType.V_PERCENTAGE;
+                        } else if (rgbOnOffValue) {
+                            subType = MySensorsMessageSubType.V_STATUS;
+                        } else {
+                            subType = var.getType();
+                        }
+
+                        // Create the real message to send
+                        MySensorsMessage newMsg = new MySensorsMessage(configuration.nodeId, configuration.childId,
+                                MySensorsMessageType.SET, MySensorsMessageAck.getById(intRequestAck),
+                                configuration.revertState, configuration.smartSleep);
+
+                        newMsg.setSubType(subType);
+                        newMsg.setMsg(adapter.fromCommand(command));
+
+                        myGateway.sendMessage(newMsg);
                     } else {
-                        subType = var.getType();
+                        logger.warn("Variable not found, cannot handle command for thing {} of type {}", thing.getUID(),
+                                channelUID.getId());
                     }
-
-                    // Create the real message to send
-                    MySensorsMessage newMsg = new MySensorsMessage(configuration.nodeId, configuration.childId,
-                            MySensorsMessageType.SET, MySensorsMessageAck.getById(intRequestAck),
-                            configuration.revertState, configuration.smartSleep);
-
-                    newMsg.setSubType(subType);
-                    newMsg.setMsg(adapter.fromCommand(command));
-
-                    myGateway.sendMessage(newMsg);
-                } else {
-                    logger.warn("Variable not found, cannot handle command for thing {} of type {}", thing.getUID(),
-                            channelUID.getId());
                 }
-            } else {
-                logger.error("Could not get type of variable for channel: {}, command: {} of thing {}", thing.getUID(),
-                        command, thing.getUID());
             }
         }
     }
@@ -390,13 +390,28 @@ public class MySensorsThingHandler extends BaseThingHandler implements MySensors
      */
     private void handleChildUpdateEvent(MySensorsVariable var) {
         String channelName = getChannelNameFromVar(var);
-        State newState = loadAdapterForChannelType(channelName).stateFromChannel(var);
-        logger.debug("Updating channel: {}({}) value to: {}", channelName, var.getType(), newState);
-        if (myGateway != null && myGateway.getNode(configuration.nodeId).getChild(configuration.childId)
-                .getPresentationCode() == MySensorsMessageSubType.S_COVER) {
-            updateState(CHANNEL_COVER, newState);
+
+        MySensorsTypeConverter conv = loadAdapterForChannelType(channelName);
+        if (conv != null) {
+            State newState = conv.stateFromChannel(var);
+            logger.debug("Updating channel: {}({}) value to: {}", channelName, var.getType(), newState);
+
+            MySensorsGateway myGateway = this.myGateway;
+
+            if (myGateway != null) {
+                MySensorsNode node = myGateway.getNode(configuration.nodeId);
+                if (node != null) {
+                    MySensorsChild child = node.getChild(configuration.childId);
+                    if (child != null) {
+                        if (child.getPresentationCode() == MySensorsMessageSubType.S_COVER) {
+                            updateState(CHANNEL_COVER, newState);
+                        }
+                    }
+                }
+            }
+
+            updateState(channelName, newState);
         }
-        updateState(channelName, newState);
     }
 
     private void handleBatteryUpdateEvent(MySensorsNode node) {
