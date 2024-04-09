@@ -12,6 +12,8 @@
  */
 package org.openhab.binding.mysensors.internal.protocol.message;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
+
 /**
  * SubType categories:
  *
@@ -22,6 +24,7 @@ package org.openhab.binding.mysensors.internal.protocol.message;
  * @author Tim Oberföll - Initial contribution
  *
  */
+@NonNullByDefault
 public enum MySensorsMessageSubTypes {
     S,
     V,

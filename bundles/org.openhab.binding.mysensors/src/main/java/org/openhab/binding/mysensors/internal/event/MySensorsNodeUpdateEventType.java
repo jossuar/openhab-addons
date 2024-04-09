@@ -12,6 +12,8 @@
  */
 package org.openhab.binding.mysensors.internal.event;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
+
 /**
  * Enum of possible node update events
  * REVERT == return to old status
@@ -21,6 +23,7 @@ package org.openhab.binding.mysensors.internal.event;
  * @author Tim Oberföll - Initial contribution
  *
  */
+@NonNullByDefault
 public enum MySensorsNodeUpdateEventType {
     REVERT,
     BATTERY,

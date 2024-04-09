@@ -290,7 +290,7 @@ public class MySensorsMqttConnection extends MySensorsAbstractConnection impleme
 
         @Override
         public void onSuccess(String topic) {
-            // TODO Auto-generated method stub
+            logger.trace("Success sending MQTT message to broker: {}.", myGatewayConfig.getBrokerName());
         }
 
         @Override

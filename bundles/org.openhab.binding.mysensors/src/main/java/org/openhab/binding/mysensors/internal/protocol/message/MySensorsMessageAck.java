@@ -15,6 +15,8 @@ package org.openhab.binding.mysensors.internal.protocol.message;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
+
 /**
  * Every message contains a field with which the sender is able to indicate that it requests an
  * Acknowledgement for the message.
@@ -22,6 +24,7 @@ import java.util.Map;
  * @author Tim Oberföll - Initial contribution
  *
  */
+@NonNullByDefault
 public enum MySensorsMessageAck {
     TRUE(1),
     FALSE(0);
@@ -46,6 +49,12 @@ public enum MySensorsMessageAck {
     }
 
     public static MySensorsMessageAck getById(int id) {
-        return ID.get(id);
+        MySensorsMessageAck value = ID.get(id);
+
+        if (value == null) {
+            throw new IllegalArgumentException("unknown id: " + id);
+        }
+
+        return value;
     }
 }

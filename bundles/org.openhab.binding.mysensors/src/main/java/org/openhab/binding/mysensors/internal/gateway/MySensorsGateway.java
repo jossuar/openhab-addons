@@ -329,7 +329,6 @@ public class MySensorsGateway implements MySensorsGatewayEventListener {
      * @param message to send
      */
     public void sendMessage(MySensorsMessage message) {
-
         try {
             handleOutgoingMessage(message);
         } catch (Exception e) {
