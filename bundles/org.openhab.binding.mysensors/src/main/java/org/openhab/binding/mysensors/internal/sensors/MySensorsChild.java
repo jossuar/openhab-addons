@@ -23,8 +23,51 @@ import org.openhab.binding.mysensors.internal.Mergeable;
 import org.openhab.binding.mysensors.internal.exception.MergeException;
 import org.openhab.binding.mysensors.internal.exception.NoContentException;
 import org.openhab.binding.mysensors.internal.protocol.message.MySensorsMessageSubType;
-import org.openhab.binding.mysensors.internal.sensors.child.*;
-import org.openhab.binding.mysensors.internal.sensors.variable.*;
+import org.openhab.binding.mysensors.internal.sensors.child.MySensorsChildSAirQuality;
+import org.openhab.binding.mysensors.internal.sensors.child.MySensorsChildSArduinoNode;
+import org.openhab.binding.mysensors.internal.sensors.child.MySensorsChildSArduinoRepeaterNode;
+import org.openhab.binding.mysensors.internal.sensors.child.MySensorsChildSBaro;
+import org.openhab.binding.mysensors.internal.sensors.child.MySensorsChildSBinary;
+import org.openhab.binding.mysensors.internal.sensors.child.MySensorsChildSColorSensor;
+import org.openhab.binding.mysensors.internal.sensors.child.MySensorsChildSCover;
+import org.openhab.binding.mysensors.internal.sensors.child.MySensorsChildSCustom;
+import org.openhab.binding.mysensors.internal.sensors.child.MySensorsChildSDimmer;
+import org.openhab.binding.mysensors.internal.sensors.child.MySensorsChildSDistance;
+import org.openhab.binding.mysensors.internal.sensors.child.MySensorsChildSDoor;
+import org.openhab.binding.mysensors.internal.sensors.child.MySensorsChildSDust;
+import org.openhab.binding.mysensors.internal.sensors.child.MySensorsChildSGas;
+import org.openhab.binding.mysensors.internal.sensors.child.MySensorsChildSGps;
+import org.openhab.binding.mysensors.internal.sensors.child.MySensorsChildSHeater;
+import org.openhab.binding.mysensors.internal.sensors.child.MySensorsChildSHum;
+import org.openhab.binding.mysensors.internal.sensors.child.MySensorsChildSHvac;
+import org.openhab.binding.mysensors.internal.sensors.child.MySensorsChildSInfo;
+import org.openhab.binding.mysensors.internal.sensors.child.MySensorsChildSIr;
+import org.openhab.binding.mysensors.internal.sensors.child.MySensorsChildSLightLevel;
+import org.openhab.binding.mysensors.internal.sensors.child.MySensorsChildSLock;
+import org.openhab.binding.mysensors.internal.sensors.child.MySensorsChildSMoisture;
+import org.openhab.binding.mysensors.internal.sensors.child.MySensorsChildSMotion;
+import org.openhab.binding.mysensors.internal.sensors.child.MySensorsChildSMultimeter;
+import org.openhab.binding.mysensors.internal.sensors.child.MySensorsChildSPower;
+import org.openhab.binding.mysensors.internal.sensors.child.MySensorsChildSRain;
+import org.openhab.binding.mysensors.internal.sensors.child.MySensorsChildSRgbLight;
+import org.openhab.binding.mysensors.internal.sensors.child.MySensorsChildSRgbwLight;
+import org.openhab.binding.mysensors.internal.sensors.child.MySensorsChildSSceneController;
+import org.openhab.binding.mysensors.internal.sensors.child.MySensorsChildSSmoke;
+import org.openhab.binding.mysensors.internal.sensors.child.MySensorsChildSSound;
+import org.openhab.binding.mysensors.internal.sensors.child.MySensorsChildSSprinkler;
+import org.openhab.binding.mysensors.internal.sensors.child.MySensorsChildSTemp;
+import org.openhab.binding.mysensors.internal.sensors.child.MySensorsChildSUv;
+import org.openhab.binding.mysensors.internal.sensors.child.MySensorsChildSVibration;
+import org.openhab.binding.mysensors.internal.sensors.child.MySensorsChildSWater;
+import org.openhab.binding.mysensors.internal.sensors.child.MySensorsChildSWaterLeak;
+import org.openhab.binding.mysensors.internal.sensors.child.MySensorsChildSWaterQuality;
+import org.openhab.binding.mysensors.internal.sensors.child.MySensorsChildSWeight;
+import org.openhab.binding.mysensors.internal.sensors.child.MySensorsChildSWind;
+import org.openhab.binding.mysensors.internal.sensors.variable.MySensorsVariableVVar1;
+import org.openhab.binding.mysensors.internal.sensors.variable.MySensorsVariableVVar2;
+import org.openhab.binding.mysensors.internal.sensors.variable.MySensorsVariableVVar3;
+import org.openhab.binding.mysensors.internal.sensors.variable.MySensorsVariableVVar4;
+import org.openhab.binding.mysensors.internal.sensors.variable.MySensorsVariableVVar5;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -244,17 +287,18 @@ public abstract class MySensorsChild implements Mergeable {
     @Nullable
     public static MySensorsChild fromPresentation(MySensorsMessageSubType presentationCode, int childId) {
         @Nullable
-        MySensorsChild ret;
+        MySensorsChild ret = null;
 
         if (PRESENTATION_TO_CHILD_CLASS.containsKey(presentationCode)) {
             try {
                 Class<? extends MySensorsChild> cls = PRESENTATION_TO_CHILD_CLASS.get(presentationCode);
-                Constructor<? extends MySensorsChild> constr = cls.getConstructor(int.class);
-                ret = constr.newInstance(childId);
+                if (cls != null) {
+                    Constructor<? extends MySensorsChild> constr = cls.getConstructor(int.class);
+                    ret = constr.newInstance(childId);
+                }
             } catch (Exception e) {
                 LoggerFactory.getLogger(MySensorsChild.class)
                         .error("Reflection has failed for presentation {}, childId: {}", presentationCode, childId, e);
-                ret = null;
             }
         } else {
             throw new IllegalArgumentException(

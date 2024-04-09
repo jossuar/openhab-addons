@@ -81,9 +81,16 @@ public class TopicSubscribe implements MqttMessageSubscriber {
      * @return Completes with true if successful. Exceptionally otherwise.
      */
     public CompletableFuture<Boolean> stop() {
-        CompletableFuture<Boolean> stopFuture = connection == null || !isStarted
-                ? CompletableFuture.completedFuture(true)
-                : connection.unsubscribe(topic, this);
+        MqttBrokerConnection connection = this.connection;
+
+        CompletableFuture<Boolean> stopFuture;
+
+        if (connection == null || !isStarted) {
+            stopFuture = CompletableFuture.completedFuture(true);
+        } else {
+            stopFuture = connection.unsubscribe(topic, this);
+        }
+
         isStarted = false;
         return stopFuture;
     }

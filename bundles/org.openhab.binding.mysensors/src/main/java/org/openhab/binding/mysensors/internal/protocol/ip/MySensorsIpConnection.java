@@ -45,10 +45,11 @@ public class MySensorsIpConnection extends MySensorsAbstractConnection {
     public boolean establishConnection() {
         logger.debug("Connecting to IP bridge [{}:{}]", myGatewayConfig.getIpAddress(), myGatewayConfig.getTcpPort());
         try {
-            sock = new Socket(myGatewayConfig.getIpAddress(), myGatewayConfig.getTcpPort());
+            Socket sock = new Socket(myGatewayConfig.getIpAddress(), myGatewayConfig.getTcpPort());
             mysConReader = new MySensorsReader(sock.getInputStream());
             mysConWriter = new MySensorsWriter(sock.getOutputStream());
 
+            this.sock = sock;
             return startReaderWriterThread(mysConReader, mysConWriter);
         } catch (UnknownHostException e) {
             logger.error("Error while trying to connect to: {}:{}", myGatewayConfig.getIpAddress(),
@@ -67,18 +68,21 @@ public class MySensorsIpConnection extends MySensorsAbstractConnection {
     public void stopConnection() {
         logger.debug("Disconnecting from IP bridge ...");
 
-        if (mysConWriter != null) {
-            mysConWriter.stopWriting();
+        MySensorsWriter writer = mysConWriter;
+        if (writer != null) {
+            writer.stopWriting();
             mysConWriter = null;
         }
 
-        if (mysConReader != null) {
-            mysConReader.stopReader();
+        MySensorsReader reader = mysConReader;
+        if (reader != null) {
+            reader.stopReader();
             mysConReader = null;
         }
 
         // Shut down socket
         try {
+            Socket sock = this.sock;
             if (sock != null && sock.isConnected()) {
                 sock.close();
                 sock = null;

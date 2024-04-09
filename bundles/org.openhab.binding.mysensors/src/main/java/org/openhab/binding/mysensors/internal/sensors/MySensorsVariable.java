@@ -116,10 +116,12 @@ public abstract class MySensorsVariable {
         if (type != other.type) {
             return false;
         }
+        String value = this.value;
         if (value == null) {
             return other.value == null;
-        } else
+        } else {
             return value.equals(other.value);
+        }
     }
 
     @Override

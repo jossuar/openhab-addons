@@ -77,7 +77,8 @@ public class MySensorsMqttConnection extends MySensorsAbstractConnection impleme
         MqttBrokerConnection localConnection = null;
         final BundleContext bundleContext = FrameworkUtil.getBundle(getClass()).getBundleContext();
         if (bundleContext != null) {
-            final ServiceReference serviceReference = bundleContext.getServiceReference(ThingRegistry.class.getName());
+            final ServiceReference<?> serviceReference = bundleContext
+                    .getServiceReference(ThingRegistry.class.getName());
             if (serviceReference != null) {
                 ThingRegistry thingRegistry = (ThingRegistry) bundleContext.getService(serviceReference);
                 if (thingRegistry != null) {
@@ -107,7 +108,8 @@ public class MySensorsMqttConnection extends MySensorsAbstractConnection impleme
     protected boolean establishConnection() {
         @Nullable
         String brokerName = myGatewayConfig.getBrokerName();
-        connection = getMqttConnection(brokerName);
+        MqttBrokerConnection connection = getMqttConnection(brokerName);
+        this.connection = connection;
 
         if (connection == null) {
             logger.error("No connection to broker: {}", brokerName);
@@ -138,6 +140,7 @@ public class MySensorsMqttConnection extends MySensorsAbstractConnection impleme
      */
     @Override
     protected void stopConnection() {
+        MqttBrokerConnection connection = this.connection;
         if (connection != null) {
             connection.unsubscribe(myMqttSub.getTopic(), myMqttSub);
             connection.removeConnectionObserver(this);
@@ -179,7 +182,7 @@ public class MySensorsMqttConnection extends MySensorsAbstractConnection impleme
 
             String payloadString = new String(payload);
             logger.debug("MQTT message received. Topic: {}, Message: {}", topic, payloadString);
-            if (subscribeTopic != null && topic.indexOf(subscribeTopic) == 0) {
+            if (topic.indexOf(subscribeTopic) == 0) {
                 String messageTopicPart = topic.replace(myGatewayConfig.getTopicSubscribe() + "/", "");
                 logger.debug("Message topic part: {}", messageTopicPart);
                 MySensorsMessage incomingMessage = new MySensorsMessage();
@@ -211,10 +214,12 @@ public class MySensorsMqttConnection extends MySensorsAbstractConnection impleme
          * @param topicSubscribe topic that should be listened to
          */
         public void setTopic(String topicSubscribe) {
+            String topic = topicSubscribe;
+
             if (!topicSubscribe.endsWith("/")) {
-                topicSubscribe += "/";
+                topic += "/";
             }
-            this.topicSubscribe = topicSubscribe + "+/+/+/+/+";
+            this.topicSubscribe = topic + "+/+/+/+/+";
         }
     }
 

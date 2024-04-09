@@ -151,6 +151,7 @@ public class MySensorsThingHandler extends BaseThingHandler implements MySensors
 
     @Override
     public void handleCommand(ChannelUID channelUID, Command command) {
+        MySensorsGateway myGateway = this.myGateway;
         if (myGateway == null) {
             logger.warn("Attempted to handle command for null gateway: {}", configuration.toString());
             return;
@@ -211,34 +212,30 @@ public class MySensorsThingHandler extends BaseThingHandler implements MySensors
                 logger.trace("Type for channel: {}, command: {} of thing {} is: {}", thing.getUID(), command,
                         thing.getUID(), type);
 
-                MySensorsGateway myGateway = this.myGateway;
-                if (myGateway != null) {
+                MySensorsVariable var = myGateway.getVariable(configuration.nodeId, configuration.childId, type);
 
-                    MySensorsVariable var = myGateway.getVariable(configuration.nodeId, configuration.childId, type);
-
-                    if (var != null) {
-                        MySensorsMessageSubType subType;
-                        if (rgbPercentageValue) {
-                            subType = MySensorsMessageSubType.V_PERCENTAGE;
-                        } else if (rgbOnOffValue) {
-                            subType = MySensorsMessageSubType.V_STATUS;
-                        } else {
-                            subType = var.getType();
-                        }
-
-                        // Create the real message to send
-                        MySensorsMessage newMsg = new MySensorsMessage(configuration.nodeId, configuration.childId,
-                                MySensorsMessageType.SET, MySensorsMessageAck.getById(intRequestAck),
-                                configuration.revertState, configuration.smartSleep);
-
-                        newMsg.setSubType(subType);
-                        newMsg.setMsg(adapter.fromCommand(command));
-
-                        myGateway.sendMessage(newMsg);
+                if (var != null) {
+                    MySensorsMessageSubType subType;
+                    if (rgbPercentageValue) {
+                        subType = MySensorsMessageSubType.V_PERCENTAGE;
+                    } else if (rgbOnOffValue) {
+                        subType = MySensorsMessageSubType.V_STATUS;
                     } else {
-                        logger.warn("Variable not found, cannot handle command for thing {} of type {}", thing.getUID(),
-                                channelUID.getId());
+                        subType = var.getType();
                     }
+
+                    // Create the real message to send
+                    MySensorsMessage newMsg = new MySensorsMessage(configuration.nodeId, configuration.childId,
+                            MySensorsMessageType.SET, MySensorsMessageAck.getById(intRequestAck),
+                            configuration.revertState, configuration.smartSleep);
+
+                    newMsg.setSubType(subType);
+                    newMsg.setMsg(adapter.fromCommand(command));
+
+                    myGateway.sendMessage(newMsg);
+                } else {
+                    logger.warn("Variable not found, cannot handle command for thing {} of type {}", thing.getUID(),
+                            channelUID.getId());
                 }
             }
         }
@@ -329,7 +326,11 @@ public class MySensorsThingHandler extends BaseThingHandler implements MySensors
         MySensorsMessage newMsg = new MySensorsMessage(configuration.nodeId,
                 MySensorsChild.MYSENSORS_CHILD_ID_RESERVED_255, MySensorsMessageType.INTERNAL,
                 MySensorsMessageAck.FALSE, false, MySensorsMessageSubType.I_REBOOT, "", configuration.smartSleep);
-        myGateway.sendMessage(newMsg);
+
+        MySensorsGateway myGateway = this.myGateway;
+        if (myGateway != null) {
+            myGateway.sendMessage(newMsg);
+        }
     }
 
     public void handleNodePresentation() {
@@ -338,7 +339,11 @@ public class MySensorsThingHandler extends BaseThingHandler implements MySensors
         MySensorsMessage newMsg = new MySensorsMessage(configuration.nodeId,
                 MySensorsChild.MYSENSORS_CHILD_ID_RESERVED_255, MySensorsMessageType.INTERNAL,
                 MySensorsMessageAck.FALSE, false, MySensorsMessageSubType.I_PRESENTATION, "", configuration.smartSleep);
-        myGateway.sendMessage(newMsg);
+
+        MySensorsGateway myGateway = this.myGateway;
+        if (myGateway != null) {
+            myGateway.sendMessage(newMsg);
+        }
     }
 
     /**
@@ -347,6 +352,8 @@ public class MySensorsThingHandler extends BaseThingHandler implements MySensors
      */
     private void updateLastUpdate(MySensorsNode node, boolean isRevert) {
         // Don't always fire last update channel, do it only after a minute by
+
+        DateTimeType lastUpdate = this.lastUpdate;
         if (lastUpdate == null
                 || (System.currentTimeMillis() > (lastUpdate.getZonedDateTime().toInstant().toEpochMilli() + 60000))
                 || configuration.revertState) {
@@ -449,6 +456,8 @@ public class MySensorsThingHandler extends BaseThingHandler implements MySensors
     }
 
     private void registerListeners() {
+        MySensorsGateway myGateway = this.myGateway;
+
         if (myGateway != null && !myGateway.isEventListenerRegistered(this)) {
             logger.debug("Event listener for node {}-{} not registered yet, registering...", configuration.nodeId,
                     configuration.childId);
