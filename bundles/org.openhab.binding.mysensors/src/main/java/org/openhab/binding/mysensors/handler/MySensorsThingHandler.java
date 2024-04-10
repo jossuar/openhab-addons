@@ -105,6 +105,7 @@ public class MySensorsThingHandler extends BaseThingHandler implements MySensors
     @Override
     public void dispose() {
         updateStatus(ThingStatus.OFFLINE);
+        MySensorsGateway myGateway = this.myGateway;
         if (myGateway != null) {
             myGateway.removeEventListener(this);
 
@@ -128,6 +129,8 @@ public class MySensorsThingHandler extends BaseThingHandler implements MySensors
     public void bridgeStatusChanged(ThingStatusInfo bridgeStatusInfo) {
         logger.debug("MySensors Bridge Status updated to {} for device: {}", bridgeStatusInfo.getStatus(),
                 getThing().getUID().toString());
+
+        MySensorsGateway myGateway = this.myGateway;
         if (bridgeStatusInfo.getStatus() == ThingStatus.ONLINE || bridgeStatusInfo.getStatus() == ThingStatus.OFFLINE) {
             if (bridgeStatusInfo.getStatus() == ThingStatus.ONLINE) {
                 registerListeners();
@@ -472,6 +475,8 @@ public class MySensorsThingHandler extends BaseThingHandler implements MySensors
             logger.error("Attempted to add null node into gateway");
             return;
         }
+
+        MySensorsGateway myGateway = this.myGateway;
         if (myGateway != null) {
             myGateway.addNode(node, true);
         } else {

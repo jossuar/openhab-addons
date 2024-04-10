@@ -140,6 +140,7 @@ public class MySensorsBridgeHandler extends BaseBridgeHandler implements MySenso
 
     @Override
     public void connectionStatusUpdate(@Nullable MySensorsAbstractConnection connection, boolean connected) {
+        MySensorsDiscoveryService discoveryService = this.discoveryService;
         if (connected) {
             updateStatus(ThingStatus.ONLINE);
             if (discoveryService != null) {

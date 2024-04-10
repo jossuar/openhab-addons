@@ -94,6 +94,8 @@ public abstract class MySensorsVariable {
 
     @Override
     public int hashCode() {
+        String value = this.value;
+
         final int prime = 31;
         int result = 1;
         result = prime * result + type.getId();

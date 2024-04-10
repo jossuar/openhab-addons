@@ -89,8 +89,11 @@ public class MySensorsNetworkSanityChecker implements MySensorsGatewayEventListe
     public void start() {
         reset();
 
+        ScheduledFuture<?> futureSanityChk = this.futureSanityChk;
         if (futureSanityChk == null && scheduler == null) {
-            scheduler = Executors.newSingleThreadScheduledExecutor();
+            ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+            this.scheduler = scheduler;
+
             futureSanityChk = scheduler.scheduleWithFixedDelay(this, scheduleMinuteDelay, scheduleMinuteDelay,
                     TimeUnit.MINUTES);
         } else {
@@ -242,6 +245,7 @@ public class MySensorsNetworkSanityChecker implements MySensorsGatewayEventListe
             if ((maxAttemptsBeforeDisconnecting - missedIVersionMessages) <= 0) {
                 logger.error("Retry period expired, gateway is down. Disconneting bridge...");
 
+                MySensorsAbstractConnection myCon = this.myCon;
                 if (myCon != null) {
                     myCon.requestDisconnection(true);
                 }

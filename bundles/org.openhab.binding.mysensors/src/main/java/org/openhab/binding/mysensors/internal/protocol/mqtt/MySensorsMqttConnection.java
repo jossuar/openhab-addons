@@ -145,11 +145,13 @@ public class MySensorsMqttConnection extends MySensorsAbstractConnection impleme
             connection.unsubscribe(myMqttSub.getTopic(), myMqttSub);
             connection.removeConnectionObserver(this);
 
+            MySensorsWriter mysConWriter = this.mysConWriter;
             if (mysConWriter != null) {
                 mysConWriter.stopWriting();
                 mysConWriter = null;
             }
 
+            MySensorsReader mysConReader = this.mysConReader;
             if (mysConReader != null) {
                 mysConReader.stopReader();
                 mysConReader = null;
@@ -251,14 +253,17 @@ public class MySensorsMqttConnection extends MySensorsAbstractConnection impleme
             try {
                 MySensorsMessage msgOut = MySensorsMessage.parse(msg);
                 String newTopic = myGatewayConfig.getTopicPublish() + "/" + MySensorsMessage.generateMQTTString(msgOut);
-                assert conn != null;
-                conn.publish(newTopic, msgOut.getMsg().getBytes(), 0, false).whenComplete((m, t) -> {
-                    if (t == null) {
-                        myMqttPublishCallback.onSuccess(newTopic);
-                    } else {
-                        myMqttPublishCallback.onFailure(newTopic, t);
-                    }
-                });
+
+                MqttBrokerConnection conn = this.conn;
+                if (conn != null) {
+                    conn.publish(newTopic, msgOut.getMsg().getBytes(), 0, false).whenComplete((m, t) -> {
+                        if (t == null) {
+                            myMqttPublishCallback.onSuccess(newTopic);
+                        } else {
+                            myMqttPublishCallback.onFailure(newTopic, t);
+                        }
+                    });
+                }
             } catch (ParseException e) {
                 logger.error("Unable to convert String to MySensorsMessage!", e);
             }

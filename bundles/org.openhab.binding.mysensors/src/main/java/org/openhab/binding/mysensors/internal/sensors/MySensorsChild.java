@@ -310,6 +310,8 @@ public abstract class MySensorsChild implements Mergeable {
 
     @Override
     public int hashCode() {
+        MySensorsMessageSubType presentationCode = this.presentationCode;
+
         final int prime = 31;
         int result = 1;
         result = prime * result + childId;

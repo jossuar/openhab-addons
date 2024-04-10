@@ -188,6 +188,7 @@ public abstract class MySensorsAbstractConnection implements Runnable {
             disconnect();
         }
 
+        Future<?> futureWatchdog = this.futureWatchdog;
         if (futureWatchdog != null) {
             futureWatchdog.cancel(true);
             futureWatchdog = null;
@@ -330,6 +331,7 @@ public abstract class MySensorsAbstractConnection implements Runnable {
          * Starts the reader process that will receive the messages from the MySensors network.
          */
         public void startReader() {
+            ExecutorService executor = this.executor;
             if (executor != null) {
                 future = executor.submit(this);
             }
@@ -507,6 +509,7 @@ public abstract class MySensorsAbstractConnection implements Runnable {
          * and send them to the MySensors network.
          */
         public void startWriter() {
+            ExecutorService executor = this.executor;
             if (executor != null) {
                 future = executor.submit(this);
             }
