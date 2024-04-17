@@ -9,4 +9,5 @@
 		<bundle start-level="80">mvn:org.openhab.addons.bundles/org.openhab.binding.mqtt/${project.version}</bundle>
 		<bundle start-level="81">mvn:org.openhab.addons.bundles/org.openhab.binding.mysensors/${project.version}</bundle>
 	</feature>
+
 </features>
