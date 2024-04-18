@@ -188,9 +188,10 @@ public abstract class MySensorsAbstractConnection implements Runnable {
             disconnect();
         }
 
+        Future<?> futureWatchdog = this.futureWatchdog;
         if (futureWatchdog != null) {
             futureWatchdog.cancel(true);
-            futureWatchdog = null;
+            this.futureWatchdog = null;
         }
 
         watchdogExecutor.shutdown();
@@ -330,6 +331,7 @@ public abstract class MySensorsAbstractConnection implements Runnable {
          * Starts the reader process that will receive the messages from the MySensors network.
          */
         public void startReader() {
+            ExecutorService executor = this.executor;
             if (executor != null) {
                 future = executor.submit(this);
             }
@@ -396,9 +398,10 @@ public abstract class MySensorsAbstractConnection implements Runnable {
 
             this.stopReader = true;
 
+            Future<?> future = this.future;
             if (future != null) {
                 future.cancel(true);
-                future = null;
+                this.future = null;
             }
 
             ExecutorService executor = this.executor;
@@ -409,14 +412,16 @@ public abstract class MySensorsAbstractConnection implements Runnable {
             }
 
             try {
+                BufferedReader reads = this.reads;
                 if (reads != null) {
                     reads.close();
-                    reads = null;
+                    this.reads = null;
                 }
 
+                InputStream inStream = this.inStream;
                 if (inStream != null) {
                     inStream.close();
-                    inStream = null;
+                    this.inStream = null;
                 }
             } catch (IOException e) {
                 logger.error("Cannot close reader stream");
@@ -504,6 +509,7 @@ public abstract class MySensorsAbstractConnection implements Runnable {
          * and send them to the MySensors network.
          */
         public void startWriter() {
+            ExecutorService executor = this.executor;
             if (executor != null) {
                 future = executor.submit(this);
             }
@@ -576,16 +582,17 @@ public abstract class MySensorsAbstractConnection implements Runnable {
 
             this.stopWriting = true;
 
+            Future<?> future = this.future;
             if (future != null) {
                 future.cancel(true);
-                future = null;
+                this.future = null;
             }
 
             ExecutorService executor = this.executor;
             if (executor != null) {
                 executor.shutdown();
                 executor.shutdownNow();
-                executor = null;
+                this.executor = null;
             }
 
             try {
@@ -596,9 +603,10 @@ public abstract class MySensorsAbstractConnection implements Runnable {
                     this.outs = null;
                 }
 
+                OutputStream outStream = this.outStream;
                 if (outStream != null) {
                     outStream.close();
-                    outStream = null;
+                    this.outStream = null;
                 }
             } catch (IOException e) {
                 logger.error("Cannot close writer stream");

@@ -116,14 +116,16 @@ public class MySensorsSerialConnection extends MySensorsAbstractConnection imple
     public void stopConnection() {
         logger.debug("Shutting down serial connection!");
 
+        MySensorsWriter mysConWriter = this.mysConWriter;
         if (mysConWriter != null) {
             mysConWriter.stopWriting();
-            mysConWriter = null;
+            this.mysConWriter = null;
         }
 
+        MySensorsReader mysConReader = this.mysConReader;
         if (mysConReader != null) {
             mysConReader.stopReader();
-            mysConReader = null;
+            this.mysConReader = null;
         }
 
         if (myGatewayConfig.isHardReset()) {
