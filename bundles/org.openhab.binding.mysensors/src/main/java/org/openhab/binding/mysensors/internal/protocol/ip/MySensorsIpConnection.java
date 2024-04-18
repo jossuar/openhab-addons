@@ -69,14 +69,16 @@ public class MySensorsIpConnection extends MySensorsAbstractConnection {
     public void stopConnection() {
         logger.debug("Disconnecting from IP bridge ...");
 
+        MySensorsWriter mysConWriter = this.mysConWriter;
         if (mysConWriter != null) {
             mysConWriter.stopWriting();
-            mysConWriter = null;
+            this.mysConWriter = null;
         }
 
+        MySensorsReader mysConReader = this.mysConReader;
         if (mysConReader != null) {
             mysConReader.stopReader();
-            mysConReader = null;
+            this.mysConReader = null;
         }
 
         // Shut down socket

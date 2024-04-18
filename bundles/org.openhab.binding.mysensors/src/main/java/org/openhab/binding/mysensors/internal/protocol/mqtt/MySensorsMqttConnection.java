@@ -143,14 +143,16 @@ public class MySensorsMqttConnection extends MySensorsAbstractConnection impleme
             connection.unsubscribe(myMqttSub.getTopic(), myMqttSub);
             connection.removeConnectionObserver(this);
 
+            MySensorsWriter mysConWriter = this.mysConWriter;
             if (mysConWriter != null) {
                 mysConWriter.stopWriting();
-                mysConWriter = null;
+                this.mysConWriter = null;
             }
 
+            MySensorsReader mysConReader = this.mysConReader;
             if (mysConReader != null) {
                 mysConReader.stopReader();
-                mysConReader = null;
+                this.mysConReader = null;
             }
         } else {
             logger.warn("Tried to stop null MQTT connection");
@@ -248,14 +250,18 @@ public class MySensorsMqttConnection extends MySensorsAbstractConnection impleme
             try {
                 MySensorsMessage msgOut = MySensorsMessage.parse(msg);
                 String newTopic = myGatewayConfig.getTopicPublish() + "/" + MySensorsMessage.generateMQTTString(msgOut);
-                assert conn != null;
-                conn.publish(newTopic, msgOut.getMsg().getBytes(), 0, false).whenComplete((m, t) -> {
-                    if (t == null) {
-                        myMqttPublishCallback.onSuccess(newTopic);
-                    } else {
-                        myMqttPublishCallback.onFailure(newTopic, t);
-                    }
-                });
+
+                MqttBrokerConnection conn = this.conn;
+                if (conn != null) {
+                    conn.publish(newTopic, msgOut.getMsg().getBytes(), 0, false).whenComplete((m, t) -> {
+                        MySensorsMqttPublishCallback callback = myMqttPublishCallback;
+                        if (t == null) {
+                            callback.onSuccess(newTopic);
+                        } else {
+                            callback.onFailure(newTopic, t);
+                        }
+                    });
+                }
             } catch (ParseException e) {
                 logger.error("Unable to convert String to MySensorsMessage!", e);
             }

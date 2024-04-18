@@ -313,6 +313,8 @@ public abstract class MySensorsChild implements Mergeable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
+        MySensorsMessageSubType presentationCode = this.presentationCode;
+
         result = prime * result + childId;
         result = prime * result + (presentationCode != null ? presentationCode.getId() : 0);
         result = prime * result + (variableMap.hashCode());

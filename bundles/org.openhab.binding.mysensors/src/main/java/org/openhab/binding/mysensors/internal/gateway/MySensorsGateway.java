@@ -114,6 +114,8 @@ public class MySensorsGateway implements MySensorsGatewayEventListener {
      * Startup the gateway
      */
     public void startup() {
+        MySensorsAbstractConnection myCon = this.myCon;
+
         if (myCon != null) {
             myCon.initialize();
         } else {
@@ -122,7 +124,7 @@ public class MySensorsGateway implements MySensorsGatewayEventListener {
 
         myEventRegister.addEventListener(this);
 
-        if (myConf.getEnableNetworkSanCheck() && myCon != null) {
+        if (myConf.getEnableNetworkSanCheck()) {
             myNetSanCheck = new MySensorsNetworkSanityChecker(this, myEventRegister, myCon);
         }
     }
@@ -131,13 +133,16 @@ public class MySensorsGateway implements MySensorsGatewayEventListener {
      * Shutdown the gateway
      */
     public void shutdown() {
+        MySensorsNetworkSanityChecker myNetSanCheck = this.myNetSanCheck;
+
         if (myNetSanCheck != null) {
             myNetSanCheck.stop();
         }
 
+        MySensorsAbstractConnection myCon = this.myCon;
         if (myCon != null) {
             myCon.destroy();
-            myCon = null;
+            this.myCon = null;
         }
 
         myEventRegister.clearAllListeners();
@@ -560,6 +565,8 @@ public class MySensorsGateway implements MySensorsGatewayEventListener {
                         logger.debug("Request received!");
                         msg.setMsgType(MySensorsMessageType.SET);
                         msg.setMsg(Objects.requireNonNullElse(value, "0"));
+
+                        MySensorsAbstractConnection myCon = this.myCon;
                         if (myCon != null) {
                             myCon.sendMessage(msg);
                         }
@@ -648,6 +655,7 @@ public class MySensorsGateway implements MySensorsGatewayEventListener {
         MySensorsMessage newMsg = new MySensorsMessage(msg.getNodeId(), msg.getChildId(), MySensorsMessageType.INTERNAL,
                 MySensorsMessageAck.FALSE, false, MySensorsMessageSubType.I_TIME, time);
 
+        MySensorsAbstractConnection myCon = this.myCon;
         if (myCon != null) {
             myCon.sendMessage(newMsg);
         }
@@ -686,6 +694,8 @@ public class MySensorsGateway implements MySensorsGatewayEventListener {
             MySensorsMessage newMsg = new MySensorsMessage(MySensorsNode.MYSENSORS_NODE_ID_RESERVED_255,
                     MySensorsChild.MYSENSORS_CHILD_ID_RESERVED_255, MySensorsMessageType.INTERNAL,
                     MySensorsMessageAck.FALSE, false, MySensorsMessageSubType.I_ID_RESPONSE, newId + "");
+
+            MySensorsAbstractConnection myCon = this.myCon;
             if (myCon != null) {
                 myCon.sendMessage(newMsg);
             } else {

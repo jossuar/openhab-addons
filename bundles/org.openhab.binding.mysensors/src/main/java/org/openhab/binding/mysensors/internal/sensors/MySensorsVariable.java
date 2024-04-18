@@ -96,6 +96,8 @@ public abstract class MySensorsVariable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
+        String value = this.value;
+
         result = prime * result + type.getId();
         result = prime * result + ((value == null) ? 0 : value.hashCode());
         return result;
