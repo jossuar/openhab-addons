@@ -25,11 +25,11 @@ import org.slf4j.LoggerFactory;
 
 /**
  * This is the automation engine action handler service for the
- * caddx bridge actions.
+ * risco partition actions.
  *
  * @author Georgios Moutsos - Initial contribution
  */
-@ThingActionsScope(name = "caddx")
+@ThingActionsScope(name = "risco")
 @NonNullByDefault
 public class RiscoPartitionActions implements ThingActions {
     private final Logger logger = LoggerFactory.getLogger(RiscoPartitionActions.class);
