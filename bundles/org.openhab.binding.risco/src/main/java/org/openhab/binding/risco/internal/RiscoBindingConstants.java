@@ -80,9 +80,8 @@ public class RiscoBindingConstants {
             .collect(Collectors.toSet()));
 
     // Special channels
+    public static final String BRIDGE_SEND_COMMAND = "send_command";
     public static final String ZONE_CHANNEL_BYPASS = "bypass";
-    public static final String PARTITION_CHANNEL_ARM = "arm";
-    public static final String PARTITION_CHANNEL_HOME_STAY = "home-stay";
 
     // Channel types
     @SuppressWarnings("null")
