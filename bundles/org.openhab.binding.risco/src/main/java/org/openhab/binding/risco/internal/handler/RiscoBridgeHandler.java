@@ -17,6 +17,8 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -100,6 +102,11 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
     private @Nullable RiscoCommunicator communicator = null;
     private @Nullable RiscoDiscoveryService discoveryService = null;
 
+    private static final Pattern CMD_ARM_PARTITION = Pattern.compile("^ARM_PARTITION:(\\d+):(\\d+)$");
+    private static final Pattern CMD_STAY_PARTITION = Pattern.compile("^STAY_PARTITION:(\\d+):(\\d+)$");
+    private static final Pattern CMD_DISARM_PARTITION = Pattern.compile("^DISARM_PARTITION:(\\d+):(\\d+)$");
+    private static final Pattern CMD_TOGGLE_ZONE_BYPASS = Pattern.compile("^TOGGLE_ZONE_BYPASS:(\\d+)$");
+
     public RiscoBridgeHandler(Bridge bridge) {
         super(bridge);
     }
@@ -162,9 +169,66 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
         logger.trace("handleCommand(), channelUID: {}, command: {}", channelUID, command);
 
         switch (channelUID.getId()) {
+            case RiscoBindingConstants.BRIDGE_SEND_COMMAND:
+                String cmd = command.toString();
+
+                // ARM_PARTITION:<PartitionNumber>:<UserPin>
+                Matcher m1 = CMD_ARM_PARTITION.matcher(cmd);
+                if (m1.matches()) {
+                    handlePartitionCommand("ARM", Integer.valueOf(m1.group(1)), m1.group(2));
+                }
+
+                // DISARM_PARTITION:<PartitionNumber>:<Pin>
+                Matcher m2 = CMD_DISARM_PARTITION.matcher(cmd);
+                if (m2.matches()) {
+                    handlePartitionCommand("DISARM", Integer.valueOf(m2.group(1)), m2.group(2));
+                }
+
+                // STAY_PARTITION:<PartitionNumber>:<Pin>
+                Matcher m3 = CMD_STAY_PARTITION.matcher(cmd);
+                if (m3.matches()) {
+                    handlePartitionCommand("STAY", Integer.valueOf(m3.group(1)), m3.group(2));
+                }
+
+                // TOGGLE_ZONE_BYPASS:<ZoneNumber>
+                Matcher m4 = CMD_TOGGLE_ZONE_BYPASS.matcher(cmd);
+                if (m4.matches()) {
+                    handleZoneCommand("TOGGLEBYPASS", Integer.valueOf(m4.group(1)));
+                }
+
+                break;
+
             default:
                 logger.debug("Unknown command {}", command);
                 break;
+        }
+    }
+
+    private void handlePartitionCommand(String cmd, Integer partitionNumber, String userPin) {
+        Thing thing = findThing(RiscoThingType.PARTITION, partitionNumber);
+        if (thing != null) {
+            RiscoPartitionHandler thingHandler = (RiscoPartitionHandler) thing.getHandler();
+            if (thingHandler != null) {
+                if ("ARM".equals(cmd)) {
+                    thingHandler.arm(userPin);
+                } else if ("DISARM".equals(cmd)) {
+                    thingHandler.disarm(userPin);
+                } else if ("STAY".equals(cmd)) {
+                    thingHandler.stay(userPin);
+                }
+            }
+        }
+    }
+
+    private void handleZoneCommand(String cmd, Integer zoneNumber) {
+        Thing thing = findThing(RiscoThingType.ZONE, zoneNumber);
+        if (thing != null) {
+            RiscoZoneHandler thingHandler = (RiscoZoneHandler) thing.getHandler();
+            if (thingHandler != null) {
+                if ("TOGGLE_ZONE_BYPASS".equals(cmd)) {
+                    thingHandler.bypass();
+                }
+            }
         }
     }
 

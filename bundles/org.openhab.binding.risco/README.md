@@ -313,6 +313,64 @@ The Risco binding things expose the following channels:
 
 ## Full Example
 
-_Provide a full usage example based on textual configuration files._
-_*.things, *.items examples are mandatory as textual configuration is well used by many users._
-_*.sitemap examples are optional._
+The following is an example of a things file (risco.things):
+
+```
+Bridge risco:bridge:lightsys "Risco Alarm Panel" [hostname="192.168.1.10", password="5678", id=1, encoding="UTF-8", port=1000, connectionDelay=0] {
+    Thing panel     panel      "SecurityPanel"
+    Thing partition partition1 "Partition 1" [partitionNumber=1]
+    Thing zone      zone1      "Livingroom motion sensor" [ zoneNumber=1 ]
+    Thing zone      zone2      "Kitchen motion sensor" [ zoneNumber=2 ]
+}
+```
+
+The following is an example of an items file (risco.items):
+
+```
+Switch p1Fire “Main House Fire” (Partition) {channel=“risco:partition:lightsys:partition1:fire”}
+Switch p1Arm “Main House Armed/Disarmed” (Partition) {channel=“risco:partition:lightsys:partition1:arm”}
+
+Contact   Livingroom_Motion     "Livingroom [%s]"       <motion>       (MotionSensors)  { channel="risco:zone:lightsys:zone1:open" }
+Contact   Kitchen_Motion        "Kitchen [%s]"          <motion>       (MotionSensors)  { channel="risco:zone:lightsys:zone2:open" }
+```
+
+The following is a rule example with calling of an action on the binding.
+You have to specify a valid trigger condition and also the correct partition identifier and pin
+
+```
+rule "Arm"
+when
+    Item AButton received command ON
+then
+    val acts = getActions("risco","risco:partition:lightsys:partition1")
+    if (null === acts) {
+        logWarn("actions", "Actions not found, check thing ID for the Partition")
+        return
+    }
+    
+    acts.arm("1234")
+end
+
+```
+
+
+UI CODE example
+```
+
+    UID: risco:bridge:thebridge
+    label: Risco Bridge
+    thingTypeUID: risco:bridge
+    configuration:
+      hostname: 192.168.1.10
+      password: "5678"
+      id: 1
+      encoding: UTF-8
+      port: 1000
+      connectionDelay: 0
+    channels:
+      - id: send-command
+        channelTypeUID: risco:command
+        label: Send Command
+        description: Sends an Alarm Panel Command
+        configuration: {}
+```
