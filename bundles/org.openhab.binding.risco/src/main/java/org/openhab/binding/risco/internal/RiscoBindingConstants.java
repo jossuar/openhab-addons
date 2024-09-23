@@ -79,6 +79,12 @@ public class RiscoBindingConstants {
                     VOICE_MODULE_THING_TYPE, WIRELESS_MODULE_THING_TYPE, ZONE_THING_TYPE, ZONE_EXPANDER_THING_TYPE)
             .collect(Collectors.toSet()));
 
+    // Commands
+    public static final String CMD_ARM_PARTITION = "ARM_PARTITION";
+    public static final String CMD_STAY_PARTITION = "STAY_PARTITION";
+    public static final String CMD_DISARM_PARTITION = "DISARM_PARTITION";
+    public static final String CMD_TOGGLE_ZONE_BYPASS = "TOGGLE_ZONE_BYPASS";
+
     // Special channels
     public static final String BRIDGE_SEND_COMMAND = "send_command";
     public static final String ZONE_CHANNEL_BYPASS = "bypass";
