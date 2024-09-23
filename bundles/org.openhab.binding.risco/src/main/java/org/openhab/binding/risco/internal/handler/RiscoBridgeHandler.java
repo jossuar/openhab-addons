@@ -102,10 +102,14 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
     private @Nullable RiscoCommunicator communicator = null;
     private @Nullable RiscoDiscoveryService discoveryService = null;
 
-    private static final Pattern CMD_ARM_PARTITION = Pattern.compile("^ARM_PARTITION:(\\d+):(\\d+)$");
-    private static final Pattern CMD_STAY_PARTITION = Pattern.compile("^STAY_PARTITION:(\\d+):(\\d+)$");
-    private static final Pattern CMD_DISARM_PARTITION = Pattern.compile("^DISARM_PARTITION:(\\d+):(\\d+)$");
-    private static final Pattern CMD_TOGGLE_ZONE_BYPASS = Pattern.compile("^TOGGLE_ZONE_BYPASS:(\\d+)$");
+    private static final Pattern PATTERN_ARM_PARTITION = Pattern
+            .compile("^(" + RiscoBindingConstants.CMD_ARM_PARTITION + "):(\\d+){1,2}:(\\d+){1,4}$");
+    private static final Pattern PATTERN_STAY_PARTITION = Pattern
+            .compile("^(" + RiscoBindingConstants.CMD_STAY_PARTITION + "):(\\d+):(\\d+)$");
+    private static final Pattern PATTERN_DISARM_PARTITION = Pattern
+            .compile("^(" + RiscoBindingConstants.CMD_DISARM_PARTITION + "):(\\d+):(\\d+)$");
+    private static final Pattern PATTERN_TOGGLE_ZONE_BYPASS = Pattern
+            .compile("^(" + RiscoBindingConstants.CMD_TOGGLE_ZONE_BYPASS + "):(\\d+)$");
 
     public RiscoBridgeHandler(Bridge bridge) {
         super(bridge);
@@ -173,27 +177,27 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
                 String cmd = command.toString();
 
                 // ARM_PARTITION:<PartitionNumber>:<UserPin>
-                Matcher m1 = CMD_ARM_PARTITION.matcher(cmd);
+                Matcher m1 = PATTERN_ARM_PARTITION.matcher(cmd);
                 if (m1.matches()) {
-                    handlePartitionCommand("ARM", Integer.valueOf(m1.group(1)), m1.group(2));
+                    handlePartitionCommand(m1.group(1), Integer.valueOf(m1.group(2)), m1.group(3));
                 }
 
-                // DISARM_PARTITION:<PartitionNumber>:<Pin>
-                Matcher m2 = CMD_DISARM_PARTITION.matcher(cmd);
+                // DISARM_PARTITION:<PartitionNumber>:<UserPin>
+                Matcher m2 = PATTERN_DISARM_PARTITION.matcher(cmd);
                 if (m2.matches()) {
-                    handlePartitionCommand("DISARM", Integer.valueOf(m2.group(1)), m2.group(2));
+                    handlePartitionCommand(m2.group(1), Integer.valueOf(m2.group(2)), m2.group(3));
                 }
 
-                // STAY_PARTITION:<PartitionNumber>:<Pin>
-                Matcher m3 = CMD_STAY_PARTITION.matcher(cmd);
+                // STAY_PARTITION:<PartitionNumber>:<UserPin>
+                Matcher m3 = PATTERN_STAY_PARTITION.matcher(cmd);
                 if (m3.matches()) {
-                    handlePartitionCommand("STAY", Integer.valueOf(m3.group(1)), m3.group(2));
+                    handlePartitionCommand(m3.group(1), Integer.valueOf(m3.group(2)), m3.group(3));
                 }
 
                 // TOGGLE_ZONE_BYPASS:<ZoneNumber>
-                Matcher m4 = CMD_TOGGLE_ZONE_BYPASS.matcher(cmd);
+                Matcher m4 = PATTERN_TOGGLE_ZONE_BYPASS.matcher(cmd);
                 if (m4.matches()) {
-                    handleZoneCommand("TOGGLEBYPASS", Integer.valueOf(m4.group(1)));
+                    handleZoneCommand(m4.group(1), Integer.valueOf(m4.group(2)));
                 }
 
                 break;
@@ -209,11 +213,11 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
         if (thing != null) {
             RiscoPartitionHandler thingHandler = (RiscoPartitionHandler) thing.getHandler();
             if (thingHandler != null) {
-                if ("ARM".equals(cmd)) {
+                if (RiscoBindingConstants.CMD_ARM_PARTITION.equals(cmd)) {
                     thingHandler.arm(userPin);
-                } else if ("DISARM".equals(cmd)) {
+                } else if (RiscoBindingConstants.CMD_DISARM_PARTITION.equals(cmd)) {
                     thingHandler.disarm(userPin);
-                } else if ("STAY".equals(cmd)) {
+                } else if (RiscoBindingConstants.CMD_STAY_PARTITION.equals(cmd)) {
                     thingHandler.stay(userPin);
                 }
             }
@@ -225,7 +229,7 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
         if (thing != null) {
             RiscoZoneHandler thingHandler = (RiscoZoneHandler) thing.getHandler();
             if (thingHandler != null) {
-                if ("TOGGLE_ZONE_BYPASS".equals(cmd)) {
+                if (RiscoBindingConstants.CMD_TOGGLE_ZONE_BYPASS.equals(cmd)) {
                     thingHandler.bypass();
                 }
             }
