@@ -59,6 +59,7 @@ import org.openhab.binding.risco.internal.protocol.RiscoThing;
 import org.openhab.binding.risco.internal.protocol.RiscoThingType;
 import org.openhab.binding.risco.internal.protocol.message.connection.Local;
 import org.openhab.binding.risco.internal.protocol.message.connection.Remote;
+import org.openhab.core.library.types.StringType;
 import org.openhab.core.thing.Bridge;
 import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.thing.Thing;
@@ -199,13 +200,15 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
                 if (m4.matches()) {
                     handleZoneCommand(m4.group(1), Integer.valueOf(m4.group(2)));
                 }
-
                 break;
 
             default:
                 logger.debug("Unknown command {}", command);
                 break;
         }
+
+        // Clear the command
+        updateState(channelUID, new StringType(""));
     }
 
     private void handlePartitionCommand(String cmd, Integer partitionNumber, String userPin) {
