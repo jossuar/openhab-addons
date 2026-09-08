@@ -82,8 +82,6 @@ public class RiscoCommunicator {
     private ZonedDateTime lastReceiveTime = ZonedDateTime.now();
     private ScheduledFuture<?> riscoWatchdog;
 
-    private ScheduledExecutorService scheduler;
-
     public interface RiscoPanelListener {
         public void handleRiscoMessage(RiscoMessage msg);
     }
@@ -102,7 +100,6 @@ public class RiscoCommunicator {
         this.panelId = panelId;
         this.encoding = encoding;
         this.password = password;
-        this.scheduler = scheduler;
 
         // Open the socket and get the streams
         tcpSocket = new Socket();
@@ -221,14 +218,24 @@ public class RiscoCommunicator {
         riscoWatchdog.cancel(true);
     }
 
+    private static final long RESPONSE_TIMEOUT_MS = 15000;
+
     @Nullable
     private Integer responseCommandId;
 
     public synchronized void suspendForPendingResponseIfNeeded() {
+        long deadlineMillis = System.currentTimeMillis() + RESPONSE_TIMEOUT_MS;
+
         while (responseCommandId != null) {
+            long remainingMillis = deadlineMillis - System.currentTimeMillis();
+            if (remainingMillis <= 0) {
+                responseCommandId = null;
+                break;
+            }
             try {
-                wait();
+                wait(remainingMillis);
             } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
             }
         }
     }
@@ -443,7 +450,7 @@ public class RiscoCommunicator {
     }
 
     private void reconnect() throws IOException {
-        stop();
+        stopInternal();
         start();
     }
 
