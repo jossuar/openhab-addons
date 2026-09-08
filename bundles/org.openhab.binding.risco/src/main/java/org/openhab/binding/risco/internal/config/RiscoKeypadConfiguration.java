@@ -26,7 +26,7 @@ public class RiscoKeypadConfiguration {
     public static final String KEYPAD_NUMBER = "keypadNumber";
 
     /**
-     * The Keypad Number. Can be in the range of 1-512. Depends on the Panel model. This is a required parameter for a
+     * The Keypad Number. Can be in the range of 1-32. Depends on the Panel model. This is a required parameter for a
      * zone.
      */
     private int keypadNumber;

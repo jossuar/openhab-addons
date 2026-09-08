@@ -26,7 +26,7 @@ public class RiscoKeyfobConfiguration {
     public static final String KEYFOB_NUMBER = "keyfobNumber";
 
     /**
-     * The Keyfob Number. Can be in the range of 1-512. Depends on the Panel model. This is a required parameter for a
+     * The Keyfob Number. Can be in the range of 1-256. Depends on the Panel model. This is a required parameter for a
      * zone.
      */
     private int keyfobNumber;

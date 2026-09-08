@@ -14,6 +14,7 @@ package org.openhab.binding.risco.internal.protocol;
 
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -366,7 +367,7 @@ public class RiscoMessageFactory {
      * and CRC array Value
      */
     private String calcCommandCRC(String cmdStr) {
-        byte[] cmdBytes = cmdStr.getBytes();
+        byte[] cmdBytes = cmdStr.getBytes(StandardCharsets.UTF_8);
         int sum = 65535;
 
         for (int i = 0; i < cmdBytes.length; i++) {
@@ -419,7 +420,7 @@ public class RiscoMessageFactory {
         int offset = 0;
         int position = 0;
 
-        byte[] buffer = fullCommand.getBytes(); // fullCommand.getBytes(encoding);
+        byte[] buffer = fullCommand.getBytes(StandardCharsets.UTF_8);
         byte[] encryptionBuffer = createPseudoBuffer(panelId);
 
         for (int i = 0; i < buffer.length; i++) {

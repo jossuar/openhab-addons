@@ -26,7 +26,7 @@ public class RiscoSirenConfiguration {
     public static final String SIREN_NUMBER = "sirenNumber";
 
     /**
-     * The Siren Number. Can be in the range of 1-32. This is a required parameter for a siren
+     * The Siren Number. Can be in the range of 1-512. This is a required parameter for a siren
      */
     private int sirenNumber;
 
