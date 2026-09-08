@@ -51,9 +51,9 @@ public class BusExpanderAllocation extends RiscoMessage {
                 for (int j = text.length() - 1; j >= 0; j--) {
                     if ("1".equals(String.valueOf(text.charAt(j)))) {
                         List<RiscoProperty> props = new ArrayList<RiscoProperty>();
-                        props.add(new RiscoProperty("name", "Zone Expander " + index));
+                        props.add(new RiscoProperty("name", "Bus Expander " + index));
 
-                        things.add(new RiscoThing(RiscoThingType.ZONE_EXPANDER, index, props));
+                        things.add(new RiscoThing(RiscoThingType.BUS_EXPANDER, index, props));
                     }
                     index++;
                 }

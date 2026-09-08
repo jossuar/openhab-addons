@@ -50,10 +50,10 @@ public class SounderAllocation extends RiscoMessage {
                         .replaceAll(" ", "0");
                 for (int j = text.length() - 1; j >= 0; j--) {
                     List<RiscoProperty> props = new ArrayList<RiscoProperty>();
-                    props.add(new RiscoProperty("name", "Zone " + index));
+                    props.add(new RiscoProperty("name", "Sounder " + index));
 
                     if ("1".equals(String.valueOf(text.charAt(j)))) {
-                        things.add(new RiscoThing(RiscoThingType.ZONE, index, props));
+                        things.add(new RiscoThing(RiscoThingType.SOUNDER, index, props));
                     }
                     index++;
                 }

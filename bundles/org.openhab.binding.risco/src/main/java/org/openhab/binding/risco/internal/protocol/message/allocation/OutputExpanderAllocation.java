@@ -51,9 +51,9 @@ public class OutputExpanderAllocation extends RiscoMessage {
                 for (int j = text.length() - 1; j >= 0; j--) {
                     if ("1".equals(String.valueOf(text.charAt(j)))) {
                         List<RiscoProperty> props = new ArrayList<RiscoProperty>();
-                        props.add(new RiscoProperty("name", "Zone Expander " + index));
+                        props.add(new RiscoProperty("name", "Output Expander " + index));
 
-                        things.add(new RiscoThing(RiscoThingType.ZONE_EXPANDER, index, props));
+                        things.add(new RiscoThing(RiscoThingType.OUTPUT_EXPANDER, index, props));
                     }
                     index++;
                 }
