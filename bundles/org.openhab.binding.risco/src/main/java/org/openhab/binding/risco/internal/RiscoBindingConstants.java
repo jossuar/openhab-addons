@@ -86,7 +86,7 @@ public class RiscoBindingConstants {
     public static final String CMD_TOGGLE_ZONE_BYPASS = "TOGGLE_ZONE_BYPASS";
 
     // Special channels
-    public static final String BRIDGE_SEND_COMMAND = "send_command";
+    public static final String BRIDGE_SEND_COMMAND = "send-command";
     public static final String ZONE_CHANNEL_BYPASS = "bypass";
 
     // Channel types
