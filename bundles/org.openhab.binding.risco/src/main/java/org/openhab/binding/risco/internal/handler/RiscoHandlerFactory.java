@@ -24,7 +24,7 @@ import org.openhab.binding.risco.internal.handler.thing.RiscoPanelHandler;
 import org.openhab.binding.risco.internal.handler.thing.RiscoPartitionHandler;
 import org.openhab.binding.risco.internal.handler.thing.RiscoPowerSupplyHandler;
 import org.openhab.binding.risco.internal.handler.thing.RiscoProximityReaderHandler;
-import org.openhab.binding.risco.internal.handler.thing.RiscoSounderHandler;
+import org.openhab.binding.risco.internal.handler.thing.RiscoSirenHandler;
 import org.openhab.binding.risco.internal.handler.thing.RiscoVoiceModuleHandler;
 import org.openhab.binding.risco.internal.handler.thing.RiscoWirelessModuleHandler;
 import org.openhab.binding.risco.internal.handler.thing.RiscoZoneExpanderHandler;
@@ -86,8 +86,8 @@ public class RiscoHandlerFactory extends BaseThingHandlerFactory {
             return new RiscoPowerSupplyHandler(thing);
         } else if (RiscoBindingConstants.PROXIMITY_READER_THING_TYPE.equals(thingTypeUID)) {
             return new RiscoProximityReaderHandler(thing);
-        } else if (RiscoBindingConstants.SOUNDER_THING_TYPE.equals(thingTypeUID)) {
-            return new RiscoSounderHandler(thing);
+        } else if (RiscoBindingConstants.SIREN_THING_TYPE.equals(thingTypeUID)) {
+            return new RiscoSirenHandler(thing);
         } else if (RiscoBindingConstants.PANEL_THING_TYPE.equals(thingTypeUID)) {
             return new RiscoPanelHandler(thing);
         } else if (RiscoBindingConstants.VOICE_MODULE_THING_TYPE.equals(thingTypeUID)) {

@@ -28,7 +28,7 @@ import org.openhab.binding.risco.internal.protocol.message.allocation.OutputExpa
 import org.openhab.binding.risco.internal.protocol.message.allocation.PartitionAllocation;
 import org.openhab.binding.risco.internal.protocol.message.allocation.PowerSupplyAllocation;
 import org.openhab.binding.risco.internal.protocol.message.allocation.ProximityReaderAllocation;
-import org.openhab.binding.risco.internal.protocol.message.allocation.SounderAllocation;
+import org.openhab.binding.risco.internal.protocol.message.allocation.SirenAllocation;
 import org.openhab.binding.risco.internal.protocol.message.allocation.WirelessModuleAllocation;
 import org.openhab.binding.risco.internal.protocol.message.allocation.ZoneAllocation;
 import org.openhab.binding.risco.internal.protocol.message.allocation.ZoneExpanderAllocation;
@@ -45,7 +45,7 @@ import org.openhab.binding.risco.internal.protocol.message.status.OutputStatus;
 import org.openhab.binding.risco.internal.protocol.message.status.PartitionStatus;
 import org.openhab.binding.risco.internal.protocol.message.status.PowerSupplyStatus;
 import org.openhab.binding.risco.internal.protocol.message.status.ProximityReaderStatus;
-import org.openhab.binding.risco.internal.protocol.message.status.SounderStatus;
+import org.openhab.binding.risco.internal.protocol.message.status.SirenStatus;
 import org.openhab.binding.risco.internal.protocol.message.status.SystemStatus;
 import org.openhab.binding.risco.internal.protocol.message.status.VoiceModuleStatus;
 import org.openhab.binding.risco.internal.protocol.message.status.WirelessModuleStatus;
@@ -226,12 +226,12 @@ public class RiscoMessageFactory {
                 return new ProximityReaderStatus(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
                         encryptedMessage, decryptedMessage);
 
-            case SounderAllocation.COMMAND:
-                return new SounderAllocation(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
+            case SirenAllocation.COMMAND:
+                return new SirenAllocation(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
                         encryptedMessage, decryptedMessage);
 
-            case SounderStatus.COMMAND:
-                return new SounderStatus(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
+            case SirenStatus.COMMAND:
+                return new SirenStatus(commandId, commandName, modifier, commandValues, indexFrom, indexTo,
                         encryptedMessage, decryptedMessage);
 
             case SystemStatus.COMMAND:
