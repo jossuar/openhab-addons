@@ -147,9 +147,6 @@ public class RiscoCommunicator {
         riscoSender.setDaemon(true);
         riscoSender.start();
 
-        // Start watchdog
-        riscoWatchdog = scheduler.scheduleWithFixedDelay(new RiscoWatchdog(), 10, 20, TimeUnit.SECONDS);
-
         // Initialize the communication with the panel
         sendPlainAndWait(Remote.getReadCommand(password));
         sendPlainAndWait(Local.getReadCommand());
@@ -157,10 +154,20 @@ public class RiscoCommunicator {
         connected = true;
     }
 
-    public void stop() {
-        logger.trace("stop(): RiscoCommunicator stopping");
-
+    private void stopInternal() {
+        logger.trace("stopInternal(): RiscoCommunicator stopping");
         connected = false;
+
+        // Wake up any caller stuck in suspendForPendingResponseIfNeeded() waiting for a response that will
+        // now never arrive on this (dying) connection, instead of leaving it blocked until the timeout there
+        // elapses.
+        synchronized (this) {
+            if (responseCommandId != null) {
+                logger.debug("Clearing pending response wait for command id {} due to disconnect.", responseCommandId);
+                responseCommandId = null;
+                notifyAll();
+            }
+        }
 
         // Disconnect command
         send(Disconnect.getReadCommand());
@@ -204,6 +211,11 @@ public class RiscoCommunicator {
             riscoSender.join(3000);
         } catch (InterruptedException e) {
         }
+    }
+
+    public void stop() {
+        logger.trace("stop(): RiscoCommunicator stopping");
+        stopInternal();
 
         // Stop watchdog
         riscoWatchdog.cancel(true);
