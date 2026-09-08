@@ -26,7 +26,7 @@ public class RiscoProximityReaderConfiguration {
     public static final String PROXIMITY_READER_NUMBER = "proximityReaderNumber";
 
     /**
-     * The Proximity Reader Number. Can be in the range of 1-64. This is a required parameter for a proximity reader.
+     * The Proximity Reader Number. Can be in the range of 1-16. This is a required parameter for a proximity reader.
      */
     private int proximityReaderNumber;
 

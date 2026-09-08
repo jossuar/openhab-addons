@@ -26,7 +26,7 @@ public class RiscoOutputExpanderConfiguration {
     public static final String OUTPUT_EXPANDER_NUMBER = "outputExpanderNumber";
 
     /**
-     * The Output Expander Number. Can be in the range of 1-32. This is a required parameter for a output expander.
+     * The Output Expander Number. Can be in the range of 1-24. This is a required parameter for a output expander.
      */
     private int outputExpanderNumber;
 

@@ -31,7 +31,6 @@ public class RiscoBridgeConfiguration {
     private String password = "5678";
     private String encoding = "utf-8";
     private int connectionDelay = 0;
-    private int userIndex = 1;
 
     public @Nullable String getHostname() {
         return hostname;
@@ -55,9 +54,5 @@ public class RiscoBridgeConfiguration {
 
     public int getConnectionDelay() {
         return connectionDelay;
-    }
-
-    public int getUserIndex() {
-        return userIndex;
     }
 }
