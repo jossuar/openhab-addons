@@ -34,7 +34,7 @@ import org.openhab.binding.risco.internal.config.RiscoOutputExpanderConfiguratio
 import org.openhab.binding.risco.internal.config.RiscoPartitionConfiguration;
 import org.openhab.binding.risco.internal.config.RiscoPowerSupplyConfiguration;
 import org.openhab.binding.risco.internal.config.RiscoProximityReaderConfiguration;
-import org.openhab.binding.risco.internal.config.RiscoSounderConfiguration;
+import org.openhab.binding.risco.internal.config.RiscoSirenConfiguration;
 import org.openhab.binding.risco.internal.config.RiscoWirelessModuleConfiguration;
 import org.openhab.binding.risco.internal.config.RiscoZoneConfiguration;
 import org.openhab.binding.risco.internal.config.RiscoZoneExpanderConfiguration;
@@ -48,7 +48,7 @@ import org.openhab.binding.risco.internal.handler.thing.RiscoPanelHandler;
 import org.openhab.binding.risco.internal.handler.thing.RiscoPartitionHandler;
 import org.openhab.binding.risco.internal.handler.thing.RiscoPowerSupplyHandler;
 import org.openhab.binding.risco.internal.handler.thing.RiscoProximityReaderHandler;
-import org.openhab.binding.risco.internal.handler.thing.RiscoSounderHandler;
+import org.openhab.binding.risco.internal.handler.thing.RiscoSirenHandler;
 import org.openhab.binding.risco.internal.handler.thing.RiscoVoiceModuleHandler;
 import org.openhab.binding.risco.internal.handler.thing.RiscoWirelessModuleHandler;
 import org.openhab.binding.risco.internal.handler.thing.RiscoZoneExpanderHandler;
@@ -94,7 +94,7 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
     private Map<Integer, Thing> thingPartitionMap = new ConcurrentHashMap<>();
     private Map<Integer, Thing> thingPowerSupplyMap = new ConcurrentHashMap<>();
     private Map<Integer, Thing> thingProximityReaderMap = new ConcurrentHashMap<>();
-    private Map<Integer, Thing> thingSounderMap = new ConcurrentHashMap<>();
+    private Map<Integer, Thing> thingSirenMap = new ConcurrentHashMap<>();
     private Map<Integer, Thing> thingWirelessModuleMap = new ConcurrentHashMap<>();
     private Map<Integer, Thing> thingZoneMap = new ConcurrentHashMap<>();
     private Map<Integer, Thing> thingZoneExpanderMap = new ConcurrentHashMap<>();
@@ -313,8 +313,8 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
                 return thingPowerSupplyMap.get(Integer.valueOf(index));
             case PROXIMITY_READER:
                 return thingProximityReaderMap.get(Integer.valueOf(index));
-            case SOUNDER:
-                return thingSounderMap.get(Integer.valueOf(index));
+            case SIREN:
+                return thingSirenMap.get(Integer.valueOf(index));
             case WIRELESS_MODULE:
                 return thingWirelessModuleMap.get(Integer.valueOf(index));
             case ZONE:
@@ -388,11 +388,11 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
                 label = "Proximity Reader " + index;
                 indexProperty = RiscoProximityReaderConfiguration.PROXIMITY_READER_NUMBER;
                 break;
-            case SOUNDER:
-                ttUID = RiscoBindingConstants.SOUNDER_THING_TYPE;
+            case SIREN:
+                ttUID = RiscoBindingConstants.SIREN_THING_TYPE;
                 prefix = RiscoBindingConstants.SIREN;
-                label = "Sounder " + index;
-                indexProperty = RiscoSounderConfiguration.SOUNDER_NUMBER;
+                label = "Siren " + index;
+                indexProperty = RiscoSirenConfiguration.SIREN_NUMBER;
                 break;
             case PANEL:
                 ttUID = RiscoBindingConstants.PANEL_THING_TYPE;
@@ -440,7 +440,6 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
      * Sends a command to the panel
      *
      * @param command The command to be send
-     * @param data The associated command data
      */
     public synchronized boolean sendCommand(String command) {
         logger.trace("sendCommand(): Attempting to send Command: command - {}", command);
@@ -489,9 +488,9 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
         } else if (childHandler instanceof RiscoProximityReaderHandler) {
             RiscoProximityReaderHandler handler = (RiscoProximityReaderHandler) childHandler;
             thingProximityReaderMap.put(handler.getProximityReaderNumber(), childThing);
-        } else if (childHandler instanceof RiscoSounderHandler) {
-            RiscoSounderHandler handler = (RiscoSounderHandler) childHandler;
-            thingSounderMap.put(handler.getSounderNumber(), childThing);
+        } else if (childHandler instanceof RiscoSirenHandler) {
+            RiscoSirenHandler handler = (RiscoSirenHandler) childHandler;
+            thingSirenMap.put(handler.getSirenNumber(), childThing);
         } else if (childHandler instanceof RiscoVoiceModuleHandler) {
             thingGeneralMap.put(RiscoBindingConstants.VOICE_MODULE, childThing);
         } else if (childHandler instanceof RiscoWirelessModuleHandler) {
@@ -543,9 +542,9 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
         } else if (childHandler instanceof RiscoProximityReaderHandler) {
             RiscoProximityReaderHandler handler = (RiscoProximityReaderHandler) childHandler;
             thingPartitionMap.remove(handler.getProximityReaderNumber());
-        } else if (childHandler instanceof RiscoSounderHandler) {
-            RiscoSounderHandler handler = (RiscoSounderHandler) childHandler;
-            thingSounderMap.remove(handler.getSounderNumber());
+        } else if (childHandler instanceof RiscoSirenHandler) {
+            RiscoSirenHandler handler = (RiscoSirenHandler) childHandler;
+            thingSirenMap.remove(handler.getSirenNumber());
         } else if (childHandler instanceof RiscoVoiceModuleHandler) {
             thingGeneralMap.remove(RiscoBindingConstants.VOICE_MODULE);
         } else if (childHandler instanceof RiscoWirelessModuleHandler) {

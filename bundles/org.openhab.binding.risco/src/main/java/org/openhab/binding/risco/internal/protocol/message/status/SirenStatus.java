@@ -26,7 +26,7 @@ import org.openhab.binding.risco.internal.protocol.StatusProperty;
  * @author Georgios Moutsos - Initial contribution
  */
 @NonNullByDefault
-public class SounderStatus extends RiscoMessage {
+public class SirenStatus extends RiscoMessage {
     public static final String COMMAND = "SNSTT";
 
     // @formatter:off
@@ -49,7 +49,7 @@ public class SounderStatus extends RiscoMessage {
 
     private List<RiscoThing> messageThings = new ArrayList<RiscoThing>();
 
-    public SounderStatus(int commandId, String commandName, String modifier, String[] commandValues, int indexFrom,
+    public SirenStatus(int commandId, String commandName, String modifier, String[] commandValues, int indexFrom,
             int indexTo, byte[] encryptedMessage, byte[] decryptedMessage) {
         super(commandId, commandName, modifier, commandValues, indexFrom, indexTo, encryptedMessage, decryptedMessage);
     }
@@ -74,7 +74,7 @@ public class SounderStatus extends RiscoMessage {
                         }
                     }
 
-                    things.add(new RiscoThing(RiscoThingType.SOUNDER, index, props));
+                    things.add(new RiscoThing(RiscoThingType.SIREN, index, props));
                 }
             }
 

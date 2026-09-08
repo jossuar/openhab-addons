@@ -15,22 +15,22 @@ package org.openhab.binding.risco.internal.config;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 
 /**
- * Configuration class for the Risco Sounder Thing.
+ * Configuration class for the Risco Siren Thing.
  *
  * @author Georgios Moutsos - Initial contribution
  */
 @NonNullByDefault
-public class RiscoSounderConfiguration {
+public class RiscoSirenConfiguration {
 
     // Zone Thing constants
-    public static final String SOUNDER_NUMBER = "sounderNumber";
+    public static final String SIREN_NUMBER = "sirenNumber";
 
     /**
-     * The Sounder Number. Can be in the range of 1-32. This is a required parameter for a sounder
+     * The Siren Number. Can be in the range of 1-32. This is a required parameter for a siren
      */
-    private int sounderNumber;
+    private int sirenNumber;
 
-    public int getSounderNumber() {
-        return sounderNumber;
+    public int getSirenNumber() {
+        return sirenNumber;
     }
 }

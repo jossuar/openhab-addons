@@ -25,12 +25,12 @@ import org.openhab.binding.risco.internal.protocol.RiscoThingType;
  * @author Georgios Moutsos - Initial contribution
  */
 @NonNullByDefault
-public class SounderAllocation extends RiscoMessage {
+public class SirenAllocation extends RiscoMessage {
     public static final String COMMAND = "ODSALOC&";
 
     private List<RiscoThing> messageThings = new ArrayList<RiscoThing>();
 
-    public SounderAllocation(int commandId, String commandName, String modifier, String[] commandValues, int indexFrom,
+    public SirenAllocation(int commandId, String commandName, String modifier, String[] commandValues, int indexFrom,
             int indexTo, byte[] encryptedMessage, byte[] decryptedMessage) {
         super(commandId, commandName, modifier, commandValues, indexFrom, indexTo, encryptedMessage, decryptedMessage);
     }
@@ -47,13 +47,13 @@ public class SounderAllocation extends RiscoMessage {
             for (int i = 0; i < value.length(); i++) {
                 String text = String
                         .format("%4s", Integer.toBinaryString(Integer.parseInt(String.valueOf(value.charAt(i)), 16)))
-                        .replaceAll(" ", "0");
+                        .replace(" ", "0");
                 for (int j = text.length() - 1; j >= 0; j--) {
                     List<RiscoProperty> props = new ArrayList<RiscoProperty>();
-                    props.add(new RiscoProperty("name", "Sounder " + index));
+                    props.add(new RiscoProperty("name", "Siren " + index));
 
                     if ("1".equals(String.valueOf(text.charAt(j)))) {
-                        things.add(new RiscoThing(RiscoThingType.SOUNDER, index, props));
+                        things.add(new RiscoThing(RiscoThingType.SIREN, index, props));
                     }
                     index++;
                 }
