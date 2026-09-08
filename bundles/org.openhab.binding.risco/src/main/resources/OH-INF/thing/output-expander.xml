@@ -9,7 +9,7 @@
 			<bridge-type-ref id="bridge"/>
 		</supported-bridge-type-refs>
 
-		<label>Risco Bus Expander</label>
+		<label>Risco Output Expander</label>
 		<description>Represents an output expander within a Risco Alarm System</description>
 
 		<channels>
