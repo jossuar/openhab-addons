@@ -488,7 +488,7 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
             thingPowerSupplyMap.put(handler.getPowerSupplyNumber(), childThing);
         } else if (childHandler instanceof RiscoProximityReaderHandler) {
             RiscoProximityReaderHandler handler = (RiscoProximityReaderHandler) childHandler;
-            thingPartitionMap.put(handler.getProximityReaderNumber(), childThing);
+            thingProximityReaderMap.put(handler.getProximityReaderNumber(), childThing);
         } else if (childHandler instanceof RiscoSounderHandler) {
             RiscoSounderHandler handler = (RiscoSounderHandler) childHandler;
             thingSounderMap.put(handler.getSounderNumber(), childThing);

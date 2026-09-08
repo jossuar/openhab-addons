@@ -65,7 +65,7 @@ public class OutputExpanderStatus extends RiscoMessage {
                         }
                     }
 
-                    things.add(new RiscoThing(RiscoThingType.BUS_EXPANDER, index, props));
+                    things.add(new RiscoThing(RiscoThingType.OUTPUT_EXPANDER, index, props));
                 }
             }
 
@@ -75,7 +75,7 @@ public class OutputExpanderStatus extends RiscoMessage {
         return messageThings;
     }
 
-    public static String getReadCommand(int busExpanderNumber) {
-        return String.format(COMMAND + "%d?", busExpanderNumber);
+    public static String getReadCommand(int outputExpanderNumber) {
+        return String.format(COMMAND + "%d?", outputExpanderNumber);
     }
 }
