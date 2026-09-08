@@ -30,10 +30,10 @@ public enum RiscoThingType {
     PARTITION,
     POWER_SUPPLY,
     PROXIMITY_READER,
-    SOUNDER,
+    SIREN,
     VOICE_MODULE,
     WIRELESS_MODULE,
     PANEL,
     ZONE,
     ZONE_EXPANDER
-};
+}

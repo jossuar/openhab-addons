@@ -27,7 +27,7 @@ import org.openhab.binding.risco.internal.protocol.message.allocation.OutputExpa
 import org.openhab.binding.risco.internal.protocol.message.allocation.PartitionAllocation;
 import org.openhab.binding.risco.internal.protocol.message.allocation.PowerSupplyAllocation;
 import org.openhab.binding.risco.internal.protocol.message.allocation.ProximityReaderAllocation;
-import org.openhab.binding.risco.internal.protocol.message.allocation.SounderAllocation;
+import org.openhab.binding.risco.internal.protocol.message.allocation.SirenAllocation;
 import org.openhab.binding.risco.internal.protocol.message.allocation.WirelessModuleAllocation;
 import org.openhab.binding.risco.internal.protocol.message.allocation.ZoneAllocation;
 import org.openhab.binding.risco.internal.protocol.message.allocation.ZoneExpanderAllocation;
@@ -83,8 +83,8 @@ public class RiscoDiscoveryService extends AbstractDiscoveryService implements D
             bridge.sendCommand(PowerSupplyAllocation.COMMAND);
             // Proximity Readers
             bridge.sendCommand(ProximityReaderAllocation.COMMAND);
-            // Sounders
-            bridge.sendCommand(SounderAllocation.COMMAND);
+            // Sirens
+            bridge.sendCommand(SirenAllocation.COMMAND);
             // Wireless modules
             bridge.sendCommand(WirelessModuleAllocation.COMMAND);
             // Zones

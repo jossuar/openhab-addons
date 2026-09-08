@@ -20,7 +20,7 @@ import org.openhab.binding.risco.internal.config.RiscoKeyfobConfiguration;
 import org.openhab.binding.risco.internal.handler.RiscoBridgeHandler;
 import org.openhab.binding.risco.internal.handler.RiscoThingHandler;
 import org.openhab.binding.risco.internal.protocol.message.status.KeyfobStatus;
-import org.openhab.binding.risco.internal.protocol.message.status.SounderStatus;
+import org.openhab.binding.risco.internal.protocol.message.status.SirenStatus;
 import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.thing.Thing;
 import org.openhab.core.thing.ThingStatus;
@@ -69,7 +69,7 @@ public class RiscoKeyfobHandler extends RiscoThingHandler {
         }
 
         // Send Siren Status update command
-        bridgeHandler.sendCommand(SounderStatus.getReadCommand(keyfobNumber));
+        bridgeHandler.sendCommand(SirenStatus.getReadCommand(keyfobNumber));
         logger.trace("RiscoKeyfobHandler initialized [{}]", keyfobNumber);
     }
 

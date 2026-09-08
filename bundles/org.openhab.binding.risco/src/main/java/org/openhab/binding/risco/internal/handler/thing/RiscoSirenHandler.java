@@ -16,10 +16,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.openhab.binding.risco.internal.config.RiscoSounderConfiguration;
+import org.openhab.binding.risco.internal.config.RiscoSirenConfiguration;
 import org.openhab.binding.risco.internal.handler.RiscoBridgeHandler;
 import org.openhab.binding.risco.internal.handler.RiscoThingHandler;
-import org.openhab.binding.risco.internal.protocol.message.status.SounderStatus;
+import org.openhab.binding.risco.internal.protocol.message.status.SirenStatus;
 import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.thing.Thing;
 import org.openhab.core.thing.ThingStatus;
@@ -29,35 +29,35 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The {@link RiscoSounderHandler} is responsible for handling commands, which are
+ * The {@link RiscoSirenHandler} is responsible for handling commands, which are
  * sent to one of the channels.
  *
  * @author Georgios Moutsos - Initial contribution
  */
 @NonNullByDefault
-public class RiscoSounderHandler extends RiscoThingHandler {
-    private final Logger logger = LoggerFactory.getLogger(RiscoSounderHandler.class);
+public class RiscoSirenHandler extends RiscoThingHandler {
+    private final Logger logger = LoggerFactory.getLogger(RiscoSirenHandler.class);
 
-    private int sounderNumber;
+    private int sirenNumber;
     private long lastRefreshTime = 0;
 
-    public RiscoSounderHandler(Thing thing) {
+    public RiscoSirenHandler(Thing thing) {
         super(thing);
     }
 
-    public int getSounderNumber() {
-        return sounderNumber;
+    public int getSirenNumber() {
+        return sirenNumber;
     }
 
-    public void setSounderNumber(int sounderNumber) {
-        this.sounderNumber = sounderNumber;
+    public void setSirenNumber(int sirenNumber) {
+        this.sirenNumber = sirenNumber;
     }
 
     @Override
     public void initialize() {
         // Load configuration
-        RiscoSounderConfiguration config = getConfigAs(RiscoSounderConfiguration.class);
-        setSounderNumber(config.getSounderNumber());
+        RiscoSirenConfiguration config = getConfigAs(RiscoSirenConfiguration.class);
+        setSirenNumber(config.getSirenNumber());
 
         // set the Thing offline for now
         updateStatus(ThingStatus.OFFLINE);
@@ -68,8 +68,8 @@ public class RiscoSounderHandler extends RiscoThingHandler {
         }
 
         // Send Siren Status update command
-        bridgeHandler.sendCommand(SounderStatus.getReadCommand(sounderNumber));
-        logger.trace("RiscoSirenHandler initialized [{}]", sounderNumber);
+        bridgeHandler.sendCommand(SirenStatus.getReadCommand(sirenNumber));
+        logger.trace("RiscoSirenHandler initialized [{}]", sirenNumber);
     }
 
     @Override
@@ -81,7 +81,7 @@ public class RiscoSounderHandler extends RiscoThingHandler {
         if (command instanceof RefreshType) {
             // Refresh only if 5 seconds have passed from the last refresh
             if (System.currentTimeMillis() - lastRefreshTime > 5000) {
-                messages.add(SounderStatus.getReadCommand(getSounderNumber()));
+                messages.add(SirenStatus.getReadCommand(getSirenNumber()));
                 lastRefreshTime = System.currentTimeMillis();
             }
         } else {
