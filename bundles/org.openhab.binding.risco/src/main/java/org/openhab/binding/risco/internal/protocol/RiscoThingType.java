@@ -22,7 +22,6 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 @NonNullByDefault
 public enum RiscoThingType {
     BUS_EXPANDER,
-    CELLULAR_ON_BUS,
     KEYFOB,
     KEYPAD,
     OUTPUT,
