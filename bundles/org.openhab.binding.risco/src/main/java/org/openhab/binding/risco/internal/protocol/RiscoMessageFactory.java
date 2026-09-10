@@ -434,9 +434,14 @@ public class RiscoMessageFactory {
             buffer = fullCommand.getBytes(StandardCharsets.UTF_8);
             logger.debug("Encoding exception in encrypt: {}", fullCommand);
         }
+
+        if (buffer.length > 255) {
+            logger.debug("Message to encrypt is too big and will be truncated. {}", fullCommand);
+        }
+
         byte[] encryptionBuffer = createPseudoBuffer(panelId);
 
-        for (int i = 0; i < buffer.length; i++) {
+        for (int i = 0; i < Math.min(buffer.length, 255); i++) {
             if (encrypt) {
                 buffer[i] ^= encryptionBuffer[position - offset];
             }
