@@ -22,7 +22,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 @NonNullByDefault
 public class RiscoOutputExpanderConfiguration {
 
-    // Zone Thing constants
+    // Output Expander Thing constants
     public static final String OUTPUT_EXPANDER_NUMBER = "outputExpanderNumber";
 
     /**

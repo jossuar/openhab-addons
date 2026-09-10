@@ -22,7 +22,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 @NonNullByDefault
 public class RiscoProximityReaderConfiguration {
 
-    // Partition Thing constants
+    // Proximity Reader Thing constants
     public static final String PROXIMITY_READER_NUMBER = "proximityReaderNumber";
 
     /**
