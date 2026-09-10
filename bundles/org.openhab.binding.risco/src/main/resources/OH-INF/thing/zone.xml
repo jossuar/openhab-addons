@@ -79,6 +79,7 @@
 			<parameter name="zoneNumber" type="integer" required="true" min="1" max="512">
 				<label>Zone Number</label>
 				<description>The Zone Number</description>
+                <default>1</default>
 			</parameter>
 		</config-description>
 
