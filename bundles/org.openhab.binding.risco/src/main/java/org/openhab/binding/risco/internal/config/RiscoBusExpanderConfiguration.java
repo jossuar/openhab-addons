@@ -22,11 +22,11 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 @NonNullByDefault
 public class RiscoBusExpanderConfiguration {
 
-    // Zone Thing constants
+    // Bus Expander Thing constants
     public static final String BUS_EXPANDER_NUMBER = "busExpanderNumber";
 
     /**
-     * The bus expander Expander Number. Can be in the range of 1-32. This is a required parameter for a bus expander.
+     * The Bus Expander Number. Can be in the range of 1-32. This is a required parameter for a bus expander.
      */
     private int busExpanderNumber;
 

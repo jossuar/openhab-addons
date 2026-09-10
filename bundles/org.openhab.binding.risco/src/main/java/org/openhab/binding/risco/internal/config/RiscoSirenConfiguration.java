@@ -22,7 +22,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 @NonNullByDefault
 public class RiscoSirenConfiguration {
 
-    // Zone Thing constants
+    // Siren Thing constants
     public static final String SIREN_NUMBER = "sirenNumber";
 
     /**

@@ -22,7 +22,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 @NonNullByDefault
 public class RiscoZoneExpanderConfiguration {
 
-    // Zone Thing constants
+    // Zone Expander Thing constants
     public static final String ZONE_EXPANDER_NUMBER = "zoneExpanderNumber";
 
     /**
