@@ -435,6 +435,7 @@ public class RiscoMessageFactory {
             logger.debug("Encoding exception in encrypt: {}", fullCommand);
         }
 
+        // All the commands are less than 255 bytes
         if (buffer.length > 255) {
             logger.debug("Message to encrypt is too big and will be truncated. {}", fullCommand);
         }
@@ -466,6 +467,7 @@ public class RiscoMessageFactory {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         Boolean skip = false;
 
+        // All the encrypted messages are less than 255 bytes according to the protocol
         // Remove DLE chars
         for (int i = 0; i < encryptedMessage.length; i++) {
             if (encryptedMessage[i] == 0x10 && !skip && i + 2 < encryptedMessage.length
@@ -477,6 +479,7 @@ public class RiscoMessageFactory {
                 skip = false;
             }
         }
+
         byte[] encryptedWithoutDle = outputStream.toByteArray();
         byte[] decryptionBuffer = createPseudoBuffer(panelId);
 
@@ -485,7 +488,7 @@ public class RiscoMessageFactory {
         int position = 0;
 
         outputStream.reset();
-        for (int i = (isEncrypted(encryptedMessage) ? 2 : 1); i < encryptedWithoutDle.length - 1; i++) {
+        for (int i = (isEncrypted(encryptedMessage) ? 2 : 1); i < Math.min(encryptedWithoutDle.length - 1, 255); i++) {
             if (isEncrypted(encryptedMessage)) {
                 encryptedWithoutDle[i] ^= decryptionBuffer[position - offset];
             }
