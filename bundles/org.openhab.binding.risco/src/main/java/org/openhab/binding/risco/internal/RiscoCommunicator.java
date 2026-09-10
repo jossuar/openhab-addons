@@ -373,7 +373,7 @@ public class RiscoCommunicator {
                 logger.trace("<---- {}", HexUtils.bytesToHex(message));
 
                 RiscoMessageFactory factory = new RiscoMessageFactory();
-                RiscoMessage msg = factory.create(1, "UTF-8", message);
+                RiscoMessage msg = factory.create(panelId, encoding, message);
                 handleIncomingMessage(msg);
 
                 logger.trace("RiscoCommunicator.read() Got message");
