@@ -155,9 +155,6 @@ public class RiscoCommunicator {
         logger.trace("stopInternal(): RiscoCommunicator stopping");
         connected = false;
 
-        // Wake up any caller stuck in suspendForPendingResponseIfNeeded() waiting for a response that will
-        // now never arrive on this (dying) connection, instead of leaving it blocked until the timeout there
-        // elapses.
         synchronized (this) {
             if (responseCommandId != null) {
                 logger.debug("Clearing pending response wait for command id {} due to disconnect.", responseCommandId);
@@ -166,47 +163,31 @@ public class RiscoCommunicator {
             }
         }
 
-        // Disconnect command
-        send(Disconnect.getReadCommand());
-
-        // Wait a second to receive the ACK from the panel before closing the socket
         try {
+            // Disconnect command
+            send(Disconnect.getReadCommand());
+
+            // Wait a second to receive the ACK from the panel before closing the socket
             Thread.sleep(1000);
-        } catch (InterruptedException e) {
-        }
 
-        // Interrupt threads
-        riscoReceiver.interrupt();
-        riscoSender.interrupt();
+            // Interrupt threads
+            riscoReceiver.interrupt();
+            riscoSender.interrupt();
 
-        // Close streams
-        try {
+            // Close streams
             tcpInput.close();
-        } catch (IOException e) {
-        }
-        try {
             tcpOutput.close();
-        } catch (IOException e) {
-        }
 
-        // Close socket
-        try {
+            // Close socket
             tcpSocket.close();
             logger.trace("closeConnection(): Closed TCP Connection!");
-        } catch (IOException ioException) {
-            logger.debug("closeConnection(): Unable to close connection - {}", ioException.getMessage());
+
+            // Wait until communication threads exit
+            riscoReceiver.join(3000);
+            riscoSender.join(3000);
+
         } catch (Exception exception) {
             logger.debug("closeConnection(): Error closing connection - {}", exception.getMessage());
-        }
-
-        // Wait until communication threads exit
-        try {
-            riscoReceiver.join(3000);
-        } catch (InterruptedException e) {
-        }
-        try {
-            riscoSender.join(3000);
-        } catch (InterruptedException e) {
         }
     }
 
