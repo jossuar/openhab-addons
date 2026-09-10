@@ -22,7 +22,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 @NonNullByDefault
 public class RiscoWirelessModuleConfiguration {
 
-    // Zone Thing constants
+    // Wireless Module Thing constants
     public static final String WIRELESS_MODULE_NUMBER = "wirelessModuleNumber";
 
     /**

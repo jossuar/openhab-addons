@@ -22,7 +22,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 @NonNullByDefault
 public class RiscoKeypadConfiguration {
 
-    // Zone Thing constants
+    // Keypad Thing constants
     public static final String KEYPAD_NUMBER = "keypadNumber";
 
     /**

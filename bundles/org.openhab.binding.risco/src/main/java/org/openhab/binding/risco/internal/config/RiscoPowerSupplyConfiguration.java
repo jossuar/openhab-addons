@@ -22,11 +22,11 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 @NonNullByDefault
 public class RiscoPowerSupplyConfiguration {
 
-    // Partition Thing constants
+    // Power Supply Thing constants
     public static final String POWER_SUPPLY_NUMBER = "powerSupplyNumber";
 
     /**
-     * The Partition Number. Can be in the range of 1-32. This is a required parameter for a power supply.
+     * The Power Supply Number. Can be in the range of 1-32. This is a required parameter for a power supply.
      */
     private int powerSupplyNumber;
 
