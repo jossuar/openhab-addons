@@ -285,8 +285,6 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
         switch (riscoThingType) {
             case PANEL:
                 return thingGeneralMap.get(RiscoBindingConstants.PANEL);
-            case CELLULAR_ON_BUS:
-                break;
             case VOICE_MODULE:
                 return thingGeneralMap.get(RiscoBindingConstants.VOICE_MODULE);
             default:
@@ -339,12 +337,6 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
                 prefix = RiscoBindingConstants.BUS_EXPANDER;
                 label = "Bus Expander " + index;
                 indexProperty = RiscoBusExpanderConfiguration.BUS_EXPANDER_NUMBER;
-                break;
-            case CELLULAR_ON_BUS:
-                ttUID = RiscoBindingConstants.CELLULAR_ON_BUS_THING_TYPE;
-                prefix = RiscoBindingConstants.CELLULAR_ON_BUS;
-                label = "Cellular on Bus " + index;
-                indexProperty = "cellularOnBusNumber";
                 break;
             case KEYFOB:
                 ttUID = RiscoBindingConstants.KEYFOB_THING_TYPE;
