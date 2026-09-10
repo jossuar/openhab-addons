@@ -478,7 +478,10 @@ public class RiscoCommunicator {
                         ChronoUnit.SECONDS.between(lastReceiveTime, ZonedDateTime.now()), "OK");
             }
 
-            send("CLOCK");
+            try {
+                send("CLOCK");
+            } catch (RuntimeException e) {
+            }
         }
     }
 }
