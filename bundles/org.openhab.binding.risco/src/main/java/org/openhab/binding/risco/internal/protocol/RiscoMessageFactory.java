@@ -101,7 +101,7 @@ public class RiscoMessageFactory {
 
         // Check CRC
         if (!(stringMessage.startsWith("N") || stringMessage.startsWith("B"))) {
-            if (!isValidCRC(crcValue, String.format("%02d", commandId) + wholeMessage + ETB)) {
+            if (!isValidCRC(crcValue, String.format("%02d", commandId) + wholeMessage + ETB, encoding)) {
                 throw new IllegalArgumentException("CRC value is not correct.");
             }
         }
@@ -113,10 +113,10 @@ public class RiscoMessageFactory {
     public RiscoMessage create(int panelId, String encoding, Integer commandId, String command, Boolean encrypt) {
         // Add Cmd_Id to command and Separator character between Cmd and CRC value
         String cmd = String.format("%02d", commandId) + command + ETB;
-        String crcValue = this.calcCommandCRC(cmd);
+        String crcValue = this.calcCommandCRC(cmd, encoding);
 
         // Encrypt command string
-        byte[] e = encrypt(panelId, cmd + crcValue, encrypt);
+        byte[] e = encrypt(panelId, cmd + crcValue, encoding, encrypt);
 
         // Build full encrypted byte[] message
         ByteArrayOutputStream encrypedOutputStream = new ByteArrayOutputStream();
@@ -366,8 +366,15 @@ public class RiscoMessageFactory {
      * Calculate CRC for Command based on original character(not encrypted)
      * and CRC array Value
      */
-    private String calcCommandCRC(String cmdStr) {
-        byte[] cmdBytes = cmdStr.getBytes(StandardCharsets.UTF_8);
+    private String calcCommandCRC(String cmdStr, String encoding) {
+        byte[] cmdBytes = null;
+
+        try {
+            cmdBytes = cmdStr.getBytes(encoding);
+        } catch (UnsupportedEncodingException e) {
+            cmdBytes = cmdStr.getBytes(StandardCharsets.UTF_8);
+            logger.debug("Encoding exception in calcCommandCRC: {}", cmdStr);
+        }
         int sum = 65535;
 
         for (int i = 0; i < cmdBytes.length; i++) {
@@ -415,12 +422,18 @@ public class RiscoMessageFactory {
     /**
      * Encryption/Decryption mechanism
      */
-    private byte[] encrypt(int panelId, String fullCommand, Boolean encrypt) {
+    private byte[] encrypt(int panelId, String fullCommand, String encoding, Boolean encrypt) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         int offset = 0;
         int position = 0;
 
-        byte[] buffer = fullCommand.getBytes(StandardCharsets.UTF_8);
+        byte[] buffer = null;
+        try {
+            buffer = fullCommand.getBytes(encoding);
+        } catch (UnsupportedEncodingException e) {
+            buffer = fullCommand.getBytes(StandardCharsets.UTF_8);
+            logger.debug("Encoding exception in encrypt: {}", fullCommand);
+        }
         byte[] encryptionBuffer = createPseudoBuffer(panelId);
 
         for (int i = 0; i < buffer.length; i++) {
@@ -497,7 +510,7 @@ public class RiscoMessageFactory {
         return encryptedMessage.length > 1 && encryptedMessage[1] == 17;
     }
 
-    public boolean isValidCRC(String crcValue, String wholeMessage) {
+    public boolean isValidCRC(String crcValue, String wholeMessage, String encoding) {
         /*
          * if (crcValue.length() != 4) {
          * return false;
@@ -509,7 +522,7 @@ public class RiscoMessageFactory {
          * }
          * }
          */
-        String computedCrc = calcCommandCRC(wholeMessage);
+        String computedCrc = calcCommandCRC(wholeMessage, encoding);
         boolean crcOK = crcValue.equals(computedCrc);
 
         logger.trace("Command[{}] crcOK:{}, Computed CRC: {}, Message CRC: {}", wholeMessage, crcOK, computedCrc,
