@@ -75,6 +75,7 @@
 			<parameter name="sirenNumber" type="integer" required="true" min="1" max="512">
 				<label>Siren Number</label>
 				<description>The Siren Number</description>
+                <default>1</default>
 			</parameter>
 		</config-description>
 
