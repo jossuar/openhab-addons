@@ -450,7 +450,7 @@ public class RiscoCommunicator {
         }
     }
 
-    private void reconnect() throws IOException {
+    private void reconnect() throws Exception {
         stopInternal();
         start();
     }
@@ -469,7 +469,7 @@ public class RiscoCommunicator {
                     lastSendTime = ZonedDateTime.now();
                     lastReceiveTime = ZonedDateTime.now();
                     reconnect();
-                } catch (IOException e) {
+                } catch (Exception e) {
                     logger.debug("Could not reconnect to the panel.", e);
                 }
                 return;
