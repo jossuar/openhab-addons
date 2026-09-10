@@ -36,7 +36,6 @@ public class RiscoBindingConstants {
     public static final String BRIDGE = "bridge";
     // List of device types
     public static final String BUS_EXPANDER = "bus-expander";
-    public static final String CELLULAR_ON_BUS = "cellular-on-bus";
     public static final String KEYFOB = "keyfob";
     public static final String KEYPAD = "keypad";
     public static final String OUTPUT = "output";
@@ -56,7 +55,6 @@ public class RiscoBindingConstants {
 
     // List of all Thing Type UIDs
     public static final ThingTypeUID BUS_EXPANDER_THING_TYPE = new ThingTypeUID(BINDING_ID, BUS_EXPANDER);
-    public static final ThingTypeUID CELLULAR_ON_BUS_THING_TYPE = new ThingTypeUID(BINDING_ID, CELLULAR_ON_BUS);
     public static final ThingTypeUID KEYFOB_THING_TYPE = new ThingTypeUID(BINDING_ID, KEYFOB);
     public static final ThingTypeUID KEYPAD_THING_TYPE = new ThingTypeUID(BINDING_ID, KEYPAD);
     public static final ThingTypeUID OUTPUT_THING_TYPE = new ThingTypeUID(BINDING_ID, OUTPUT);
@@ -72,12 +70,11 @@ public class RiscoBindingConstants {
     public static final ThingTypeUID ZONE_EXPANDER_THING_TYPE = new ThingTypeUID(BINDING_ID, ZONE_EXPANDER);
 
     // Set of all supported Thing Type UIDs
-    public static final Set<ThingTypeUID> SUPPORTED_THING_TYPES_UIDS = Collections.unmodifiableSet(Stream
-            .of(BRIDGE_THING_TYPE, BUS_EXPANDER_THING_TYPE, CELLULAR_ON_BUS_THING_TYPE, KEYFOB_THING_TYPE,
-                    KEYPAD_THING_TYPE, OUTPUT_THING_TYPE, OUTPUT_EXPANDER_THING_TYPE, PARTITION_THING_TYPE,
-                    POWER_SUPPLY_THING_TYPE, PROXIMITY_READER_THING_TYPE, SIREN_THING_TYPE, PANEL_THING_TYPE,
-                    VOICE_MODULE_THING_TYPE, WIRELESS_MODULE_THING_TYPE, ZONE_THING_TYPE, ZONE_EXPANDER_THING_TYPE)
-            .collect(Collectors.toSet()));
+    public static final Set<ThingTypeUID> SUPPORTED_THING_TYPES_UIDS = Collections
+            .unmodifiableSet(Stream.of(BRIDGE_THING_TYPE, BUS_EXPANDER_THING_TYPE, KEYFOB_THING_TYPE, KEYPAD_THING_TYPE,
+                    OUTPUT_THING_TYPE, OUTPUT_EXPANDER_THING_TYPE, PARTITION_THING_TYPE, POWER_SUPPLY_THING_TYPE,
+                    PROXIMITY_READER_THING_TYPE, SIREN_THING_TYPE, PANEL_THING_TYPE, VOICE_MODULE_THING_TYPE,
+                    WIRELESS_MODULE_THING_TYPE, ZONE_THING_TYPE, ZONE_EXPANDER_THING_TYPE).collect(Collectors.toSet()));
 
     // Commands
     public static final String CMD_ARM_PARTITION = "ARM_PARTITION";

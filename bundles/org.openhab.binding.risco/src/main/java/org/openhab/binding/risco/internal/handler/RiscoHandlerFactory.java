@@ -70,8 +70,6 @@ public class RiscoHandlerFactory extends BaseThingHandlerFactory {
             return new RiscoBridgeHandler((Bridge) thing);
         } else if (RiscoBindingConstants.BUS_EXPANDER_THING_TYPE.equals(thingTypeUID)) {
             return new RiscoBusExpanderHandler(thing);
-        } else if (RiscoBindingConstants.CELLULAR_ON_BUS_THING_TYPE.equals(thingTypeUID)) {
-            logger.debug("createHandler(): ThingHandler not implemented for {}", thingTypeUID);
         } else if (RiscoBindingConstants.KEYFOB_THING_TYPE.equals(thingTypeUID)) {
             return new RiscoKeyfobHandler(thing);
         } else if (RiscoBindingConstants.KEYPAD_THING_TYPE.equals(thingTypeUID)) {
