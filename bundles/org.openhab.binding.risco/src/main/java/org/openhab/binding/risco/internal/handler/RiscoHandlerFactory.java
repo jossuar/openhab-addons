@@ -100,6 +100,5 @@ public class RiscoHandlerFactory extends BaseThingHandlerFactory {
             logger.debug("createHandler(): ThingHandler not found for {}", thingTypeUID);
             return null;
         }
-        return null;
     }
 }
