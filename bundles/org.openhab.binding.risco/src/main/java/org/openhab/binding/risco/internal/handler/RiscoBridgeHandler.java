@@ -124,8 +124,7 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
 
         String hostname = configuration.getHostname();
         if (hostname == null || hostname.trim().isEmpty()) {
-            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR,
-                    "Set an IP address in the thing configuration.");
+            updateStatus(ThingStatusDetail.CONFIGURATION_ERROR, "Set an IP address in the thing configuration.");
 
             return;
         }
@@ -151,8 +150,7 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
 
             notifyAll();
         } catch (IOException e) {
-            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR,
-                    "Communication cannot be initialized. " + e.toString());
+            updateStatus(ThingStatusDetail.COMMUNICATION_ERROR, "Communication cannot be initialized. " + e.toString());
 
             return;
         }
