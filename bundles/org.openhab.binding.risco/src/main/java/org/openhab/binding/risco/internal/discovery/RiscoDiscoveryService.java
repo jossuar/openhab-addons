@@ -32,14 +32,13 @@ import org.openhab.binding.risco.internal.protocol.message.allocation.WirelessMo
 import org.openhab.binding.risco.internal.protocol.message.allocation.ZoneAllocation;
 import org.openhab.binding.risco.internal.protocol.message.allocation.ZoneExpanderAllocation;
 import org.openhab.binding.risco.internal.protocol.message.general.PanelConfiguration;
-import org.openhab.core.config.discovery.AbstractDiscoveryService;
+import org.openhab.core.config.discovery.AbstractThingHandlerDiscoveryService;
 import org.openhab.core.config.discovery.DiscoveryResult;
 import org.openhab.core.config.discovery.DiscoveryResultBuilder;
-import org.openhab.core.config.discovery.DiscoveryService;
 import org.openhab.core.thing.Bridge;
 import org.openhab.core.thing.ThingUID;
-import org.openhab.core.thing.binding.ThingHandler;
-import org.openhab.core.thing.binding.ThingHandlerService;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.ServiceScope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,52 +47,50 @@ import org.slf4j.LoggerFactory;
  *
  * @author Georgios Moutsos - Initial contribution
  */
+@Component(scope = ServiceScope.PROTOTYPE, service = RiscoDiscoveryService.class)
 @NonNullByDefault
-public class RiscoDiscoveryService extends AbstractDiscoveryService implements DiscoveryService, ThingHandlerService {
+public class RiscoDiscoveryService extends AbstractThingHandlerDiscoveryService<RiscoBridgeHandler> {
     private final Logger logger = LoggerFactory.getLogger(RiscoDiscoveryService.class);
 
-    private @Nullable RiscoBridgeHandler bridgeHandler = null;
-
     public RiscoDiscoveryService() {
-        super(RiscoBindingConstants.SUPPORTED_THING_TYPES_UIDS, 15, false);
+        super(RiscoBridgeHandler.class, RiscoBindingConstants.SUPPORTED_THING_TYPES_UIDS, 15);
     }
 
     @Override
     protected void startScan() {
         logger.debug("startScan called");
 
-        RiscoBridgeHandler bridge = bridgeHandler;
-        if (bridge != null) {
-            // Bus Expanders
-            bridge.sendCommand(BusExpanderAllocation.COMMAND);
-            // Keyfobs
-            bridge.sendCommand(KeyfobAllocation.COMMAND);
-            // Keypads
-            bridge.sendCommand(KeypadAllocation.COMMAND1);
-            bridge.sendCommand(KeypadAllocation.COMMAND2);
-            // Outputs
-            bridge.sendCommand(OutputAllocation.COMMAND);
-            // Output Expanders
-            bridge.sendCommand(OutputExpanderAllocation.COMMAND);
-            // Panel
-            bridge.sendCommand(PanelConfiguration.COMMAND);
-            // Partitions
-            bridge.sendCommand(PartitionAllocation.COMMAND);
-            // Power Supplies
-            bridge.sendCommand(PowerSupplyAllocation.COMMAND);
-            // Proximity Readers
-            bridge.sendCommand(ProximityReaderAllocation.COMMAND);
-            // Sirens
-            bridge.sendCommand(SirenAllocation.COMMAND);
-            // Wireless modules
-            bridge.sendCommand(WirelessModuleAllocation.COMMAND);
-            // Zones
-            bridge.sendCommand(ZoneAllocation.COMMAND1);
-            bridge.sendCommand(ZoneAllocation.COMMAND2);
-            bridge.sendCommand(ZoneAllocation.COMMAND3);
-            // Zone Expanders
-            bridge.sendCommand(ZoneExpanderAllocation.COMMAND);
-        }
+        RiscoBridgeHandler bridge = thingHandler;
+
+        // Bus Expanders
+        bridge.sendCommand(BusExpanderAllocation.COMMAND);
+        // Keyfobs
+        bridge.sendCommand(KeyfobAllocation.COMMAND);
+        // Keypads
+        bridge.sendCommand(KeypadAllocation.COMMAND1);
+        bridge.sendCommand(KeypadAllocation.COMMAND2);
+        // Outputs
+        bridge.sendCommand(OutputAllocation.COMMAND);
+        // Output Expanders
+        bridge.sendCommand(OutputExpanderAllocation.COMMAND);
+        // Panel
+        bridge.sendCommand(PanelConfiguration.COMMAND);
+        // Partitions
+        bridge.sendCommand(PartitionAllocation.COMMAND);
+        // Power Supplies
+        bridge.sendCommand(PowerSupplyAllocation.COMMAND);
+        // Proximity Readers
+        bridge.sendCommand(ProximityReaderAllocation.COMMAND);
+        // Sirens
+        bridge.sendCommand(SirenAllocation.COMMAND);
+        // Wireless modules
+        bridge.sendCommand(WirelessModuleAllocation.COMMAND);
+        // Zones
+        bridge.sendCommand(ZoneAllocation.COMMAND1);
+        bridge.sendCommand(ZoneAllocation.COMMAND2);
+        bridge.sendCommand(ZoneAllocation.COMMAND3);
+        // Zone Expanders
+        bridge.sendCommand(ZoneExpanderAllocation.COMMAND);
     }
 
     public void addThing(Bridge bridge, ThingUID thingUID, String thingLabel, @Nullable String indexProperty,
@@ -122,30 +119,18 @@ public class RiscoDiscoveryService extends AbstractDiscoveryService implements D
     }
 
     @Override
-    public void activate() {
-        RiscoBridgeHandler handler = bridgeHandler;
-        if (handler != null) {
-            handler.registerDiscoveryService(this);
-        }
+    public void initialize() {
+        RiscoBridgeHandler handler = thingHandler;
+        handler.registerDiscoveryService(this);
+
+        super.initialize();
     }
 
     @Override
-    public void deactivate() {
-        RiscoBridgeHandler handler = bridgeHandler;
-        if (handler != null) {
-            handler.unregisterDiscoveryService();
-        }
-    }
+    public void dispose() {
+        super.dispose();
 
-    @Override
-    public void setThingHandler(@Nullable ThingHandler handler) {
-        if (handler instanceof RiscoBridgeHandler) {
-            bridgeHandler = (RiscoBridgeHandler) handler;
-        }
-    }
-
-    @Override
-    public @Nullable ThingHandler getThingHandler() {
-        return bridgeHandler;
+        RiscoBridgeHandler handler = thingHandler;
+        handler.unregisterDiscoveryService();
     }
 }
