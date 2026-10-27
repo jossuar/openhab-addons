@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.SocketAddress;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
@@ -57,6 +56,7 @@ public class RiscoCommunicator {
     private final int panelId;
     private final String encoding;
     private final String password;
+    private final int connectionDelayMs;
 
     private Socket tcpSocket;
     private BufferedOutputStream tcpOutput;
@@ -71,9 +71,6 @@ public class RiscoCommunicator {
     // receive
     private Thread riscoReceiver;
 
-    // in-flight
-    // private final BlockingDeque<RiscoMessagePair> inFlightQueue = new LinkedBlockingDeque<RiscoMessagePair>();
-
     // listener
     private final Set<RiscoPanelListener> listenerQueue = new HashSet<>();
 
@@ -81,9 +78,13 @@ public class RiscoCommunicator {
     private ZonedDateTime lastSendTime = ZonedDateTime.now();
     private ZonedDateTime lastReceiveTime = ZonedDateTime.now();
     private ScheduledFuture<?> riscoWatchdog;
+    private volatile boolean connectionUp = true;
 
     public interface RiscoPanelListener {
         public void handleRiscoMessage(RiscoMessage msg);
+
+        default void connectionStateChanged(boolean up) {
+        }
     }
 
     public void addListener(RiscoPanelListener listener) {
@@ -92,6 +93,11 @@ public class RiscoCommunicator {
 
     public RiscoCommunicator(String uid, String hostname, int port, int panelId, String encoding, String password,
             ScheduledExecutorService scheduler) throws IOException {
+        this(uid, hostname, port, panelId, encoding, password, 0, scheduler);
+    }
+
+    public RiscoCommunicator(String uid, String hostname, int port, int panelId, String encoding, String password,
+            int connectionDelayMs, ScheduledExecutorService scheduler) throws IOException {
         logger.trace("RiscoCommunicator(): Connecting to Risco panel");
 
         this.uid = uid;
@@ -100,13 +106,18 @@ public class RiscoCommunicator {
         this.panelId = panelId;
         this.encoding = encoding;
         this.password = password;
+        this.connectionDelayMs = Math.max(0, connectionDelayMs);
 
         // Open the socket and get the streams
-        tcpSocket = new Socket();
-        SocketAddress socketAddress = new InetSocketAddress(hostname, port);
-        tcpSocket.connect(socketAddress, 5000);
-        tcpOutput = new BufferedOutputStream(tcpSocket.getOutputStream());
-        tcpInput = new BufferedInputStream(tcpSocket.getInputStream());
+        Socket socket = connectSocket(hostname, port);
+        try {
+            tcpOutput = new BufferedOutputStream(socket.getOutputStream());
+            tcpInput = new BufferedInputStream(socket.getInputStream());
+        } catch (IOException e) {
+            closeQuietly(socket);
+            throw e;
+        }
+        tcpSocket = socket;
 
         // Start sender, receiver and watchdog threads
         riscoReceiver = new Thread(new RiscoReceiver(), "OH-binding-" + uid + "-riscorecevr");
@@ -123,17 +134,47 @@ public class RiscoCommunicator {
         logger.trace("RiscoCommunicator communication threads started successfully");
     }
 
+    /**
+     * Opens a connection to the panel. The socket is closed again if the connection cannot be established.
+     */
+    private static Socket connectSocket(String hostname, int port) throws IOException {
+        Socket socket = new Socket();
+        try {
+            socket.connect(new InetSocketAddress(hostname, port), 5000);
+        } catch (IOException | RuntimeException e) {
+            closeQuietly(socket);
+            throw e;
+        }
+        return socket;
+    }
+
+    private static void closeQuietly(Socket socket) {
+        try {
+            socket.close();
+        } catch (IOException e) {
+            // Nothing else can be done
+        }
+    }
+
     private void start() throws IOException {
         logger.trace("start(): RiscoCommunicator starting");
+
         // Reset command id
         sendCommandId = 2;
 
+        // Drop anything left in the queue by a previous connection, e.g. a disconnect command that could not be sent
+        sendQueue.clear();
+
         // Open the socket and get the streams
-        tcpSocket = new Socket();
-        SocketAddress socketAddress = new InetSocketAddress(hostname, port);
-        tcpSocket.connect(socketAddress, 5000);
-        tcpOutput = new BufferedOutputStream(tcpSocket.getOutputStream());
-        tcpInput = new BufferedInputStream(tcpSocket.getInputStream());
+        Socket socket = connectSocket(hostname, port);
+        try {
+            tcpOutput = new BufferedOutputStream(socket.getOutputStream());
+            tcpInput = new BufferedInputStream(socket.getInputStream());
+        } catch (IOException e) {
+            closeQuietly(socket);
+            throw e;
+        }
+        tcpSocket = socket;
 
         // Start sender and receiver threads
         riscoReceiver = new Thread(new RiscoReceiver(), "OH-binding-" + uid + "-riscorecvr");
@@ -145,10 +186,27 @@ public class RiscoCommunicator {
         riscoSender.start();
 
         // Initialize the communication with the panel
-        sendPlainAndWait(Remote.getReadCommand(password));
-        sendPlainAndWait(Local.getReadCommand());
+        initializeSession();
 
         connected = true;
+    }
+
+    /**
+     * Initializes the communication with the panel. This must be done once the connection is open, after the
+     * configured connection delay.
+     */
+    public void initializeSession() {
+        if (connectionDelayMs > 0) {
+            try {
+                Thread.sleep(connectionDelayMs);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                return;
+            }
+        }
+
+        sendPlainAndWait(Remote.getReadCommand(password));
+        sendPlainAndWait(Local.getReadCommand());
     }
 
     private void stopInternal() {
@@ -163,11 +221,13 @@ public class RiscoCommunicator {
             }
         }
 
-        // Disconnect command
-        try {
-            send(Disconnect.getReadCommand());
-        } catch (Exception exception) {
-            logger.debug("send(): Error closing connection - {}", exception.getMessage());
+        // Disconnect command. Without a running sender it would just stay in the queue.
+        if (riscoSender.isAlive()) {
+            try {
+                send(Disconnect.getReadCommand());
+            } catch (Exception exception) {
+                logger.debug("send(): Error closing connection - {}", exception.getMessage());
+            }
         }
 
         // Wait a second to receive the ACK from the panel before closing the socket
@@ -208,6 +268,24 @@ public class RiscoCommunicator {
         try {
             riscoSender.join(3000);
         } catch (InterruptedException e) {
+        }
+
+        // Nothing must be sent on the next connection from this one
+        sendQueue.clear();
+    }
+
+    private void notifyConnectionState(boolean up) {
+        if (connectionUp == up) {
+            return;
+        }
+        connectionUp = up;
+
+        for (RiscoPanelListener listener : listenerQueue) {
+            try {
+                listener.connectionStateChanged(up);
+            } catch (RuntimeException e) {
+                logger.debug("Listener failed on connection state change. " + e.getLocalizedMessage());
+            }
         }
     }
 
@@ -394,7 +472,8 @@ public class RiscoCommunicator {
                 logger.debug("RiscoReceiver: IO Exception.");
                 Thread.currentThread().interrupt();
             } catch (RuntimeException e) {
-                logger.debug("RiscoReceiver: Error processing a received message, discarding it.", e);
+                logger.debug("RiscoReceiver: Error processing a received message, discarding it. "
+                        + e.getLocalizedMessage());
             }
         }
 
@@ -451,9 +530,9 @@ public class RiscoCommunicator {
                 } catch (IOException e) {
                     // The message is lost, but keep draining the queue. If the connection is really broken, the
                     // watchdog will notice that nothing is being sent and will reconnect.
-                    logger.debug("RiscoCommunicator.SenderThread: IOException caught.", e);
+                    logger.debug("RiscoCommunicator.SenderThread: IOException caught. " + e.getLocalizedMessage());
                 } catch (RuntimeException e) {
-                    logger.debug("RiscoCommunicator.SenderThread: Unexpected error.", e);
+                    logger.debug("RiscoCommunicator.SenderThread: Unexpected error. " + e.getLocalizedMessage());
                 }
             }
 
@@ -485,9 +564,11 @@ public class RiscoCommunicator {
                 try {
                     lastSendTime = ZonedDateTime.now();
                     lastReceiveTime = ZonedDateTime.now();
+                    notifyConnectionState(false);
                     reconnect();
+                    notifyConnectionState(true);
                 } catch (Exception e) {
-                    logger.debug("Could not reconnect to the panel.", e);
+                    logger.debug("Could not reconnect to the panel.");
                 }
                 return;
             } else {

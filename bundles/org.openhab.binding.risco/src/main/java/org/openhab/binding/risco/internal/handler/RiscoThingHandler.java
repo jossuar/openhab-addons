@@ -26,6 +26,8 @@ import org.openhab.core.thing.Bridge;
 import org.openhab.core.thing.Channel;
 import org.openhab.core.thing.Thing;
 import org.openhab.core.thing.ThingStatus;
+import org.openhab.core.thing.ThingStatusDetail;
+import org.openhab.core.thing.ThingStatusInfo;
 import org.openhab.core.thing.binding.BaseThingHandler;
 import org.openhab.core.thing.binding.ThingHandler;
 import org.openhab.core.thing.type.ChannelTypeUID;
@@ -69,6 +71,16 @@ public abstract class RiscoThingHandler extends BaseThingHandler implements Risc
         }
 
         return this.bridgeHandler;
+    }
+
+    @Override
+    public void bridgeStatusChanged(ThingStatusInfo bridgeStatusInfo) {
+        if (bridgeStatusInfo.getStatus() == ThingStatus.ONLINE) {
+            logger.debug("Bridge is online, initializing {} again", getThing().getUID());
+            initialize();
+        } else {
+            updateStatus(ThingStatusDetail.BRIDGE_OFFLINE);
+        }
     }
 
     protected void updateChannel(String channelID, String data) {

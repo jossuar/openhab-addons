@@ -17,6 +17,8 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -57,8 +59,6 @@ import org.openhab.binding.risco.internal.protocol.DiscoveryInfo;
 import org.openhab.binding.risco.internal.protocol.RiscoMessage;
 import org.openhab.binding.risco.internal.protocol.RiscoThing;
 import org.openhab.binding.risco.internal.protocol.RiscoThingType;
-import org.openhab.binding.risco.internal.protocol.message.connection.Local;
-import org.openhab.binding.risco.internal.protocol.message.connection.Remote;
 import org.openhab.core.library.types.StringType;
 import org.openhab.core.thing.Bridge;
 import org.openhab.core.thing.ChannelUID;
@@ -100,8 +100,11 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
     private Map<Integer, Thing> thingZoneExpanderMap = new ConcurrentHashMap<>();
 
     // Communication
-    private @Nullable RiscoCommunicator communicator = null;
-    private @Nullable RiscoDiscoveryService discoveryService = null;
+    private volatile @Nullable RiscoCommunicator communicator = null;
+    private volatile @Nullable RiscoDiscoveryService discoveryService = null;
+    private volatile @Nullable ScheduledFuture<?> connectJob = null;
+    private volatile boolean disposed = false;
+    private static final int RECONNECT_INTERVAL_SECONDS = 30;
 
     private static final Pattern PATTERN_ARM_PARTITION = Pattern
             .compile("^(" + RiscoBindingConstants.CMD_ARM_PARTITION + "):(\\d+){1,2}:(\\d+){1,4}$");
@@ -117,7 +120,8 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
     }
 
     @Override
-    public synchronized void initialize() {
+    public void initialize() {
+        disposed = false;
         updateStatus(ThingStatus.UNKNOWN);
 
         RiscoBridgeConfiguration configuration = getConfigAs(RiscoBridgeConfiguration.class);
@@ -129,42 +133,105 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
             return;
         }
 
+        // Connect in the background
+        scheduleConnect(configuration, 0);
+    }
+
+    private void scheduleConnect(RiscoBridgeConfiguration configuration, int delaySeconds) {
+        if (disposed) {
+            return;
+        }
+
+        connectJob = scheduler.schedule(() -> connect(configuration), delaySeconds, TimeUnit.SECONDS);
+    }
+
+    private void connect(RiscoBridgeConfiguration configuration) {
+        if (disposed) {
+            return;
+        }
+
+        String hostname = configuration.getHostname();
+        // Already checked in initialize. Check added to bypass null check
+        if (hostname == null) {
+            return;
+        }
+
         int port = configuration.getPort();
-        updateStatus(ThingStatus.OFFLINE);
 
         // create & start panel interface
         logger.debug("Starting interface with host {} at port {}", hostname, port);
 
+        RiscoCommunicator comm = null;
         try {
-            RiscoCommunicator communicator = new RiscoCommunicator(getThing().getUID().getAsString(), hostname, port,
-                    configuration.getId(), configuration.getEncoding(), configuration.getPassword(), scheduler);
+            comm = new RiscoCommunicator(getThing().getUID().getAsString(), hostname, port, configuration.getId(),
+                    configuration.getEncoding(), configuration.getPassword(), configuration.getConnectionDelay(),
+                    scheduler);
 
             // Initialize the communication with the panel
-            communicator.sendPlainAndWait(Remote.getReadCommand(configuration.getPassword()));
-            communicator.sendPlainAndWait(Local.getReadCommand());
+            comm.initializeSession();
+            comm.addListener(this);
 
-            communicator.addListener(this);
-            this.communicator = communicator;
+            synchronized (this) {
+                if (disposed) {
+                    comm.stop();
+                    return;
+                }
+                communicator = comm;
+            }
 
             updateStatus(ThingStatus.ONLINE);
+        } catch (IOException | RuntimeException e) {
+            logger.debug("Communication cannot be initialized. " + e.getLocalizedMessage());
 
-            notifyAll();
-        } catch (IOException e) {
-            updateStatus(ThingStatusDetail.COMMUNICATION_ERROR, "Communication cannot be initialized. " + e.toString());
+            if (comm != null) {
+                comm.stop();
+            }
 
-            return;
+            updateStatus(ThingStatusDetail.COMMUNICATION_ERROR, "Communication cannot be initialized, retrying in "
+                    + RECONNECT_INTERVAL_SECONDS + " seconds. " + e.toString());
+            scheduleConnect(configuration, RECONNECT_INTERVAL_SECONDS);
+        }
+    }
+
+    private void stopCommunication() {
+        ScheduledFuture<?> job = connectJob;
+        if (job != null) {
+            job.cancel(false);
+            connectJob = null;
+        }
+
+        RiscoCommunicator comm;
+        synchronized (this) {
+            comm = communicator;
+            communicator = null;
+        }
+
+        if (comm != null) {
+            comm.stop();
         }
     }
 
     @Override
     public void dispose() {
-        RiscoCommunicator comm = communicator;
-        if (comm != null) {
-            comm.stop();
-            comm = null;
-        }
+        disposed = true;
+        stopCommunication();
 
         super.dispose();
+    }
+
+    @Override
+    public void connectionStateChanged(boolean up) {
+        if (disposed) {
+            return;
+        }
+
+        if (up) {
+            logger.debug("Connection to the panel re-established");
+            updateStatus(ThingStatus.ONLINE);
+        } else {
+            logger.debug("Connection to the panel lost");
+            updateStatus(ThingStatusDetail.COMMUNICATION_ERROR, "Connection to the panel lost, reconnecting.");
+        }
     }
 
     @Override
@@ -239,11 +306,7 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
 
     public void restart() {
         // Stop the currently running communicator
-        RiscoCommunicator comm = communicator;
-        if (comm != null) {
-            comm.stop();
-            comm = null;
-        }
+        stopCommunication();
 
         // Initialize again
         initialize();
@@ -431,21 +494,16 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
      *
      * @param command The command to be send
      */
-    public synchronized boolean sendCommand(String command) {
+    public boolean sendCommand(String command) {
         logger.trace("sendCommand(): Attempting to send Command: command - {}", command);
 
-        // Wait until the communicator initializes
-        while (communicator == null) {
-            try {
-                wait();
-            } catch (InterruptedException e) {
-            }
+        RiscoCommunicator comm = communicator;
+        if (comm == null) {
+            logger.debug("sendCommand(): Not connected to the panel, command dropped: {}", command);
+            return false;
         }
 
-        RiscoCommunicator comm = communicator;
-        if (comm != null) {
-            comm.send(command);
-        }
+        comm.send(command);
 
         return true;
     }
@@ -495,13 +553,6 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
         }
 
         super.childHandlerInitialized(childHandler, childThing);
-
-        // refresh all channels
-        /*
-         * for (Channel c : childThing.getChannels()) {
-         * childHandler.handleCommand(c.getUID(), RefreshType.REFRESH);
-         * }
-         */
     }
 
     @Override
