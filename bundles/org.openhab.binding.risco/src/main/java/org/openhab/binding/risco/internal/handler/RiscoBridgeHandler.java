@@ -181,7 +181,7 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
 
             updateStatus(ThingStatus.ONLINE);
         } catch (IOException | RuntimeException e) {
-            logger.debug("Communication cannot be initialized. " + e.getLocalizedMessage());
+            logger.debug("Communication cannot be initialized: {} ", e.getMessage());
 
             if (comm != null) {
                 comm.stop();
@@ -190,6 +190,10 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
             updateStatus(ThingStatusDetail.COMMUNICATION_ERROR, "Communication cannot be initialized, retrying in "
                     + RECONNECT_INTERVAL_SECONDS + " seconds. " + e.toString());
             scheduleConnect(configuration, RECONNECT_INTERVAL_SECONDS);
+        } catch (InterruptedException e) {
+            // The bridge is being stopped
+            comm.stop();
+            Thread.currentThread().interrupt();
         }
     }
 

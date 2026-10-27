@@ -17,13 +17,14 @@ import java.io.BufferedOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InterruptedIOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -58,25 +59,30 @@ public class RiscoCommunicator {
     private final String password;
     private final int connectionDelayMs;
 
-    private Socket tcpSocket;
-    private BufferedOutputStream tcpOutput;
-    private BufferedInputStream tcpInput;
-    private Boolean connected = false;
+    // The connection state is changed by the watchdog thread and used by the sender and receiver threads
+    private volatile Socket tcpSocket;
+    private volatile BufferedOutputStream tcpOutput;
+    private volatile BufferedInputStream tcpInput;
+    private volatile boolean connected = false;
+
+    // start, stop and reconnect must not run at the same time
+    private final Object lifecycleLock = new Object();
+    private volatile boolean stopped = false;
 
     // send
-    private Thread riscoSender;
+    private volatile Thread riscoSender;
     private final LinkedBlockingDeque<RiscoMessage> sendQueue = new LinkedBlockingDeque<RiscoMessage>(50);
     private int sendCommandId = 2;
 
     // receive
-    private Thread riscoReceiver;
+    private volatile Thread riscoReceiver;
 
     // listener
-    private final Set<RiscoPanelListener> listenerQueue = new HashSet<>();
+    private final Set<RiscoPanelListener> listenerQueue = new CopyOnWriteArraySet<>();
 
     // watchdog
-    private ZonedDateTime lastSendTime = ZonedDateTime.now();
-    private ZonedDateTime lastReceiveTime = ZonedDateTime.now();
+    private volatile ZonedDateTime lastSendTime = ZonedDateTime.now();
+    private volatile ZonedDateTime lastReceiveTime = ZonedDateTime.now();
     private ScheduledFuture<?> riscoWatchdog;
     private volatile boolean connectionUp = true;
 
@@ -159,8 +165,14 @@ public class RiscoCommunicator {
     private void start() throws IOException {
         logger.trace("start(): RiscoCommunicator starting");
 
+        if (stopped) {
+            throw new IOException("The communicator was stopped");
+        }
+
         // Reset command id
-        sendCommandId = 2;
+        synchronized (this) {
+            sendCommandId = 2;
+        }
 
         // Drop anything left in the queue by a previous connection, e.g. a disconnect command that could not be sent
         sendQueue.clear();
@@ -186,7 +198,12 @@ public class RiscoCommunicator {
         riscoSender.start();
 
         // Initialize the communication with the panel
-        initializeSession();
+        try {
+            initializeSession();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new InterruptedIOException("Interrupted while initializing the session");
+        }
 
         connected = true;
     }
@@ -195,17 +212,20 @@ public class RiscoCommunicator {
      * Initializes the communication with the panel. This must be done once the connection is open, after the
      * configured connection delay.
      */
-    public void initializeSession() {
+    public void initializeSession() throws InterruptedException {
         if (connectionDelayMs > 0) {
-            try {
-                Thread.sleep(connectionDelayMs);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                return;
-            }
+            Thread.sleep(connectionDelayMs);
         }
 
+        // Stop if the thread is being interrupted, e.g. because the communicator is being stopped
+        if (Thread.interrupted()) {
+            throw new InterruptedException();
+        }
         sendPlainAndWait(Remote.getReadCommand(password));
+
+        if (Thread.interrupted()) {
+            throw new InterruptedException();
+        }
         sendPlainAndWait(Local.getReadCommand());
     }
 
@@ -284,17 +304,22 @@ public class RiscoCommunicator {
             try {
                 listener.connectionStateChanged(up);
             } catch (RuntimeException e) {
-                logger.debug("Listener failed on connection state change. " + e.getLocalizedMessage());
+                logger.debug("Listener failed on connection state change: {} ", e.getMessage());
             }
         }
     }
 
     public void stop() {
         logger.trace("stop(): RiscoCommunicator stopping");
-        stopInternal();
 
-        // Stop watchdog
+        // Stop the watchdog first (interrupting a reconnection in progress), so it cannot open a new connection
+        // after the communicator was stopped
+        stopped = true;
         riscoWatchdog.cancel(true);
+
+        synchronized (lifecycleLock) {
+            stopInternal();
+        }
     }
 
     private static final long RESPONSE_TIMEOUT_MS = 15000;
@@ -314,7 +339,9 @@ public class RiscoCommunicator {
             try {
                 wait(remainingMillis);
             } catch (InterruptedException e) {
+                // Restore the flag and stop waiting. Looping here would spin, as wait() throws again immediately.
                 Thread.currentThread().interrupt();
+                break;
             }
         }
     }
@@ -472,8 +499,7 @@ public class RiscoCommunicator {
                 logger.debug("RiscoReceiver: IO Exception.");
                 Thread.currentThread().interrupt();
             } catch (RuntimeException e) {
-                logger.debug("RiscoReceiver: Error processing a received message, discarding it. "
-                        + e.getLocalizedMessage());
+                logger.debug("RiscoReceiver: Error processing a received message, discarding it. {}", e.getMessage());
             }
         }
 
@@ -530,9 +556,9 @@ public class RiscoCommunicator {
                 } catch (IOException e) {
                     // The message is lost, but keep draining the queue. If the connection is really broken, the
                     // watchdog will notice that nothing is being sent and will reconnect.
-                    logger.debug("RiscoCommunicator.SenderThread: IOException caught. " + e.getLocalizedMessage());
+                    logger.debug("RiscoCommunicator.SenderThread: IOException caught: {}", e.getMessage());
                 } catch (RuntimeException e) {
-                    logger.debug("RiscoCommunicator.SenderThread: Unexpected error. " + e.getLocalizedMessage());
+                    logger.debug("RiscoCommunicator.SenderThread: Unexpected error: {}", e.getMessage());
                 }
             }
 
@@ -547,13 +573,23 @@ public class RiscoCommunicator {
     }
 
     private void reconnect() throws Exception {
-        stopInternal();
-        start();
+        synchronized (lifecycleLock) {
+            if (stopped) {
+                throw new IOException("The communicator was stopped");
+            }
+
+            stopInternal();
+            start();
+        }
     }
 
     private class RiscoWatchdog implements Runnable {
         @Override
         public void run() {
+            if (stopped) {
+                return;
+            }
+
             if (ChronoUnit.SECONDS.between(lastSendTime, ZonedDateTime.now()) > 30
                     || ChronoUnit.SECONDS.between(lastReceiveTime, ZonedDateTime.now()) > 70) {
                 logger.trace("check sendBefore: {}, recvBefore: {}, result: {}",
@@ -568,7 +604,7 @@ public class RiscoCommunicator {
                     reconnect();
                     notifyConnectionState(true);
                 } catch (Exception e) {
-                    logger.debug("Could not reconnect to the panel.");
+                    logger.debug("Could not reconnect to the panel: {}", e.getMessage());
                 }
                 return;
             } else {
@@ -580,6 +616,7 @@ public class RiscoCommunicator {
             try {
                 send("CLOCK");
             } catch (RuntimeException e) {
+                logger.debug("Could not send the keepalive to the panel: {}", e.getMessage());
             }
         }
     }
