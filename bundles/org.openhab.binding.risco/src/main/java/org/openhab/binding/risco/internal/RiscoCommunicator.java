@@ -247,10 +247,13 @@ public class RiscoCommunicator {
         RiscoMessageFactory factory = new RiscoMessageFactory();
         RiscoMessage msg = factory.create(panelId, encoding, sendCommandId, command, encrypt);
 
+        if (!enqueue(msg)) {
+            return;
+        }
+
         if (wait) {
             responseCommandId = sendCommandId;
         }
-        sendQueue.add(msg);
 
         // adjust command id for the next send
         sendCommandId++;
@@ -281,7 +284,15 @@ public class RiscoCommunicator {
         RiscoMessageFactory factory = new RiscoMessageFactory();
         RiscoMessage msg = factory.create(panelId, encoding, commandId, command, true);
 
-        sendQueue.add(msg);
+        enqueue(msg);
+    }
+
+    private boolean enqueue(RiscoMessage msg) {
+        if (!sendQueue.offer(msg)) {
+            logger.debug("Send queue is full, dropping message {}", msg);
+            return false;
+        }
+        return true;
     }
 
     private synchronized void handleIncomingMessage(RiscoMessage msg) {
@@ -354,14 +365,13 @@ public class RiscoCommunicator {
                 do {
                     int b = readUnstuffedByte(is);
 
+                    if (bufferIndex >= MAX_MESSAGE_SIZE) {
+                        logger.debug("Message exceeded {} bytes, discarding it.", MAX_MESSAGE_SIZE);
+                        return;
+                    }
+
                     buffer[bufferIndex] = (byte) b;
                     bufferIndex++;
-                    if (bufferIndex == MAX_MESSAGE_SIZE) {
-                        logger.debug("Message exceeded {} bytes.", MAX_MESSAGE_SIZE);
-
-                        // Stop the receiver
-                        Thread.currentThread().interrupt();
-                    }
 
                     if (b == 0x03 && !stuffed) {
                         break;
@@ -378,9 +388,13 @@ public class RiscoCommunicator {
 
                 logger.trace("RiscoCommunicator.read() Got message");
             } catch (EOFException e) {
-                return;
-            } catch (IOException e) {
+                logger.debug("RiscoReceiver: Connection closed by the panel.");
                 Thread.currentThread().interrupt();
+            } catch (IOException e) {
+                logger.debug("RiscoReceiver: IO Exception.");
+                Thread.currentThread().interrupt();
+            } catch (RuntimeException e) {
+                logger.debug("RiscoReceiver: Error processing a received message, discarding it.", e);
             }
         }
 
@@ -424,20 +438,23 @@ public class RiscoCommunicator {
     private class RiscoSender implements Runnable {
         @Override
         public void run() {
-            try {
-                while (!Thread.currentThread().isInterrupted()) {
+            while (!Thread.currentThread().isInterrupted()) {
+                try {
                     RiscoMessage rm = sendQueue.take();
                     write(rm.getEncryptedMessage());
 
                     handleOutgoingMessage(rm);
+                } catch (InterruptedException e) {
+                    // Just exit the loop
+                    logger.debug("RiscoCommunicator.SenderThread: InterruptedException caught.");
+                    Thread.currentThread().interrupt();
+                } catch (IOException e) {
+                    // The message is lost, but keep draining the queue. If the connection is really broken, the
+                    // watchdog will notice that nothing is being sent and will reconnect.
+                    logger.debug("RiscoCommunicator.SenderThread: IOException caught.", e);
+                } catch (RuntimeException e) {
+                    logger.debug("RiscoCommunicator.SenderThread: Unexpected error.", e);
                 }
-
-                logger.trace("RiscoCommunicator.SenderThread: Thread interrupted.");
-            } catch (InterruptedException e) {
-                // Just exit the loop
-                logger.debug("RiscoCommunicator.SenderThread: InterruptedException caught.");
-            } catch (IOException e) {
-                logger.debug("RiscoCommunicator.SenderThread: IOException caught.", e);
             }
 
             logger.trace("RiscoSender. Thread stopped.");
