@@ -106,14 +106,15 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
     private volatile boolean disposed = false;
     private static final int RECONNECT_INTERVAL_SECONDS = 30;
 
+    // Partitions: 1-32 (2 digits), zones: 1-512 (3 digits), user pins: 4-6 digits
     private static final Pattern PATTERN_ARM_PARTITION = Pattern
-            .compile("^(" + RiscoBindingConstants.CMD_ARM_PARTITION + "):(\\d+){1,2}:(\\d+){1,4}$");
+            .compile("^(" + RiscoBindingConstants.CMD_ARM_PARTITION + "):(\\d{1,2}):(\\d{4,6})$");
     private static final Pattern PATTERN_STAY_PARTITION = Pattern
-            .compile("^(" + RiscoBindingConstants.CMD_STAY_PARTITION + "):(\\d+):(\\d+)$");
+            .compile("^(" + RiscoBindingConstants.CMD_STAY_PARTITION + "):(\\d{1,2}):(\\d{4,6})$");
     private static final Pattern PATTERN_DISARM_PARTITION = Pattern
-            .compile("^(" + RiscoBindingConstants.CMD_DISARM_PARTITION + "):(\\d+):(\\d+)$");
+            .compile("^(" + RiscoBindingConstants.CMD_DISARM_PARTITION + "):(\\d{1,2}):(\\d{4,6})$");
     private static final Pattern PATTERN_TOGGLE_ZONE_BYPASS = Pattern
-            .compile("^(" + RiscoBindingConstants.CMD_TOGGLE_ZONE_BYPASS + "):(\\d+)$");
+            .compile("^(" + RiscoBindingConstants.CMD_TOGGLE_ZONE_BYPASS + "):(\\d{1,3})$");
 
     public RiscoBridgeHandler(Bridge bridge) {
         super(bridge);
