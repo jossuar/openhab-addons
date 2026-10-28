@@ -126,7 +126,7 @@ public class RiscoCommunicator {
         tcpSocket = socket;
 
         // Start sender, receiver and watchdog threads
-        riscoReceiver = new Thread(new RiscoReceiver(), "OH-binding-" + uid + "-riscorecevr");
+        riscoReceiver = new Thread(new RiscoReceiver(), "OH-binding-" + uid + "-riscorecvr");
         riscoReceiver.setDaemon(true);
         riscoReceiver.start();
 
@@ -246,7 +246,7 @@ public class RiscoCommunicator {
             try {
                 send(Disconnect.getReadCommand());
             } catch (Exception exception) {
-                logger.debug("send(): Error closing connection - {}", exception.getMessage());
+                logger.debug("stopInternal(): Error sending the disconnect command - {}", exception.getMessage());
             }
         }
 
@@ -273,11 +273,11 @@ public class RiscoCommunicator {
         // Close socket
         try {
             tcpSocket.close();
-            logger.trace("closeConnection(): Closed TCP Connection!");
+            logger.trace("stopInternal(): Closed TCP Connection!");
         } catch (IOException ioException) {
-            logger.debug("closeConnection(): Unable to close connection - {}", ioException.getMessage());
+            logger.debug("stopInternal(): Unable to close connection - {}", ioException.getMessage());
         } catch (Exception exception) {
-            logger.debug("closeConnection(): Error closing connection - {}", exception.getMessage());
+            logger.debug("stopInternal(): Error closing connection - {}", exception.getMessage());
         }
 
         // Wait until communication threads exit
@@ -304,7 +304,7 @@ public class RiscoCommunicator {
             try {
                 listener.connectionStateChanged(up);
             } catch (RuntimeException e) {
-                logger.debug("Listener failed on connection state change: {} ", e.getMessage());
+                logger.debug("Listener failed on connection state change: {}", e.getMessage());
             }
         }
     }
