@@ -181,7 +181,7 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
 
             updateStatus(ThingStatus.ONLINE);
         } catch (IOException | RuntimeException e) {
-            logger.debug("Communication cannot be initialized: {} ", e.getMessage());
+            logger.debug("Communication cannot be initialized: {}", e.getMessage());
 
             if (comm != null) {
                 comm.stop();

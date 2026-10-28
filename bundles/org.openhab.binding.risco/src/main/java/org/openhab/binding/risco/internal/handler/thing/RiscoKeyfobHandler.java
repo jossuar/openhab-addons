@@ -67,7 +67,7 @@ public class RiscoKeyfobHandler extends RiscoThingHandler {
             return;
         }
 
-        // Send Siren Status update command
+        // Send Keyfob Status update command
         bridgeHandler.sendCommand(KeyfobStatus.getReadCommand(keyfobNumber));
         logger.trace("RiscoKeyfobHandler initialized [{}]", keyfobNumber);
     }
