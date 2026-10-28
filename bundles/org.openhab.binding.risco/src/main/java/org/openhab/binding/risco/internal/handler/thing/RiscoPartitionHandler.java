@@ -53,7 +53,7 @@ public class RiscoPartitionHandler extends RiscoThingHandler implements RiscoPan
     private int partitionNumber;
     private int userIndex;
     private long lastRefreshTime = 0;
-    private @Nullable String userPin;
+    private volatile @Nullable String userPin;
 
     public RiscoPartitionHandler(Thing thing) {
         super(thing);
@@ -123,7 +123,7 @@ public class RiscoPartitionHandler extends RiscoThingHandler implements RiscoPan
     }
 
     public void arm(String userPin) {
-        if (userPin.equals(this.userPin)) {
+        if (isUserPinValid(userPin, "arm")) {
             List<String> messages = new ArrayList<String>();
 
             messages.add(PartitionArm.getCommand(getPartitionNumber()));
@@ -135,7 +135,7 @@ public class RiscoPartitionHandler extends RiscoThingHandler implements RiscoPan
     }
 
     public void stay(String userPin) {
-        if (userPin.equals(this.userPin)) {
+        if (isUserPinValid(userPin, "set the home stay mode of")) {
             List<String> messages = new ArrayList<String>();
 
             messages.add(PartitionStay.getCommand(getPartitionNumber()));
@@ -147,7 +147,7 @@ public class RiscoPartitionHandler extends RiscoThingHandler implements RiscoPan
     }
 
     public void disarm(String userPin) {
-        if (userPin.equals(this.userPin)) {
+        if (isUserPinValid(userPin, "disarm")) {
             List<String> messages = new ArrayList<String>();
 
             messages.add(PartitionDisarm.getCommand(getPartitionNumber()));
@@ -156,6 +156,28 @@ public class RiscoPartitionHandler extends RiscoThingHandler implements RiscoPan
 
             sendMessages(messages);
         }
+    }
+
+    /**
+     * Checks the user pin of a command. The pin of the user is read from the panel, so the command is ignored
+     * until it was received.
+     */
+    private boolean isUserPinValid(String userPin, String action) {
+        String expectedPin = this.userPin;
+
+        if (expectedPin == null) {
+            logger.debug("Cannot {} partition {}: the pin of user {} was not received from the panel yet.", action,
+                    getPartitionNumber(), getUserIndex());
+            return false;
+        }
+
+        if (!userPin.equals(expectedPin)) {
+            logger.debug("Cannot {} partition {}: the pin does not match the pin of user {}.", action,
+                    getPartitionNumber(), getUserIndex());
+            return false;
+        }
+
+        return true;
     }
 
     private void sendMessages(List<String> messages) {
