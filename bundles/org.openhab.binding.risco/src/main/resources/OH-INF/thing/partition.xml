@@ -49,10 +49,6 @@
 				<label>Ready</label>
 				<description>Ready or Not Ready</description>
 			</channel>
-			<channel id="open" typeId="readonly-switch">
-				<label>Open</label>
-				<description>At least one zone is tripped</description>
-			</channel>
 			<channel id="exists" typeId="readonly-switch-advanced">
 				<label>Exists</label>
 				<description>Exists or Not Exists</description>
