@@ -34,17 +34,16 @@ public class SirenStatus extends RiscoMessage {
         new StatusProperty("radio-low-battery-trouble", "R"),
             new StatusProperty("speaker-low-battery-trouble", "S"),
             new StatusProperty("battery-load", "O"),
-            new StatusProperty("tamper", "T"),
+            new StatusProperty("box-tamper", "T"),
             new StatusProperty("communication-trouble", "C"),
             new StatusProperty("exists", "E"),
             new StatusProperty("proximity-tamper", "P"),
             new StatusProperty("aux-trouble", "U"),
             new StatusProperty("speaker-flt", "N"),
-            new StatusProperty("charge-trouble", "T"),
-            new StatusProperty("invalid", "T"),
-            new StatusProperty("box-tamper", "T"),
-            new StatusProperty("lost", "T"),
-            new StatusProperty("low-battery", "T") };
+            new StatusProperty("charge-trouble", "G"),
+            new StatusProperty("invalid", "I"),
+            new StatusProperty("lost", "L"),
+            new StatusProperty("low-battery", "W") };
     // @formatter:on
 
     private List<RiscoThing> messageThings = new ArrayList<RiscoThing>();

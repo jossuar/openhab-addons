@@ -114,6 +114,10 @@
 				<label>Dual Path</label>
 				<description>Dual Path On or Dual Path Off</description>
 			</channel>
+			<channel id="bus-speed" typeId="readonly-switch-advanced">
+				<label>Bus Speed</label>
+				<description>Bus 3 Fast Speed On or Off</description>
+			</channel>
 		</channels>
 	</thing-type>
 

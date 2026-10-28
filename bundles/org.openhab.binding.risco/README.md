@@ -100,7 +100,7 @@ The following tables show the available configuration parameters for each thing.
 
 | Name              | Type    | Description                           | Default | Required | Advanced |
 |-------------------|---------|---------------------------------------|---------|----------|----------|
-| sirenNumber       | integer | Siren Number                          | N/A     | yes      | no       |
+| sirenNumber       | integer | Siren Number                          | 1       | yes      | no       |
 
 ### `wireless-module` Thing Configuration
 
@@ -112,7 +112,7 @@ The following tables show the available configuration parameters for each thing.
 
 | Name              | Type    | Description                           | Default | Required | Advanced |
 |-------------------|---------|---------------------------------------|---------|----------|----------|
-| zoneNumber        | integer | Zone Number                           | N/A     | yes      | no       |
+| zoneNumber        | integer | Zone Number                           | 1       | yes      | no       |
 
 ### `zone-expander` Thing Configuration
 
@@ -186,7 +186,6 @@ The Risco binding things expose the following channels:
 | arm                   | Switch | RW         | Armed or Disarmed                       |
 | home-stay             | Switch | RW         | Home Stay or Home Disarmed              |
 | ready-to-arm          | Switch | R          | Ready or Not Ready                      |
-| open                  | Switch | R          | At least one zone is tripped            |
 | exists                | Switch | R          | Exists                                  |
 | reset-required        | Switch | R          | Memory Event or Memory Ack              |
 | no-activity-alert     | Switch | R          | No Activity Alert                       |
@@ -222,10 +221,10 @@ The Risco binding things expose the following channels:
 | Channel                     | Type   | Read/Write | Description                             |
 |-----------------------------|--------|------------|-----------------------------------------|
 | radio-low-battery-trouble   | Switch | R          | Radio Low Battery Trouble               |
-| speaker-low-battery-trouble | Switch | R          | Radio Low Battery Trouble               |
+| speaker-low-battery-trouble | Switch | R          | Speaker Low Battery Trouble             |
 | battery-load                | Switch | R          | Battery Load                            |
 | communication-trouble       | Switch | R          | Communication Trouble                   |
-| exists                      | Switch | R          | Speaker Low Battery Trouble             |
+| exists                      | Switch | R          | Exists                                  |
 | proximity-tamper            | Switch | R          | Proximity Tamper                        |
 | aux-trouble                 | Switch | R          | Aux Trouble                             |
 | speaker-flt                 | Switch | R          | Speaker Flt                             |
@@ -264,6 +263,7 @@ The Risco binding things expose the following channels:
 | payment-expired       | Switch | R          | Payment Expired                         |
 | service-mode          | Switch | R          | Service Mode                            |
 | dual-path             | Switch | R          | Dual Path                               |
+| bus-speed             | Switch | R          | Bus 3 Fast Speed                        |
 
 ### `voice-module` Channels
 
