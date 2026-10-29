@@ -16,13 +16,11 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InterruptedIOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Arrays;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.LinkedBlockingDeque;
@@ -435,55 +433,25 @@ public class RiscoCommunicator {
 
     private class RiscoReceiver implements Runnable {
         private static final int MAX_MESSAGE_SIZE = 4096;
-        private byte[] buffer = new byte[MAX_MESSAGE_SIZE];
-        private int bufferIndex = 0;
-        private boolean unStuff = false;
-        private boolean stuffed = false;
 
         /**
          * Run method. Runs the MessageListener thread
          */
         @Override
         public void run() {
+            // A receiver is created for each connection, so the stream of this connection is read
+            RiscoFrameReader reader = new RiscoFrameReader(tcpInput, MAX_MESSAGE_SIZE);
+
             while (!Thread.currentThread().isInterrupted()) {
-                readMessageBuffer();
+                readMessage(reader);
             }
 
             logger.trace("RiscoReceiver. Thread stopped.");
         }
 
-        private void readMessageBuffer() {
+        private void readMessage(RiscoFrameReader reader) {
             try {
-                InputStream is = tcpInput;
-
-                // Initialize
-                bufferIndex = 0;
-                unStuff = false;
-                stuffed = false;
-
-                // Read start byte 0x02
-                loopUntilByteIsRead(is, 0x02);
-                buffer[bufferIndex] = 0x02;
-                bufferIndex++;
-
-                // Read until end byte 0x03
-                do {
-                    int b = readUnstuffedByte(is);
-
-                    if (bufferIndex >= MAX_MESSAGE_SIZE) {
-                        logger.debug("Message exceeded {} bytes, discarding it.", MAX_MESSAGE_SIZE);
-                        return;
-                    }
-
-                    buffer[bufferIndex] = (byte) b;
-                    bufferIndex++;
-
-                    if (b == 0x03 && !stuffed) {
-                        break;
-                    }
-                } while (true);
-
-                byte[] message = Arrays.copyOfRange(buffer, 0, bufferIndex);
+                byte[] message = reader.readFrame();
 
                 logger.trace("<---- {}", HexUtils.bytesToHex(message));
 
@@ -501,42 +469,6 @@ public class RiscoCommunicator {
             } catch (RuntimeException e) {
                 logger.debug("RiscoReceiver: Error processing a received message, discarding it. {}", e.getMessage());
             }
-        }
-
-        private void loopUntilByteIsRead(InputStream stream, int byteToRead) throws IOException {
-            int b = 0;
-            do {
-                b = readUnstuffedByte(stream);
-            } while (b != byteToRead);
-        }
-
-        private int readUnstuffedByte(InputStream stream) throws IOException {
-            int b;
-
-            if (!unStuff) {
-                stuffed = false;
-                b = readByte(stream);
-
-                if (b == 0x10) {
-                    unStuff = true;
-                } else {
-                    return b;
-                }
-            }
-
-            b = readByte(stream);
-            stuffed = true;
-            unStuff = false;
-
-            return b;
-        }
-
-        private int readByte(InputStream stream) throws IOException {
-            int b = stream.read();
-            if (b == -1) {
-                throw new EOFException();
-            }
-            return b;
         }
     }
 
