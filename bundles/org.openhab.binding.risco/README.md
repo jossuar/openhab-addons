@@ -1,6 +1,5 @@
 # Risco Binding
 
-
 The openHAB Risco Binding allows openHAB to communicate with Risco security panels.
 The connectivity to the panel is via TCP/IP on the local network.
 
@@ -8,7 +7,7 @@ The connectivity to the panel is via TCP/IP on the local network.
 
 Currently the following things are supported:
 
-- `bridge`: The bridge is the communication point with the panel. Agility LightSys, LightSysPlus, ProSys panels should be working. Tested only on LightSysPlus. 
+- `bridge`: The bridge is the communication point with the panel. Agility LightSys, LightSysPlus, ProSys panels should be working. Tested only on LightSysPlus.
 - `bus-expander`: Represents a bus expander within a Risco Alarm System
 - `keyfob`: Represents a keyfob within a Risco Alarm System
 - `keypad`: Represents a keypad within a Risco Alarm System
@@ -26,7 +25,7 @@ Currently the following things are supported:
 
 ## Discovery
 
-First the bridge must be manually defined. The hostname or IP address, port, panel id, panel password, encoding and the connection delay have to be specified. Except for the ip, all the other parameters have their default values predefined. 
+First the bridge must be manually defined. The hostname or IP address, port, panel id, panel password, encoding and the connection delay have to be specified. Except for the ip, all the other parameters have their default values predefined.
 
 After the bridge is manually added and available to openHAB, the binding will automatically discover various things and add them to the discovery inbox, according to the received messages from the panel.
 
@@ -119,7 +118,6 @@ The following tables show the available configuration parameters for each thing.
 | Name               | Type    | Description                           | Default | Required | Advanced |
 |--------------------|---------|---------------------------------------|---------|----------|----------|
 | zoneExpanderNumber | integer | Zone Expander Number                  | N/A     | yes      | no       |
-
 
 ## Channels
 
@@ -214,7 +212,6 @@ The Risco binding things expose the following channels:
 | tamper                | Switch | R          | Tamper                                  |
 | communication-trouble | Switch | R          | Communication Trouble                   |
 | exists                | Switch | R          | Exists                                  |
-
 
 ### `siren` Channels
 
@@ -315,7 +312,7 @@ The Risco binding things expose the following channels:
 
 The following is an example of a things file (risco.things):
 
-```
+```text
 Bridge risco:bridge:lightsys "Risco Alarm Panel" [hostname="192.168.1.10", password="5678", id=1, encoding="UTF-8", port=1000, connectionDelay=0] {
     Thing panel     panel      "SecurityPanel"
     Thing partition partition1 "Partition 1" [partitionNumber=1]
@@ -326,7 +323,7 @@ Bridge risco:bridge:lightsys "Risco Alarm Panel" [hostname="192.168.1.10", passw
 
 The following is an example of an items file (risco.items):
 
-```
+```text
 Switch p1Fire “Main House Fire” (Partition) {channel=“risco:partition:lightsys:partition1:fire”}
 Switch p1Arm “Main House Armed/Disarmed” (Partition) {channel=“risco:partition:lightsys:partition1:arm”}
 
@@ -337,7 +334,7 @@ Contact   Kitchen_Motion        "Kitchen [%s]"          <motion>       (MotionSe
 The following is a rule example with calling of an action on the binding.
 You have to specify a valid trigger condition and also the correct partition identifier and pin
 
-```
+```text
 rule "Arm"
 when
     Item AButton received command ON
@@ -353,10 +350,9 @@ end
 
 ```
 
-
 UI CODE example
 
-```
+```yaml
 
     UID: risco:bridge:thebridge
     label: Risco Bridge
