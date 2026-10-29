@@ -324,8 +324,8 @@ Bridge risco:bridge:lightsys "Risco Alarm Panel" [hostname="192.168.1.10", passw
 The following is an example of an items file (risco.items):
 
 ```text
-Switch p1Fire “Main House Fire” (Partition) {channel=“risco:partition:lightsys:partition1:fire”}
-Switch p1Arm “Main House Armed/Disarmed” (Partition) {channel=“risco:partition:lightsys:partition1:arm”}
+Switch p1Fire "Main House Fire" (Partition) {channel="risco:partition:lightsys:partition1:fire"}
+Switch p1Arm "Main House Armed/Disarmed" (Partition) {channel="risco:partition:lightsys:partition1:arm"}
 
 Contact   Livingroom_Motion     "Livingroom [%s]"       <motion>       (MotionSensors)  { channel="risco:zone:lightsys:zone1:open" }
 Contact   Kitchen_Motion        "Kitchen [%s]"          <motion>       (MotionSensors)  { channel="risco:zone:lightsys:zone2:open" }
