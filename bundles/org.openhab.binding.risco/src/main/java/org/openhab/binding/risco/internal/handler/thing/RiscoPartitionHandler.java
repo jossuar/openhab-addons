@@ -19,7 +19,7 @@ import java.util.Set;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.openhab.binding.risco.internal.RiscoCommunicator.RiscoPanelListener;
+import org.openhab.binding.risco.internal.RiscoPanelListener;
 import org.openhab.binding.risco.internal.action.RiscoPartitionActions;
 import org.openhab.binding.risco.internal.config.RiscoPartitionConfiguration;
 import org.openhab.binding.risco.internal.handler.RiscoBridgeHandler;
@@ -81,6 +81,7 @@ public class RiscoPartitionHandler extends RiscoThingHandler implements RiscoPan
         RiscoPartitionConfiguration config = getConfigAs(RiscoPartitionConfiguration.class);
         setPartitionNumber(config.getPartitionNumber());
         setUserIndex(config.getUserIndex());
+        userPin = null;
 
         // set the Thing offline for now
         updateStatus(ThingStatus.OFFLINE);
@@ -199,6 +200,16 @@ public class RiscoPartitionHandler extends RiscoThingHandler implements RiscoPan
                 this.userPin = values[0];
             }
         }
+    }
+
+    @Override
+    public void dispose() {
+        RiscoBridgeHandler bridgeHandler = getBridgeHandler();
+        if (bridgeHandler != null) {
+            bridgeHandler.removeListener(this);
+        }
+        userPin = null;
+        super.dispose();
     }
 
     @Override
