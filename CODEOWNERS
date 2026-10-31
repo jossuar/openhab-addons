@@ -359,6 +359,7 @@
 /bundles/org.openhab.binding.revogi/ @openhab/add-ons-maintainers
 /bundles/org.openhab.binding.rfxcom/ @martinvw @paulianttila
 /bundles/org.openhab.binding.ring/ @psmedley
+/bundles/org.openhab.binding.risco/ @jossuar
 /bundles/org.openhab.binding.rme/ @kgoderis
 /bundles/org.openhab.binding.robonect/ @reyem
 /bundles/org.openhab.binding.roborock/ @psmedley
