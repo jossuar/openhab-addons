@@ -81,8 +81,8 @@ public class RiscoCommunicator implements RiscoSession.Listener {
             }
             session.set(RiscoSession.open(settings, this));
             connectionUp.set(true);
-            watchdogJob = scheduler.scheduleWithFixedDelay(this::watchdog, WATCHDOG_INTERVAL_S,
-                    WATCHDOG_INTERVAL_S, TimeUnit.SECONDS);
+            watchdogJob = scheduler.scheduleWithFixedDelay(this::watchdog, WATCHDOG_INTERVAL_S, WATCHDOG_INTERVAL_S,
+                    TimeUnit.SECONDS);
         }
     }
 
