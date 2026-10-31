@@ -18,7 +18,6 @@ import java.util.concurrent.Executors;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.openhab.binding.risco.internal.RiscoCommunicator.RiscoPanelListener;
 import org.openhab.binding.risco.internal.protocol.RiscoMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +33,7 @@ public class RiscoCommTest implements RiscoPanelListener {
 
     @Disabled
     @Test
-    public void testCommunication() throws IOException {
+    public void testCommunication() throws IOException, InterruptedException {
         /*
          * LoggerContext logCtx = (LoggerContext) LoggerFactory.getILoggerFactory();
          *
@@ -60,9 +59,11 @@ public class RiscoCommTest implements RiscoPanelListener {
         logger.debug("Root debug message");
         logger.warn("Root trace message");
 
-        RiscoCommunicator comm = new RiscoCommunicator("risco", "192.168.1.71", 1000, 1, "UTF-8", "5678",
-                Executors.newScheduledThreadPool(1));
+        RiscoConnectionSettings settings = new RiscoConnectionSettings("risco", "192.168.1.71", 1000, 1, "UTF-8",
+                "5678", 0);
+        RiscoCommunicator comm = new RiscoCommunicator(settings, Executors.newScheduledThreadPool(1));
         comm.addListener(this);
+        comm.start();
 
         // comm.send("RMT=5678");
         // comm.send("LCL");

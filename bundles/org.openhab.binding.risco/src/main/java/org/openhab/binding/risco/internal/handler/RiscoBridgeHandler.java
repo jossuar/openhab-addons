@@ -26,7 +26,8 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.binding.risco.internal.RiscoBindingConstants;
 import org.openhab.binding.risco.internal.RiscoCommunicator;
-import org.openhab.binding.risco.internal.RiscoCommunicator.RiscoPanelListener;
+import org.openhab.binding.risco.internal.RiscoConnectionSettings;
+import org.openhab.binding.risco.internal.RiscoPanelListener;
 import org.openhab.binding.risco.internal.config.RiscoBridgeConfiguration;
 import org.openhab.binding.risco.internal.config.RiscoBusExpanderConfiguration;
 import org.openhab.binding.risco.internal.config.RiscoKeyfobConfiguration;
@@ -162,15 +163,14 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
         // create & start panel interface
         logger.debug("Starting interface with host {} at port {}", hostname, port);
 
-        RiscoCommunicator comm = null;
-        try {
-            comm = new RiscoCommunicator(getThing().getUID().getAsString(), hostname, port, configuration.getId(),
-                    configuration.getEncoding(), configuration.getPassword(), configuration.getConnectionDelay(),
-                    scheduler);
+        RiscoConnectionSettings settings = new RiscoConnectionSettings(getThing().getUID().getAsString(), hostname,
+                port, configuration.getId(), configuration.getEncoding(), configuration.getPassword(),
+                configuration.getConnectionDelay());
+        RiscoCommunicator comm = new RiscoCommunicator(settings, scheduler);
+        comm.addListener(this);
 
-            // Initialize the communication with the panel
-            comm.initializeSession();
-            comm.addListener(this);
+        try {
+            comm.start();
 
             synchronized (this) {
                 if (disposed) {
@@ -183,13 +183,10 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
             updateStatus(ThingStatus.ONLINE);
         } catch (IOException | RuntimeException e) {
             logger.debug("Communication cannot be initialized: {}", e.getMessage());
-
-            if (comm != null) {
-                comm.stop();
-            }
+            comm.stop();
 
             updateStatus(ThingStatusDetail.COMMUNICATION_ERROR, "Communication cannot be initialized, retrying in "
-                    + RECONNECT_INTERVAL_SECONDS + " seconds. " + e.toString());
+                    + RECONNECT_INTERVAL_SECONDS + " seconds. " + e.getMessage());
             scheduleConnect(configuration, RECONNECT_INTERVAL_SECONDS);
         } catch (InterruptedException e) {
             // The bridge is being stopped
@@ -508,9 +505,7 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
             return false;
         }
 
-        comm.send(command);
-
-        return true;
+        return comm.send(command);
     }
 
     @Override
@@ -634,6 +629,13 @@ public class RiscoBridgeHandler extends BaseBridgeHandler implements RiscoPanelL
         RiscoCommunicator communicator = this.communicator;
         if (communicator != null) {
             communicator.addListener(listener);
+        }
+    }
+
+    public void removeListener(RiscoPanelListener listener) {
+        RiscoCommunicator communicator = this.communicator;
+        if (communicator != null) {
+            communicator.removeListener(listener);
         }
     }
 }
