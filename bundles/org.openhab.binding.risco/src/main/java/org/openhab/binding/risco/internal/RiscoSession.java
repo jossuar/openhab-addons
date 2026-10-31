@@ -226,8 +226,7 @@ class RiscoSession implements RiscoConnection.Listener, Closeable {
      */
     private void acknowledge(RiscoMessage message) {
         try {
-            write(messageFactory.create(settings.panelId(), settings.encoding(), message.getCommandId(), "ACK",
-                    true));
+            write(messageFactory.create(settings.panelId(), settings.encoding(), message.getCommandId(), "ACK", true));
         } catch (IOException e) {
             logger.debug("Could not acknowledge message {}: {}", message.getCommandId(), e.getMessage());
         }
